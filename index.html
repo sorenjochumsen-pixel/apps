@@ -1,274 +1,306 @@
-
 <!DOCTYPE html>
 <html lang="da">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#111111">
-<title>Elbil – Ladetid</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Ladetid</title>
 <style>
 :root{
-  --bg:#f2f2f2;
+  --text:#2f3133;
+  --result:#8a8d91;
+  --muted:#9a9ca0;
+  --line:#e8e8e8;
   --card:#ffffff;
-  --text:#111111;
-  --muted:#666666;
-  --line:#d9d9d9;
 }
 *{box-sizing:border-box}
 html,body{
   margin:0;
-  padding:0;
-  background:var(--bg);
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#fff;
   color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif;
 }
 body{
-  min-height:100vh;
-  padding:16px 14px 30px;
+  padding:max(13px,env(safe-area-inset-top)) 13px max(13px,env(safe-area-inset-bottom));
 }
 .app{
   width:100%;
-  max-width:480px;
+  max-width:430px;
+  height:100%;
   margin:0 auto;
+  display:grid;
+  grid-template-rows:1fr auto auto;
+  gap:13px;
+}
+.hero{
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+#time{
+  color:var(--result);
+  font-size:clamp(76px,24vw,112px);
+  line-height:.9;
+  letter-spacing:-4px;
+  font-weight:600;
+  white-space:nowrap;
+  transition:opacity .15s ease;
+}
+#route{
+  margin-top:13px;
+  color:var(--result);
+  font-size:clamp(19px,5vw,25px);
+  font-weight:500;
+  letter-spacing:-.4px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
 }
 .card{
-  background:var(--card);
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 8px 24px rgba(0,0,0,.08);
-}
-h1{
-  font-size:24px;
-  line-height:1.15;
-  margin:0 0 6px;
-}
-.intro{
-  margin:0 0 20px;
-  color:var(--muted);
-  font-size:15px;
-  line-height:1.4;
-}
-.field{margin-top:16px}
-label{
-  display:block;
-  margin-bottom:7px;
-  font-size:15px;
-  font-weight:700;
-}
-.input-wrap{
-  display:flex;
-  align-items:center;
+  min-height:118px;
+  padding:13px;
   border:1px solid var(--line);
-  border-radius:12px;
-  overflow:hidden;
-  background:#fff;
+  border-radius:13px;
+  background:var(--card);
+  box-shadow:0 1px 5px rgba(0,0,0,.025);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.value{
+  display:flex;
+  align-items:flex-end;
+  gap:5px;
 }
 input{
   width:100%;
   min-width:0;
   border:0;
   outline:0;
-  padding:15px 14px;
-  font-size:20px;
-  font-weight:600;
+  padding:0;
+  margin:0;
   background:transparent;
+  color:#252729;
+  font-size:clamp(38px,11vw,52px);
+  line-height:1;
+  font-weight:500;
+  appearance:none;
+  -webkit-appearance:none;
 }
 .unit{
-  padding:0 14px;
+  padding-bottom:4px;
   color:var(--muted);
-  font-size:15px;
+  font-size:18px;
+  line-height:1;
   white-space:nowrap;
 }
-.result{
-  margin-top:20px;
+.divider{
+  height:1px;
+  background:var(--line);
+  margin:8px 0;
 }
-.main-result{
+.label{
+  color:#252729;
+  font-size:16px;
+  font-weight:500;
+}
+.info{
+  justify-self:end;
+  width:34px;
+  height:34px;
+  border:1px solid #9a9a9a;
+  border-radius:50%;
+  background:#fff;
+  color:#888;
+  font-size:17px;
+  font-weight:600;
+  line-height:31px;
   text-align:center;
-  padding:20px 12px;
-  border-radius:14px;
-  background:#f7f7f7;
+  padding:0;
 }
-.main-result .time{
-  display:block;
-  font-size:38px;
-  line-height:1.05;
-  font-weight:800;
-  margin-bottom:6px;
-}
-.main-result .label{
-  color:var(--muted);
-  font-size:14px;
-}
-.details{
-  margin-top:14px;
+.panel{
+  display:none;
+  position:fixed;
+  left:13px;
+  right:13px;
+  bottom:max(55px,env(safe-area-inset-bottom));
+  max-width:404px;
+  margin:auto;
+  padding:13px;
   border:1px solid var(--line);
-  border-radius:12px;
-  overflow:hidden;
-}
-.row{
-  display:flex;
-  justify-content:space-between;
-  gap:14px;
-  padding:12px 14px;
-  border-bottom:1px solid var(--line);
-  font-size:15px;
-}
-.row:last-child{border-bottom:0}
-.row span:first-child{color:var(--muted)}
-.row strong{text-align:right}
-.note{
-  margin:14px 2px 0;
-  color:var(--muted);
+  border-radius:13px;
+  background:#fff;
+  box-shadow:0 8px 28px rgba(0,0,0,.12);
+  color:#666;
   font-size:13px;
   line-height:1.45;
 }
+.panel.open{display:block}
+.panel-row{
+  display:flex;
+  justify-content:space-between;
+  gap:13px;
+  padding:5px 0;
+}
+.panel strong{color:#333}
 .error{
-  padding:14px;
-  border-radius:12px;
-  background:#fff1f1;
-  color:#8a1f1f;
-  font-size:14px;
+  color:#a04444!important;
+  font-size:28px!important;
+  line-height:1.1!important;
+  letter-spacing:-1px!important;
+  white-space:normal!important;
+  max-width:300px;
+}
+@media(max-height:700px){
+  .app{gap:8px}
+  #time{font-size:72px}
+  #route{margin-top:8px;font-size:18px}
+  .card{min-height:96px;padding:8px}
+  input{font-size:36px}
+  .unit{font-size:15px}
+  .label{font-size:14px}
 }
 </style>
 </head>
 <body>
-<main class="app">
-  <section class="card">
-    <h1>Elbil-ladeberegner</h1>
-    <p class="intro">Beregn hvor lang tid det tager at lade fra nuværende til ønsket batteriprocent.</p>
+<div class="app">
+  <main class="hero">
+    <div id="time">4:12</div>
+    <div id="route">20 % → 80 %</div>
+  </main>
 
-    <div class="field">
-      <label for="battery">Batteristørrelse</label>
-      <div class="input-wrap">
-        <input id="battery" type="number" value="77" min="0.1" step="0.1">
-        <span class="unit">kWh</span>
+  <section class="grid">
+    <div class="card">
+      <div class="value">
+        <input id="from" type="number" value="20" min="0" max="100" step="1">
+        <span class="unit">%</span>
       </div>
+      <div class="divider"></div>
+      <div class="label">Nu</div>
     </div>
 
-    <div class="field">
-      <label for="power">Ladeeffekt</label>
-      <div class="input-wrap">
+    <div class="card">
+      <div class="value">
+        <input id="to" type="number" value="80" min="0" max="100" step="1">
+        <span class="unit">%</span>
+      </div>
+      <div class="divider"></div>
+      <div class="label">Mål</div>
+    </div>
+
+    <div class="card">
+      <div class="value">
+        <input id="capacity" type="number" value="77" min="0.1" step="0.1">
+        <span class="unit">kWh</span>
+      </div>
+      <div class="divider"></div>
+      <div class="label">Kapacitet</div>
+    </div>
+
+    <div class="card">
+      <div class="value">
         <input id="power" type="number" value="11" min="0.1" step="0.1">
         <span class="unit">kW</span>
       </div>
+      <div class="divider"></div>
+      <div class="label">Ladeeffekt</div>
     </div>
-
-    <div class="field">
-      <label for="current">Batteri nu</label>
-      <div class="input-wrap">
-        <input id="current" type="number" value="20" min="0" max="100" step="1">
-        <span class="unit">%</span>
-      </div>
-    </div>
-
-    <div class="field">
-      <label for="target">Ønsket batteri</label>
-      <div class="input-wrap">
-        <input id="target" type="number" value="80" min="0" max="100" step="1">
-        <span class="unit">%</span>
-      </div>
-    </div>
-
-    <div class="result" id="result"></div>
   </section>
-</main>
+
+  <button id="info" class="info" type="button" aria-label="Vis oplysninger">i</button>
+</div>
+
+<div id="panel" class="panel">
+  <div class="panel-row"><span>Energi til batteriet</span><strong id="energy">46,2 kWh</strong></div>
+  <div class="panel-row"><span>Ladehastighed</span><strong id="speed">14,3 % pr. time</strong></div>
+  <p>Beregningen forudsætter konstant ladeeffekt. Den virkelige ladetid kan være længere på grund af ladetab og bilens ladekurve.</p>
+</div>
 
 <script>
-function getValue(id) {
-  var text = document.getElementById(id).value;
-  text = text.replace(",", ".");
-  return parseFloat(text);
-}
-
-function decimal(value) {
-  return value.toFixed(1).replace(".", ",");
-}
-
-function timeText(hours) {
-  var totalMinutes = Math.round(hours * 60);
-  var hoursPart = Math.floor(totalMinutes / 60);
-  var minutesPart = totalMinutes % 60;
-
-  if (hoursPart === 0) {
-    return minutesPart + " min";
+(function(){
+  function n(id){
+    return parseFloat(String(document.getElementById(id).value).replace(",","."));
   }
 
-  if (minutesPart === 0) {
-    if (hoursPart === 1) {
-      return "1 time";
+  function one(v){
+    return v.toFixed(1).replace(".",",");
+  }
+
+  function timeText(hours){
+    var minutes=Math.round(hours*60);
+    var h=Math.floor(minutes/60);
+    var m=minutes%60;
+    if(h===0){return minutes+" min";}
+    return h+":"+(m<10?"0":"")+m;
+  }
+
+  function calc(){
+    var from=n("from");
+    var to=n("to");
+    var capacity=n("capacity");
+    var power=n("power");
+    var time=document.getElementById("time");
+    var route=document.getElementById("route");
+
+    if(isNaN(from)||isNaN(to)||isNaN(capacity)||isNaN(power)||
+       from<0||from>100||to<0||to>100||capacity<=0||power<=0){
+      time.className="error";
+      time.textContent="Kontrollér tallene";
+      route.textContent="";
+      return;
     }
-    return hoursPart + " timer";
+
+    if(to<=from){
+      time.className="error";
+      time.textContent="Målet skal være højere";
+      route.textContent="";
+      return;
+    }
+
+    var energy=capacity*(to-from)/100;
+    var hours=energy/power;
+    var speed=power/capacity*100;
+
+    time.className="";
+    time.style.opacity="0.35";
+    window.setTimeout(function(){
+      time.textContent=timeText(hours);
+      time.style.opacity="1";
+    },80);
+
+    route.textContent=Math.round(from)+" % → "+Math.round(to)+" %";
+    document.getElementById("energy").textContent=one(energy)+" kWh";
+    document.getElementById("speed").textContent=one(speed)+" % pr. time";
   }
 
-  return hoursPart + " t " + minutesPart + " min";
-}
+  ["from","to","capacity","power"].forEach(function(id){
+    document.getElementById(id).addEventListener("input",calc,false);
+    document.getElementById(id).addEventListener("change",calc,false);
+  });
 
-function calc() {
-  var battery = getValue("battery");
-  var power = getValue("power");
-  var current = getValue("current");
-  var target = getValue("target");
-  var result = document.getElementById("result");
+  document.getElementById("info").addEventListener("click",function(){
+    var panel=document.getElementById("panel");
+    if(panel.className==="panel"){
+      panel.className="panel open";
+      this.textContent="×";
+    }else{
+      panel.className="panel";
+      this.textContent="i";
+    }
+  },false);
 
-  if (
-    isNaN(battery) ||
-    isNaN(power) ||
-    isNaN(current) ||
-    isNaN(target) ||
-    battery <= 0 ||
-    power <= 0 ||
-    current < 0 ||
-    current > 100 ||
-    target < 0 ||
-    target > 100
-  ) {
-    result.innerHTML =
-      '<div class="error">Indtast gyldige værdier. Batteriprocenter skal være mellem 0 og 100.</div>';
-    return;
-  }
-
-  if (target <= current) {
-    result.innerHTML =
-      '<div class="error">Den ønskede batteriprocent skal være højere end den nuværende.</div>';
-    return;
-  }
-
-  var percentageNeeded = target - current;
-  var energyNeeded = battery * percentageNeeded / 100;
-  var chargingTime = energyNeeded / power;
-  var percentPerHour = power / battery * 100;
-
-  var output = "";
-  output += '<div class="main-result">';
-  output += '<span class="time">' + timeText(chargingTime) + '</span>';
-  output += '<span class="label">forventet ladetid</span>';
-  output += '</div>';
-
-  output += '<div class="details">';
-  output += '<div class="row"><span>Der skal lades</span><strong>' +
-            Math.round(percentageNeeded) + ' %</strong></div>';
-  output += '<div class="row"><span>Energi til batteriet</span><strong>' +
-            decimal(energyNeeded) + ' kWh</strong></div>';
-  output += '<div class="row"><span>Ladehastighed</span><strong>' +
-            decimal(percentPerHour) + ' % pr. time</strong></div>';
-  output += '</div>';
-
-  output += '<p class="note">Beregningen forudsætter konstant ladeeffekt og ser bort fra ladetab og bilens ladekurve.</p>';
-
-  result.innerHTML = output;
-}
-
-document.getElementById("battery").addEventListener("input", calc);
-document.getElementById("power").addEventListener("input", calc);
-document.getElementById("current").addEventListener("input", calc);
-document.getElementById("target").addEventListener("input", calc);
-
-document.getElementById("battery").addEventListener("change", calc);
-document.getElementById("power").addEventListener("change", calc);
-document.getElementById("current").addEventListener("change", calc);
-document.getElementById("target").addEventListener("change", calc);
-
-calc();
+  calc();
+})();
 </script>
 </body>
 </html>
