@@ -5,58 +5,337 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Ladetid</title>
+
 <style>
-:root{--n:#8a8d91;--t:#2f3133;--l:#e8e8e8}
+:root{
+  --number:#8a8d91;
+  --text:#2f3133;
+  --line:#e8e8e8;
+}
+
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;background:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--t)}
-body{overflow:hidden;padding:max(13px,env(safe-area-inset-top)) 13px max(13px,env(safe-area-inset-bottom))}
-.app{width:100%;max-width:430px;height:100%;margin:auto;display:grid;grid-template-rows:1fr auto auto;gap:13px}
-.hero{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
-#time{color:var(--n);font-size:clamp(76px,24vw,112px);line-height:.9;letter-spacing:-4px;font-weight:600}
-#route{margin-top:13px;color:var(--n);font-size:clamp(19px,5vw,25px);font-weight:500}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.card{min-height:118px;padding:13px;border:1px solid var(--l);border-radius:13px;background:#fff;display:flex;flex-direction:column;justify-content:space-between}
-.value{display:flex;align-items:flex-end;gap:5px}
-input{width:100%;min-width:0;border:0;outline:0;margin:0;padding:0;background:transparent;color:var(--n);font-size:clamp(38px,11vw,52px);line-height:1;font-weight:500;caret-color:#6f9cff;-webkit-appearance:none;appearance:none}
-.unit{padding-bottom:4px;color:var(--n);font-size:18px;white-space:nowrap}
-.divider{height:1px;margin:8px 0;background:var(--l)}
-.label{color:var(--t);font-size:16px;font-weight:500}
-.info{justify-self:end;width:34px;height:34px;padding:0;border:1px solid var(--n);border-radius:50%;background:#fff;color:var(--n);font-size:17px}
-.error{color:#a04444!important;font-size:28px!important;line-height:1.1!important;letter-spacing:-1px!important;text-align:center}
-@media(max-height:700px){.app{gap:8px}#time{font-size:72px}.card{min-height:96px;padding:8px}input{font-size:36px}.unit{font-size:15px}.label{font-size:14px}}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);
+}
+
+body{
+  overflow:hidden;
+  padding:max(13px,env(safe-area-inset-top)) 13px max(13px,env(safe-area-inset-bottom));
+}
+
+.app{
+  width:100%;
+  max-width:430px;
+  height:100%;
+  margin:auto;
+  display:grid;
+  grid-template-rows:1fr auto auto;
+  gap:13px;
+}
+
+.hero{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+
+#time{
+  color:var(--number);
+  font-size:clamp(76px,24vw,112px);
+  line-height:.9;
+  letter-spacing:-4px;
+  font-weight:600;
+}
+
+#route{
+  margin-top:13px;
+  color:var(--number);
+  font-size:clamp(19px,5vw,25px);
+  font-weight:500;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.card{
+  min-height:118px;
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.value{
+  position:relative;
+  min-height:55px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+input{
+  width:100%;
+  min-width:0;
+  border:0;
+  outline:0;
+  margin:0;
+  padding:0 48px;
+  background:transparent;
+  color:var(--number);
+  text-align:center;
+  font-size:clamp(38px,11vw,52px);
+  line-height:1;
+  font-weight:500;
+  caret-color:#6f9cff;
+  -webkit-appearance:none;
+  appearance:none;
+}
+
+.unit{
+  position:absolute;
+  right:0;
+  bottom:5px;
+  color:var(--number);
+  font-size:18px;
+  line-height:1;
+  white-space:nowrap;
+  pointer-events:none;
+}
+
+.divider{
+  height:1px;
+  margin:8px 0;
+  background:var(--line);
+}
+
+.label{
+  color:var(--text);
+  font-size:16px;
+  font-weight:500;
+}
+
+.info{
+  justify-self:end;
+  width:34px;
+  height:34px;
+  padding:0;
+  border:1px solid var(--number);
+  border-radius:50%;
+  background:#fff;
+  color:var(--number);
+  font-size:17px;
+}
+
+.error{
+  color:#a04444!important;
+  font-size:28px!important;
+  line-height:1.1!important;
+  letter-spacing:-1px!important;
+  text-align:center;
+}
+
+@media(max-height:700px){
+  .app{gap:8px}
+  #time{font-size:72px}
+  .card{min-height:96px;padding:8px}
+  input{font-size:36px;padding:0 42px}
+  .unit{font-size:15px}
+  .label{font-size:14px}
+}
 </style>
 </head>
+
 <body>
-<form class="app" id="f" autocomplete="off">
-<main class="hero"><div id="time">4:12</div><div id="route">20 % → 80 %</div></main>
-<section class="grid">
-<label class="card"><div class="value"><input id="from" type="text" inputmode="numeric" pattern="[0-9]*" value="20" enterkeyhint="next"><span class="unit">%</span></div><div class="divider"></div><div class="label">Nu</div></label>
-<label class="card"><div class="value"><input id="to" type="text" inputmode="numeric" pattern="[0-9]*" value="80" enterkeyhint="next"><span class="unit">%</span></div><div class="divider"></div><div class="label">Mål</div></label>
-<label class="card"><div class="value"><input id="capacity" type="text" inputmode="decimal" value="77" enterkeyhint="next"><span class="unit">kWh</span></div><div class="divider"></div><div class="label">Kapacitet</div></label>
-<label class="card"><div class="value"><input id="power" type="text" inputmode="decimal" value="11" enterkeyhint="done"><span class="unit">kW</span></div><div class="divider"></div><div class="label">Ladeeffekt</div></label>
-</section>
-<button class="info" type="button">i</button>
+<form class="app" id="chargeForm" autocomplete="off">
+
+  <main class="hero">
+    <div id="time">4:12</div>
+    <div id="route">20 % → 80 %</div>
+  </main>
+
+  <section class="grid">
+
+    <label class="card">
+      <div class="value">
+        <input id="from" type="text" inputmode="numeric" pattern="[0-9]*"
+               value="20" enterkeyhint="next" aria-label="Batteri nu">
+        <span class="unit">%</span>
+      </div>
+      <div class="divider"></div>
+      <div class="label">Nu</div>
+    </label>
+
+    <label class="card">
+      <div class="value">
+        <input id="to" type="text" inputmode="numeric" pattern="[0-9]*"
+               value="80" enterkeyhint="next" aria-label="Mål">
+        <span class="unit">%</span>
+      </div>
+      <div class="divider"></div>
+      <div class="label">Mål</div>
+    </label>
+
+    <label class="card">
+      <div class="value">
+        <input id="capacity" type="text" inputmode="decimal"
+               value="77" enterkeyhint="next" aria-label="Kapacitet">
+        <span class="unit">kWh</span>
+      </div>
+      <div class="divider"></div>
+      <div class="label">Kapacitet</div>
+    </label>
+
+    <label class="card">
+      <div class="value">
+        <input id="power" type="text" inputmode="decimal"
+               value="11" enterkeyhint="done" aria-label="Ladeeffekt">
+        <span class="unit">kW</span>
+      </div>
+      <div class="divider"></div>
+      <div class="label">Ladeeffekt</div>
+    </label>
+
+  </section>
+
+  <button class="info" type="button" aria-label="Information">i</button>
 </form>
+
 <script>
 (function(){
-var ids=["from","to","capacity","power"];
-function g(id){return parseFloat(String(document.getElementById(id).value).replace(",","."))}
-function calc(){
-var a=g("from"),b=g("to"),c=g("capacity"),p=g("power"),t=document.getElementById("time"),r=document.getElementById("route");
-if(isNaN(a)||isNaN(b)||isNaN(c)||isNaN(p)||a<0||a>100||b<0||b>100||c<=0||p<=0){t.className="error";t.textContent="Kontrollér tallene";r.textContent="";return}
-if(b<=a){t.className="error";t.textContent="Målet skal være højere";r.textContent="";return}
-var m=Math.round(((c*(b-a)/100)/p)*60),h=Math.floor(m/60),mm=m%60;
-t.className="";t.textContent=h+":"+(mm<10?"0":"")+mm;r.textContent=Math.round(a)+" % → "+Math.round(b)+" %";
-}
-ids.forEach(function(id,i){
-var el=document.getElementById(id);
-el.addEventListener("focus",function(){var s=this;setTimeout(function(){s.select()},50)});
-el.addEventListener("input",calc);
-el.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();if(i<ids.length-1){document.getElementById(ids[i+1]).focus()}else{this.blur()}}});
-});
-document.getElementById("f").addEventListener("submit",function(e){e.preventDefault()});
-calc();
+
+  var fieldIds=["from","to","capacity","power"];
+  var storageKey="ladeapp-vaerdier-v1";
+
+  function readNumber(id){
+    return parseFloat(
+      String(document.getElementById(id).value).trim().replace(",",".")
+    );
+  }
+
+  function saveValues(){
+    var values={};
+
+    fieldIds.forEach(function(id){
+      values[id]=document.getElementById(id).value;
+    });
+
+    try{
+      localStorage.setItem(storageKey,JSON.stringify(values));
+    }catch(error){
+      // Appen virker stadig, selv hvis browseren blokerer lokal lagring.
+    }
+  }
+
+  function loadValues(){
+    try{
+      var saved=localStorage.getItem(storageKey);
+
+      if(!saved){return}
+
+      var values=JSON.parse(saved);
+
+      fieldIds.forEach(function(id){
+        if(values[id]!==undefined && values[id]!==null && values[id]!==""){
+          document.getElementById(id).value=values[id];
+        }
+      });
+    }catch(error){
+      // Standardværdier bruges, hvis de gemte data ikke kan læses.
+    }
+  }
+
+  function calculate(){
+    var from=readNumber("from");
+    var to=readNumber("to");
+    var capacity=readNumber("capacity");
+    var power=readNumber("power");
+
+    var time=document.getElementById("time");
+    var route=document.getElementById("route");
+
+    if(
+      isNaN(from) || isNaN(to) || isNaN(capacity) || isNaN(power) ||
+      from<0 || from>100 || to<0 || to>100 ||
+      capacity<=0 || power<=0
+    ){
+      time.className="error";
+      time.textContent="Kontrollér tallene";
+      route.textContent="";
+      saveValues();
+      return;
+    }
+
+    if(to<=from){
+      time.className="error";
+      time.textContent="Målet skal være højere";
+      route.textContent="";
+      saveValues();
+      return;
+    }
+
+    var totalMinutes=Math.round(
+      ((capacity*(to-from)/100)/power)*60
+    );
+
+    var hours=Math.floor(totalMinutes/60);
+    var minutes=totalMinutes%60;
+
+    time.className="";
+    time.textContent=hours+":"+(minutes<10?"0":"")+minutes;
+    route.textContent=Math.round(from)+" % → "+Math.round(to)+" %";
+
+    saveValues();
+  }
+
+  loadValues();
+
+  fieldIds.forEach(function(id,index){
+    var field=document.getElementById(id);
+
+    field.addEventListener("focus",function(){
+      var current=this;
+      setTimeout(function(){
+        current.select();
+      },50);
+    });
+
+    field.addEventListener("input",calculate);
+
+    field.addEventListener("keydown",function(event){
+      if(event.key==="Enter"){
+        event.preventDefault();
+
+        if(index<fieldIds.length-1){
+          document.getElementById(fieldIds[index+1]).focus();
+        }else{
+          this.blur();
+        }
+      }
+    });
+  });
+
+  document.getElementById("chargeForm").addEventListener("submit",function(event){
+    event.preventDefault();
+  });
+
+  calculate();
+
 })();
 </script>
 </body>
