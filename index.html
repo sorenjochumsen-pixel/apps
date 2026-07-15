@@ -82,20 +82,19 @@ body{
 }
 
 .value{
-  position:relative;
   min-height:55px;
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
 }
 
 input{
   width:100%;
-  min-width:0;
   border:0;
   outline:0;
   margin:0;
-  padding:0 48px;
+  padding:0;
   background:transparent;
   color:var(--number);
   text-align:center;
@@ -108,9 +107,7 @@ input{
 }
 
 .unit{
-  position:absolute;
-  right:0;
-  bottom:5px;
+  margin-top:8px;
   color:var(--number);
   font-size:18px;
   line-height:1;
@@ -128,6 +125,7 @@ input{
   color:var(--text);
   font-size:16px;
   font-weight:500;
+  text-align:center;
 }
 
 .info{
@@ -154,8 +152,8 @@ input{
   .app{gap:8px}
   #time{font-size:72px}
   .card{min-height:96px;padding:8px}
-  input{font-size:36px;padding:0 42px}
-  .unit{font-size:15px}
+  input{font-size:36px}
+  .unit{font-size:15px;margin-top:5px}
   .label{font-size:14px}
 }
 </style>
@@ -237,15 +235,12 @@ input{
 
     try{
       localStorage.setItem(storageKey,JSON.stringify(values));
-    }catch(error){
-      // Appen virker stadig, selv hvis browseren blokerer lokal lagring.
-    }
+    }catch(error){}
   }
 
   function loadValues(){
     try{
       var saved=localStorage.getItem(storageKey);
-
       if(!saved){return}
 
       var values=JSON.parse(saved);
@@ -255,9 +250,7 @@ input{
           document.getElementById(id).value=values[id];
         }
       });
-    }catch(error){
-      // Standardværdier bruges, hvis de gemte data ikke kan læses.
-    }
+    }catch(error){}
   }
 
   function calculate(){
