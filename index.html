@@ -5,301 +5,58 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Ladetid</title>
 <style>
-:root{
-  --text:#2f3133;
-  --result:#8a8d91;
-  --muted:#9a9ca0;
-  --line:#e8e8e8;
-  --card:#ffffff;
-}
+:root{--n:#8a8d91;--t:#2f3133;--l:#e8e8e8}
 *{box-sizing:border-box}
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#fff;
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif;
-}
-body{
-  padding:max(13px,env(safe-area-inset-top)) 13px max(13px,env(safe-area-inset-bottom));
-}
-.app{
-  width:100%;
-  max-width:430px;
-  height:100%;
-  margin:0 auto;
-  display:grid;
-  grid-template-rows:1fr auto auto;
-  gap:13px;
-}
-.hero{
-  min-height:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-}
-#time{
-  color:var(--result);
-  font-size:clamp(76px,24vw,112px);
-  line-height:.9;
-  letter-spacing:-4px;
-  font-weight:600;
-  white-space:nowrap;
-  transition:opacity .15s ease;
-}
-#route{
-  margin-top:13px;
-  color:var(--result);
-  font-size:clamp(19px,5vw,25px);
-  font-weight:500;
-  letter-spacing:-.4px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-.card{
-  min-height:118px;
-  padding:13px;
-  border:1px solid var(--line);
-  border-radius:13px;
-  background:var(--card);
-  box-shadow:0 1px 5px rgba(0,0,0,.025);
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-}
-.value{
-  display:flex;
-  align-items:flex-end;
-  gap:5px;
-}
-input{
-  width:100%;
-  min-width:0;
-  border:0;
-  outline:0;
-  padding:0;
-  margin:0;
-  background:transparent;
-  color:#252729;
-  font-size:clamp(38px,11vw,52px);
-  line-height:1;
-  font-weight:500;
-  appearance:none;
-  -webkit-appearance:none;
-}
-.unit{
-  padding-bottom:4px;
-  color:var(--muted);
-  font-size:18px;
-  line-height:1;
-  white-space:nowrap;
-}
-.divider{
-  height:1px;
-  background:var(--line);
-  margin:8px 0;
-}
-.label{
-  color:#252729;
-  font-size:16px;
-  font-weight:500;
-}
-.info{
-  justify-self:end;
-  width:34px;
-  height:34px;
-  border:1px solid #9a9a9a;
-  border-radius:50%;
-  background:#fff;
-  color:#888;
-  font-size:17px;
-  font-weight:600;
-  line-height:31px;
-  text-align:center;
-  padding:0;
-}
-.panel{
-  display:none;
-  position:fixed;
-  left:13px;
-  right:13px;
-  bottom:max(55px,env(safe-area-inset-bottom));
-  max-width:404px;
-  margin:auto;
-  padding:13px;
-  border:1px solid var(--line);
-  border-radius:13px;
-  background:#fff;
-  box-shadow:0 8px 28px rgba(0,0,0,.12);
-  color:#666;
-  font-size:13px;
-  line-height:1.45;
-}
-.panel.open{display:block}
-.panel-row{
-  display:flex;
-  justify-content:space-between;
-  gap:13px;
-  padding:5px 0;
-}
-.panel strong{color:#333}
-.error{
-  color:#a04444!important;
-  font-size:28px!important;
-  line-height:1.1!important;
-  letter-spacing:-1px!important;
-  white-space:normal!important;
-  max-width:300px;
-}
-@media(max-height:700px){
-  .app{gap:8px}
-  #time{font-size:72px}
-  #route{margin-top:8px;font-size:18px}
-  .card{min-height:96px;padding:8px}
-  input{font-size:36px}
-  .unit{font-size:15px}
-  .label{font-size:14px}
-}
+html,body{margin:0;width:100%;height:100%;background:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--t)}
+body{overflow:hidden;padding:max(13px,env(safe-area-inset-top)) 13px max(13px,env(safe-area-inset-bottom))}
+.app{width:100%;max-width:430px;height:100%;margin:auto;display:grid;grid-template-rows:1fr auto auto;gap:13px}
+.hero{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+#time{color:var(--n);font-size:clamp(76px,24vw,112px);line-height:.9;letter-spacing:-4px;font-weight:600}
+#route{margin-top:13px;color:var(--n);font-size:clamp(19px,5vw,25px);font-weight:500}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.card{min-height:118px;padding:13px;border:1px solid var(--l);border-radius:13px;background:#fff;display:flex;flex-direction:column;justify-content:space-between}
+.value{display:flex;align-items:flex-end;gap:5px}
+input{width:100%;min-width:0;border:0;outline:0;margin:0;padding:0;background:transparent;color:var(--n);font-size:clamp(38px,11vw,52px);line-height:1;font-weight:500;caret-color:#6f9cff;-webkit-appearance:none;appearance:none}
+.unit{padding-bottom:4px;color:var(--n);font-size:18px;white-space:nowrap}
+.divider{height:1px;margin:8px 0;background:var(--l)}
+.label{color:var(--t);font-size:16px;font-weight:500}
+.info{justify-self:end;width:34px;height:34px;padding:0;border:1px solid var(--n);border-radius:50%;background:#fff;color:var(--n);font-size:17px}
+.error{color:#a04444!important;font-size:28px!important;line-height:1.1!important;letter-spacing:-1px!important;text-align:center}
+@media(max-height:700px){.app{gap:8px}#time{font-size:72px}.card{min-height:96px;padding:8px}input{font-size:36px}.unit{font-size:15px}.label{font-size:14px}}
 </style>
 </head>
 <body>
-<div class="app">
-  <main class="hero">
-    <div id="time">4:12</div>
-    <div id="route">20 % → 80 %</div>
-  </main>
-
-  <section class="grid">
-    <div class="card">
-      <div class="value">
-        <input id="from" type="number" value="20" min="0" max="100" step="1">
-        <span class="unit">%</span>
-      </div>
-      <div class="divider"></div>
-      <div class="label">Nu</div>
-    </div>
-
-    <div class="card">
-      <div class="value">
-        <input id="to" type="number" value="80" min="0" max="100" step="1">
-        <span class="unit">%</span>
-      </div>
-      <div class="divider"></div>
-      <div class="label">Mål</div>
-    </div>
-
-    <div class="card">
-      <div class="value">
-        <input id="capacity" type="number" value="77" min="0.1" step="0.1">
-        <span class="unit">kWh</span>
-      </div>
-      <div class="divider"></div>
-      <div class="label">Kapacitet</div>
-    </div>
-
-    <div class="card">
-      <div class="value">
-        <input id="power" type="number" value="11" min="0.1" step="0.1">
-        <span class="unit">kW</span>
-      </div>
-      <div class="divider"></div>
-      <div class="label">Ladeeffekt</div>
-    </div>
-  </section>
-
-  <button id="info" class="info" type="button" aria-label="Vis oplysninger">i</button>
-</div>
-
-<div id="panel" class="panel">
-  <div class="panel-row"><span>Energi til batteriet</span><strong id="energy">46,2 kWh</strong></div>
-  <div class="panel-row"><span>Ladehastighed</span><strong id="speed">14,3 % pr. time</strong></div>
-  <p>Beregningen forudsætter konstant ladeeffekt. Den virkelige ladetid kan være længere på grund af ladetab og bilens ladekurve.</p>
-</div>
-
+<form class="app" id="f" autocomplete="off">
+<main class="hero"><div id="time">4:12</div><div id="route">20 % → 80 %</div></main>
+<section class="grid">
+<label class="card"><div class="value"><input id="from" type="text" inputmode="numeric" pattern="[0-9]*" value="20" enterkeyhint="next"><span class="unit">%</span></div><div class="divider"></div><div class="label">Nu</div></label>
+<label class="card"><div class="value"><input id="to" type="text" inputmode="numeric" pattern="[0-9]*" value="80" enterkeyhint="next"><span class="unit">%</span></div><div class="divider"></div><div class="label">Mål</div></label>
+<label class="card"><div class="value"><input id="capacity" type="text" inputmode="decimal" value="77" enterkeyhint="next"><span class="unit">kWh</span></div><div class="divider"></div><div class="label">Kapacitet</div></label>
+<label class="card"><div class="value"><input id="power" type="text" inputmode="decimal" value="11" enterkeyhint="done"><span class="unit">kW</span></div><div class="divider"></div><div class="label">Ladeeffekt</div></label>
+</section>
+<button class="info" type="button">i</button>
+</form>
 <script>
 (function(){
-  function n(id){
-    return parseFloat(String(document.getElementById(id).value).replace(",","."));
-  }
-
-  function one(v){
-    return v.toFixed(1).replace(".",",");
-  }
-
-  function timeText(hours){
-    var minutes=Math.round(hours*60);
-    var h=Math.floor(minutes/60);
-    var m=minutes%60;
-    if(h===0){return minutes+" min";}
-    return h+":"+(m<10?"0":"")+m;
-  }
-
-  function calc(){
-    var from=n("from");
-    var to=n("to");
-    var capacity=n("capacity");
-    var power=n("power");
-    var time=document.getElementById("time");
-    var route=document.getElementById("route");
-
-    if(isNaN(from)||isNaN(to)||isNaN(capacity)||isNaN(power)||
-       from<0||from>100||to<0||to>100||capacity<=0||power<=0){
-      time.className="error";
-      time.textContent="Kontrollér tallene";
-      route.textContent="";
-      return;
-    }
-
-    if(to<=from){
-      time.className="error";
-      time.textContent="Målet skal være højere";
-      route.textContent="";
-      return;
-    }
-
-    var energy=capacity*(to-from)/100;
-    var hours=energy/power;
-    var speed=power/capacity*100;
-
-    time.className="";
-    time.style.opacity="0.35";
-    window.setTimeout(function(){
-      time.textContent=timeText(hours);
-      time.style.opacity="1";
-    },80);
-
-    route.textContent=Math.round(from)+" % → "+Math.round(to)+" %";
-    document.getElementById("energy").textContent=one(energy)+" kWh";
-    document.getElementById("speed").textContent=one(speed)+" % pr. time";
-  }
-
-  ["from","to","capacity","power"].forEach(function(id){
-    document.getElementById(id).addEventListener("input",calc,false);
-    document.getElementById(id).addEventListener("change",calc,false);
-  });
-
-  document.getElementById("info").addEventListener("click",function(){
-    var panel=document.getElementById("panel");
-    if(panel.className==="panel"){
-      panel.className="panel open";
-      this.textContent="×";
-    }else{
-      panel.className="panel";
-      this.textContent="i";
-    }
-  },false);
-
-  calc();
+var ids=["from","to","capacity","power"];
+function g(id){return parseFloat(String(document.getElementById(id).value).replace(",","."))}
+function calc(){
+var a=g("from"),b=g("to"),c=g("capacity"),p=g("power"),t=document.getElementById("time"),r=document.getElementById("route");
+if(isNaN(a)||isNaN(b)||isNaN(c)||isNaN(p)||a<0||a>100||b<0||b>100||c<=0||p<=0){t.className="error";t.textContent="Kontrollér tallene";r.textContent="";return}
+if(b<=a){t.className="error";t.textContent="Målet skal være højere";r.textContent="";return}
+var m=Math.round(((c*(b-a)/100)/p)*60),h=Math.floor(m/60),mm=m%60;
+t.className="";t.textContent=h+":"+(mm<10?"0":"")+mm;r.textContent=Math.round(a)+" % → "+Math.round(b)+" %";
+}
+ids.forEach(function(id,i){
+var el=document.getElementById(id);
+el.addEventListener("focus",function(){var s=this;setTimeout(function(){s.select()},50)});
+el.addEventListener("input",calc);
+el.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();if(i<ids.length-1){document.getElementById(ids[i+1]).focus()}else{this.blur()}}});
+});
+document.getElementById("f").addEventListener("submit",function(e){e.preventDefault()});
+calc();
 })();
 </script>
 </body>
