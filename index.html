@@ -138,6 +138,48 @@ input{
   background:#fff;
   color:var(--number);
   font-size:17px;
+  font-weight:600;
+  line-height:31px;
+  cursor:pointer;
+}
+
+.info-panel{
+  display:none;
+  position:fixed;
+  left:13px;
+  right:13px;
+  bottom:max(55px,env(safe-area-inset-bottom));
+  z-index:20;
+  max-width:404px;
+  margin:auto;
+  padding:21px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#fff;
+  box-shadow:0 8px 34px rgba(0,0,0,.14);
+}
+
+.info-panel.open{display:block}
+
+.info-row{
+  display:flex;
+  justify-content:space-between;
+  gap:13px;
+  padding:8px 0;
+  color:#666;
+  font-size:14px;
+}
+
+.info-row strong{
+  color:var(--number);
+  text-align:right;
+}
+
+.info-text{
+  margin:13px 0 0;
+  color:#777;
+  font-size:13px;
+  line-height:1.45;
 }
 
 .error{
@@ -211,8 +253,22 @@ input{
 
   </section>
 
-  <button class="info" type="button" aria-label="Information">i</button>
+  <button id="infoButton" class="info" type="button" aria-label="Vis information">i</button>
 </form>
+
+<div id="infoPanel" class="info-panel" aria-hidden="true">
+  <div class="info-row">
+    <span>Energi til batteriet</span>
+    <strong id="energyInfo">46,2 kWh</strong>
+  </div>
+  <div class="info-row">
+    <span>Ladehastighed</span>
+    <strong id="speedInfo">14,3 % pr. time</strong>
+  </div>
+  <p class="info-text">
+    Beregningen forudsætter konstant ladeeffekt. Den virkelige ladetid kan være længere på grund af ladetab og bilens ladekurve.
+  </p>
+</div>
 
 <script>
 (function(){
@@ -226,9 +282,12 @@ input{
     );
   }
 
+  function oneDecimal(value){
+    return value.toFixed(1).replace(".",",");
+  }
+
   function saveValues(){
     var values={};
-
     fieldIds.forEach(function(id){
       values[id]=document.getElementById(id).value;
     });
@@ -282,9 +341,9 @@ input{
       return;
     }
 
-    var totalMinutes=Math.round(
-      ((capacity*(to-from)/100)/power)*60
-    );
+    var energy=capacity*(to-from)/100;
+    var speed=power/capacity*100;
+    var totalMinutes=Math.round((energy/power)*60);
 
     var hours=Math.floor(totalMinutes/60);
     var minutes=totalMinutes%60;
@@ -292,6 +351,9 @@ input{
     time.className="";
     time.textContent=hours+":"+(minutes<10?"0":"")+minutes;
     route.textContent=Math.round(from)+" % → "+Math.round(to)+" %";
+
+    document.getElementById("energyInfo").textContent=oneDecimal(energy)+" kWh";
+    document.getElementById("speedInfo").textContent=oneDecimal(speed)+" % pr. time";
 
     saveValues();
   }
@@ -303,9 +365,7 @@ input{
 
     field.addEventListener("focus",function(){
       var current=this;
-      setTimeout(function(){
-        current.select();
-      },50);
+      setTimeout(function(){ current.select(); },50);
     });
 
     field.addEventListener("input",calculate);
@@ -325,6 +385,23 @@ input{
 
   document.getElementById("chargeForm").addEventListener("submit",function(event){
     event.preventDefault();
+  });
+
+  document.getElementById("infoButton").addEventListener("click",function(){
+    var panel=document.getElementById("infoPanel");
+    var isOpen=panel.classList.contains("open");
+
+    if(isOpen){
+      panel.classList.remove("open");
+      panel.setAttribute("aria-hidden","true");
+      this.textContent="i";
+      this.setAttribute("aria-label","Vis information");
+    }else{
+      panel.classList.add("open");
+      panel.setAttribute("aria-hidden","false");
+      this.textContent="×";
+      this.setAttribute("aria-label","Luk information");
+    }
   });
 
   calculate();
