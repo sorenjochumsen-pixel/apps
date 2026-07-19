@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Faaborg Tools">
+<meta name="theme-color" content="#ffffff">
+<title>Faaborg Tools</title>
+<style>
+:root{
+  --bg:#ffffff;
+  --text:#3f3f42;
+  --muted:#8b8b90;
+  --card:#f3f3f5;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg)}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  color:var(--text);
+}
+main{
+  width:min(100%,430px);
+  min-height:100dvh;
+  margin:0 auto;
+  padding:calc(env(safe-area-inset-top) + 38px) 18px calc(env(safe-area-inset-bottom) + 28px);
+}
+header{text-align:center;margin-bottom:34px}
+h1{
+  margin:0;
+  font-size:42px;
+  line-height:1;
+  font-weight:600;
+  letter-spacing:-.045em;
+}
+.subtitle{
+  margin-top:9px;
+  font-size:15px;
+  color:var(--muted);
+}
+.tools{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.tool{
+  min-height:145px;
+  padding:18px 14px;
+  border-radius:22px;
+  background:var(--card);
+  text-decoration:none;
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.icon{
+  font-size:38px;
+  line-height:1;
+  margin-bottom:14px;
+}
+.name{
+  font-size:19px;
+  font-weight:650;
+}
+.description{
+  margin-top:5px;
+  font-size:12px;
+  line-height:1.25;
+  color:var(--muted);
+}
+footer{
+  margin-top:28px;
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
+}
+@media(max-height:700px){
+  main{padding-top:calc(env(safe-area-inset-top) + 20px)}
+  header{margin-bottom:22px}
+  h1{font-size:36px}
+  .tool{min-height:120px}
+}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Faaborg Tools</h1>
+    <div class="subtitle">Enkle værktøjer til iPhone</div>
+  </header>
+
+  <section class="tools">
+    <a class="tool" href="./elbil/">
+      <div class="icon">⚡</div>
+      <div class="name">Elbil</div>
+      <div class="description">Beregn ladetid</div>
+    </a>
+
+    <a class="tool" href="./weight/">
+      <div class="icon">⚖️</div>
+      <div class="name">Weight</div>
+      <div class="description">Beregn materialevægt</div>
+    </a>
+
+    <a class="tool" href="./tapet/">
+      <div class="icon">▦</div>
+      <div class="name">Tapet</div>
+      <div class="description">Beregn tapetruller</div>
+    </a>
+
+    <a class="tool" href="./profil/">
+      <div class="icon">⌁</div>
+      <div class="name">Profil</div>
+      <div class="description">Eksportér DXF og SVG</div>
+    </a>
+  </section>
+
+  <footer>Designed by Søren Faaborg</footer>
+</main>
+</body>
+</html>
