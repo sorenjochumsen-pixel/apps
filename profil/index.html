@@ -8,320 +8,396 @@
 <title>Profil · Faaborg Tools</title>
 <link rel="stylesheet" href="../assets/faaborg.css">
 <style>
-  .profile-app{
+  :root{
+    --bg:#fff;--text:#3f3f42;--muted:#8a8d93;--card:#f3f3f5;
+    --line:#dedee3;--active:#454548;--accent:#d98200;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;min-height:100%;background:var(--bg)}
+  body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:var(--text)}
+  .app{
     width:min(100%,430px);
     min-height:100dvh;
     margin:0 auto;
-    padding:calc(env(safe-area-inset-top) + 18px) 14px calc(env(safe-area-inset-bottom) + 64px);
-    color:#3f3f42;
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+    padding:calc(env(safe-area-inset-top) + 16px) 14px calc(env(safe-area-inset-bottom) + 62px);
   }
-  .profile-head{text-align:center;margin-bottom:12px}
-  .profile-title{margin:0;font-size:28px;font-weight:700;letter-spacing:-.03em}
-  .profile-status{margin-top:4px;color:#8a8d93;font-size:13px}
-  .preview-card{
+  header{text-align:center;margin-bottom:12px}
+  h1{margin:0;font-size:28px;line-height:1;font-weight:700;letter-spacing:-.03em}
+  #status{margin-top:7px;color:var(--muted);font-size:13px}
+  .preview{
     position:relative;
-    height:286px;
-    border-radius:22px;
+    height:300px;
     overflow:hidden;
-    background:#f3f3f5;
-    display:grid;
-    place-items:center;
+    border-radius:22px;
+    background:var(--card);
   }
-  #preview{
-    display:block;
-    width:100%;
-    height:100%;
-    object-fit:contain;
-    touch-action:none;
+  canvas{display:block;width:100%;height:100%;object-fit:contain}
+  .empty{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:28px;text-align:center;color:var(--muted);pointer-events:none;
   }
-  .empty-state{
-    position:absolute;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-    text-align:center;
-    color:#8a8d93;
-    pointer-events:none;
-  }
-  .empty-symbol{font-size:44px;line-height:1;margin-bottom:14px}
+  .empty[hidden]{display:none}
+  .empty-symbol{font-size:44px;line-height:1;margin-bottom:13px;color:#66666b}
   .empty-title{font-size:18px;font-weight:650;color:#55555a}
   .empty-text{margin-top:6px;font-size:13px;line-height:1.35}
-  .controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-  .control-card{
-    min-height:86px;
-    padding:10px;
-    border-radius:18px;
-    background:#f3f3f5;
-    text-align:center;
+  .buttons,.exports,.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .buttons{margin-top:10px}
+  button{
+    height:48px;border:0;border-radius:15px;background:var(--card);
+    color:var(--text);font-size:15px;font-weight:650;
   }
-  .control-card label{
-    display:block;
-    margin-bottom:6px;
-    color:#8a8d93;
-    font-size:12px;
-    font-weight:650;
+  button.primary{background:var(--active);color:#fff}
+  button:disabled{opacity:.35}
+  .controls{margin-top:10px}
+  .card{
+    min-height:88px;padding:10px;border-radius:18px;background:var(--card);text-align:center;
   }
-  .control-value{font-size:13px;color:#67676c;margin-top:4px}
+  .card label{display:block;margin-bottom:6px;color:var(--muted);font-size:12px;font-weight:650}
   input[type=range]{width:100%}
-  .size-row{
-    display:flex;
-    align-items:baseline;
-    justify-content:center;
-    gap:4px;
+  .small{margin-top:4px;color:#67676c;font-size:13px}
+  .value-row{display:flex;align-items:baseline;justify-content:center;gap:4px}
+  .value{
+    width:96px;border:0;outline:0;background:transparent;text-align:center;
+    font-size:28px;font-weight:500;
   }
-  .size-input{
-    width:92px;
-    border:0;
-    outline:0;
-    background:transparent;
-    text-align:center;
-    font-size:28px;
-    font-weight:500;
-  }
-  .unit{font-size:13px;color:#8a8d93;font-weight:650}
-  .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-  .action{
-    height:48px;
-    border:0;
-    border-radius:15px;
-    background:#f3f3f5;
-    color:#454548;
-    font-size:15px;
-    font-weight:650;
-  }
-  .action.primary{background:#454548;color:#fff}
-  .action:disabled{opacity:.35}
-  .file-input{display:none}
-  .bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-  dialog{
-    width:min(calc(100% - 32px),390px);
-    border:0;
-    border-radius:22px;
-    padding:22px;
-    color:#3f3f42;
-    box-shadow:0 18px 60px rgba(0,0,0,.2);
-  }
-  dialog::backdrop{background:rgba(0,0,0,.22)}
-  dialog h2{margin:0 0 12px;font-size:22px}
-  dialog p{margin:0 0 10px;color:#66666a;font-size:14px;line-height:1.45}
-  dialog button{
-    width:100%;height:44px;margin-top:7px;border:0;border-radius:13px;
-    background:#454548;color:#fff;font-weight:650;
-  }
+  .unit{color:var(--muted);font-size:13px;font-weight:650}
+  .exports{margin-top:10px}
+  .hidden-input{display:none}
   .info{
     position:fixed;
     right:max(16px,calc((100vw - 430px)/2 + 16px));
     bottom:calc(env(safe-area-inset-bottom) + 13px);
-    width:34px;height:34px;padding:0;border:1px solid #dedee3;border-radius:50%;
-    background:#fff;color:#8a8d93;font-size:17px;font-weight:650;
+    width:34px;height:34px;padding:0;border:1px solid var(--line);
+    border-radius:50%;background:#fff;color:var(--muted);font-size:17px;font-weight:650;
   }
+  dialog{
+    width:min(calc(100% - 32px),390px);border:0;border-radius:22px;padding:22px;
+    color:var(--text);box-shadow:0 18px 60px rgba(0,0,0,.2);
+  }
+  dialog::backdrop{background:rgba(0,0,0,.22)}
+  dialog h2{margin:0 0 12px;font-size:22px}
+  dialog p{margin:0 0 10px;color:#66666a;font-size:14px;line-height:1.45}
+  dialog button{width:100%;margin-top:8px;background:var(--active);color:#fff}
 </style>
 </head>
 <body>
-<main class="profile-app">
-  <header class="profile-head">
-    <h1 class="profile-title">Profil</h1>
-    <div class="profile-status" id="status">Vælg eller fotografér en profil</div>
+<main class="app">
+  <header>
+    <h1>Profil</h1>
+    <div id="status">Vælg eller fotografér en profil</div>
   </header>
 
-  <section class="preview-card">
-    <canvas id="preview"></canvas>
-    <div class="empty-state" id="emptyState">
+  <section class="preview">
+    <canvas id="canvas"></canvas>
+    <div class="empty" id="emptyState">
       <div class="empty-symbol">⌁</div>
       <div class="empty-title">Indlæs et profilbillede</div>
-      <div class="empty-text">Brug et billede med tydelig kontrast og en ensfarvet baggrund.</div>
+      <div class="empty-text">Bedst med mørk profil på lys, ensfarvet baggrund.</div>
     </div>
   </section>
 
-  <div class="action-grid">
-    <button class="action primary" id="chooseButton" type="button">Vælg billede</button>
-    <button class="action" id="cameraButton" type="button">Tag foto</button>
+  <div class="buttons">
+    <button class="primary" id="chooseBtn">Vælg billede</button>
+    <button id="cameraBtn">Tag foto</button>
   </div>
 
-  <input class="file-input" id="libraryInput" type="file" accept="image/*">
-  <input class="file-input" id="cameraInput" type="file" accept="image/*" capture="environment">
+  <input class="hidden-input" id="libraryInput" type="file" accept="image/*">
+  <input class="hidden-input" id="cameraInput" type="file" accept="image/*" capture="environment">
 
   <section class="controls">
-    <div class="control-card">
+    <div class="card">
       <label for="threshold">Kontrast</label>
       <input id="threshold" type="range" min="20" max="235" value="128">
-      <div class="control-value" id="thresholdValue">128</div>
+      <div class="small" id="thresholdValue">128</div>
     </div>
 
-    <div class="control-card">
+    <div class="card">
       <label for="smooth">Glatning</label>
-      <input id="smooth" type="range" min="0" max="8" value="2">
-      <div class="control-value" id="smoothValue">2</div>
+      <input id="smooth" type="range" min="0" max="10" value="3">
+      <div class="small" id="smoothValue">3</div>
     </div>
 
-    <div class="control-card">
+    <div class="card">
       <label for="heightMm">Profilhøjde</label>
-      <div class="size-row">
-        <input class="size-input" id="heightMm" inputmode="decimal" value="90">
+      <div class="value-row">
+        <input class="value" id="heightMm" inputmode="decimal" value="90">
         <span class="unit">mm</span>
       </div>
     </div>
 
-    <div class="control-card">
+    <div class="card">
       <label>Fundet kontur</label>
-      <div class="size-row">
-        <span class="size-input" id="pointCount">0</span>
+      <div class="value-row">
+        <span class="value" id="pointCount">0</span>
         <span class="unit">pkt.</span>
       </div>
     </div>
   </section>
 
-  <section class="bottom-row">
-    <button class="action" id="svgButton" type="button" disabled>Eksportér SVG</button>
-    <button class="action" id="dxfButton" type="button" disabled>Eksportér DXF</button>
+  <section class="exports">
+    <button id="svgBtn" disabled>Eksportér SVG</button>
+    <button id="dxfBtn" disabled>Eksportér DXF</button>
   </section>
 </main>
 
-<button class="info" id="infoButton" type="button" aria-label="Information">i</button>
+<button class="info" id="infoBtn" aria-label="Information">i</button>
 
 <dialog id="infoDialog">
   <h2>Profil</h2>
-  <p>Appen omdanner et profilfoto til en enkel kontur og eksporterer den som SVG eller DXF.</p>
-  <p>Bedste resultat fås med mørk profil mod lys, ensfarvet baggrund og et foto taget vinkelret på profilen.</p>
-  <p>Dette er første arbejdsudkast. Perspektivkorrektion og manuel beskæring kommer i næste version.</p>
-  <button id="closeInfo" type="button">Luk</button>
+  <p>Appen finder den største mørke, sammenhængende profil og følger dens yderkant som én lukket kontur.</p>
+  <p>Tag billedet vinkelret på profilen. Brug en lys, ensfarvet baggrund og undgå skygger.</p>
+  <p>Version 2 er stadig et arbejdsudkast. Manuel beskæring og perspektivkorrektion kommer senere.</p>
+  <button id="closeInfo">Luk</button>
 </dialog>
 
 <script src="../assets/faaborg.js"></script>
 <script>
 (() => {
-  const canvas = document.getElementById('preview');
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d', {willReadFrequently:true});
   const emptyState = document.getElementById('emptyState');
   const status = document.getElementById('status');
-  const libraryInput = document.getElementById('libraryInput');
-  const cameraInput = document.getElementById('cameraInput');
   const threshold = document.getElementById('threshold');
   const smooth = document.getElementById('smooth');
   const heightMm = document.getElementById('heightMm');
   const thresholdValue = document.getElementById('thresholdValue');
   const smoothValue = document.getElementById('smoothValue');
   const pointCount = document.getElementById('pointCount');
-  const svgButton = document.getElementById('svgButton');
-  const dxfButton = document.getElementById('dxfButton');
+  const svgBtn = document.getElementById('svgBtn');
+  const dxfBtn = document.getElementById('dxfBtn');
+  const libraryInput = document.getElementById('libraryInput');
+  const cameraInput = document.getElementById('cameraInput');
 
   let sourceImage = null;
   let contour = [];
 
-  document.getElementById('chooseButton').addEventListener('click', () => libraryInput.click());
-  document.getElementById('cameraButton').addEventListener('click', () => cameraInput.click());
-  libraryInput.addEventListener('change', handleFile);
-  cameraInput.addEventListener('change', handleFile);
-  threshold.addEventListener('input', processImage);
-  smooth.addEventListener('input', processImage);
-  heightMm.addEventListener('input', () => {
-    FaaborgTools.storage.set('profil-height-mm', heightMm.value);
-  });
+  document.getElementById('chooseBtn').onclick = () => libraryInput.click();
+  document.getElementById('cameraBtn').onclick = () => cameraInput.click();
+  libraryInput.onchange = handleFile;
+  cameraInput.onchange = handleFile;
+  threshold.oninput = process;
+  smooth.oninput = process;
 
-  heightMm.value = FaaborgTools.storage.get('profil-height-mm', '90');
+  heightMm.value = FaaborgTools.storage.get('profil-height-mm','90');
+  heightMm.oninput = () => FaaborgTools.storage.set('profil-height-mm',heightMm.value);
 
   function handleFile(event){
-    const file = event.target.files && event.target.files[0];
+    const file = event.target.files?.[0];
     if(!file) return;
-
     const img = new Image();
     img.onload = () => {
       sourceImage = img;
       emptyState.hidden = true;
-      processImage();
+      process();
       URL.revokeObjectURL(img.src);
     };
-    img.onerror = () => {
-      status.textContent = 'Billedet kunne ikke indlæses';
-    };
+    img.onerror = () => status.textContent = 'Billedet kunne ikke indlæses';
     img.src = URL.createObjectURL(file);
   }
 
-  function processImage(){
+  function process(){
     thresholdValue.textContent = threshold.value;
     smoothValue.textContent = smooth.value;
     if(!sourceImage) return;
 
-    const maxW = 900;
-    const maxH = 650;
-    const scale = Math.min(maxW / sourceImage.naturalWidth, maxH / sourceImage.naturalHeight, 1);
-    canvas.width = Math.max(1, Math.round(sourceImage.naturalWidth * scale));
-    canvas.height = Math.max(1, Math.round(sourceImage.naturalHeight * scale));
+    const maxW = 900, maxH = 700;
+    const scale = Math.min(maxW/sourceImage.naturalWidth, maxH/sourceImage.naturalHeight, 1);
+    canvas.width = Math.max(1, Math.round(sourceImage.naturalWidth*scale));
+    canvas.height = Math.max(1, Math.round(sourceImage.naturalHeight*scale));
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.drawImage(sourceImage,0,0,canvas.width,canvas.height);
 
-    const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
-    const data = imageData.data;
-    const limit = Number(threshold.value);
-    const mask = new Uint8Array(canvas.width * canvas.height);
+    const img = ctx.getImageData(0,0,canvas.width,canvas.height);
+    const mask = makeMask(img, Number(threshold.value));
+    const largest = largestComponent(mask, canvas.width, canvas.height);
 
-    for(let i=0,p=0;i<data.length;i+=4,p++){
-      const gray = 0.299*data[i] + 0.587*data[i+1] + 0.114*data[i+2];
-      mask[p] = gray < limit ? 1 : 0;
-      const c = mask[p] ? 35 : 248;
-      data[i] = data[i+1] = data[i+2] = c;
-      data[i+3] = 255;
+    if(!largest || largest.count < 30){
+      renderMask(mask, canvas.width, canvas.height);
+      fail('Ingen tydelig sammenhængende profil fundet');
+      return;
     }
 
-    ctx.putImageData(imageData,0,0);
-    contour = extractBoundary(mask, canvas.width, canvas.height);
-    contour = simplify(contour, Number(smooth.value));
+    renderMask(largest.mask, canvas.width, canvas.height);
 
-    if(contour.length > 2){
-      drawContour(contour);
-      pointCount.textContent = contour.length;
-      status.textContent = 'Kontur fundet';
-      svgButton.disabled = false;
-      dxfButton.disabled = false;
-    }else{
-      pointCount.textContent = '0';
-      status.textContent = 'Ingen tydelig kontur fundet';
-      svgButton.disabled = true;
-      dxfButton.disabled = true;
+    const start = findBoundaryStart(largest.mask, canvas.width, canvas.height);
+    let traced = traceBoundaryMoore(largest.mask, canvas.width, canvas.height, start);
+
+    if(traced.length < 4){
+      fail('Konturen kunne ikke følges');
+      return;
     }
+
+    traced = removeDuplicateNeighbors(traced);
+    traced = chaikin(traced, Number(smooth.value));
+    traced = reducePoints(traced, Math.max(1, Math.floor(Number(smooth.value)/2)));
+
+    contour = traced;
+    drawContour(contour);
+
+    pointCount.textContent = contour.length;
+    status.textContent = 'Kontur fundet';
+    svgBtn.disabled = false;
+    dxfBtn.disabled = false;
   }
 
-  function extractBoundary(mask,w,h){
-    const points = [];
-    for(let y=1;y<h-1;y++){
-      for(let x=1;x<w-1;x++){
-        const i = y*w+x;
-        if(!mask[i]) continue;
-        if(!mask[i-1] || !mask[i+1] || !mask[i-w] || !mask[i+w]){
-          points.push({x,y});
+  function makeMask(imageData, limit){
+    const d = imageData.data;
+    const mask = new Uint8Array(imageData.width*imageData.height);
+    for(let i=0,p=0;i<d.length;i+=4,p++){
+      const gray = 0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
+      mask[p] = gray < limit ? 1 : 0;
+    }
+    return mask;
+  }
+
+  function largestComponent(mask,w,h){
+    const seen = new Uint8Array(mask.length);
+    let best = null;
+    const qx = new Int32Array(mask.length);
+    const qy = new Int32Array(mask.length);
+
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        const idx=y*w+x;
+        if(!mask[idx] || seen[idx]) continue;
+
+        let head=0,tail=0,count=0;
+        const pixels=[];
+        qx[tail]=x; qy[tail]=y; tail++;
+        seen[idx]=1;
+
+        while(head<tail){
+          const cx=qx[head], cy=qy[head]; head++;
+          pixels.push(cy*w+cx); count++;
+
+          const n=[[cx-1,cy],[cx+1,cy],[cx,cy-1],[cx,cy+1]];
+          for(const [nx,ny] of n){
+            if(nx<0||ny<0||nx>=w||ny>=h) continue;
+            const ni=ny*w+nx;
+            if(mask[ni] && !seen[ni]){
+              seen[ni]=1; qx[tail]=nx; qy[tail]=ny; tail++;
+            }
+          }
+        }
+
+        if(!best || count>best.count){
+          const out=new Uint8Array(mask.length);
+          for(const p of pixels) out[p]=1;
+          best={count,mask:out};
         }
       }
     }
-    if(points.length < 3) return [];
-
-    // Sorterer punkterne omkring centrum. Det er en enkel første-version,
-    // som virker bedst på én sammenhængende, lukket profil.
-    let cx=0, cy=0;
-    for(const p of points){ cx+=p.x; cy+=p.y; }
-    cx/=points.length; cy/=points.length;
-    points.sort((a,b)=>Math.atan2(a.y-cy,a.x-cx)-Math.atan2(b.y-cy,b.x-cx));
-    return points;
+    return best;
   }
 
-  function simplify(points, amount){
-    if(amount <= 0 || points.length < 10) return points;
-    const step = Math.max(1, amount * 2);
-    const reduced = [];
-    for(let i=0;i<points.length;i+=step){
-      reduced.push(points[i]);
+  function findBoundaryStart(mask,w,h){
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        const i=y*w+x;
+        if(!mask[i]) continue;
+        if(x===0 || !mask[i-1]) return {x,y};
+      }
     }
-    return reduced;
+    return null;
+  }
+
+  const dirs = [
+    {x:-1,y:0},{x:-1,y:-1},{x:0,y:-1},{x:1,y:-1},
+    {x:1,y:0},{x:1,y:1},{x:0,y:1},{x:-1,y:1}
+  ];
+
+  function dirIndex(dx,dy){
+    return dirs.findIndex(d=>d.x===dx && d.y===dy);
+  }
+
+  function traceBoundaryMoore(mask,w,h,start){
+    if(!start) return [];
+    const boundary=[];
+    let current={...start};
+    let back={x:start.x-1,y:start.y};
+    const startBack={...back};
+    const maxSteps=w*h*4;
+
+    for(let step=0;step<maxSteps;step++){
+      boundary.push({...current});
+
+      let bi=dirIndex(back.x-current.x, back.y-current.y);
+      if(bi<0) bi=0;
+
+      let found=null;
+      let foundIndex=-1;
+
+      for(let k=1;k<=8;k++){
+        const ni=(bi+k)%8;
+        const nx=current.x+dirs[ni].x;
+        const ny=current.y+dirs[ni].y;
+        if(nx>=0&&ny>=0&&nx<w&&ny<h&&mask[ny*w+nx]){
+          found={x:nx,y:ny};
+          foundIndex=ni;
+          break;
+        }
+      }
+
+      if(!found) break;
+
+      const prevIndex=(foundIndex+7)%8;
+      back={x:current.x+dirs[prevIndex].x,y:current.y+dirs[prevIndex].y};
+      current=found;
+
+      if(current.x===start.x && current.y===start.y &&
+         back.x===startBack.x && back.y===startBack.y){
+        break;
+      }
+    }
+    return boundary;
+  }
+
+  function removeDuplicateNeighbors(points){
+    const out=[];
+    for(const p of points){
+      const q=out[out.length-1];
+      if(!q || q.x!==p.x || q.y!==p.y) out.push(p);
+    }
+    return out;
+  }
+
+  function chaikin(points,iterations){
+    let pts=points.map(p=>({x:p.x,y:p.y}));
+    const rounds=Math.min(4,Math.floor(iterations/2));
+    for(let r=0;r<rounds;r++){
+      const next=[];
+      for(let i=0;i<pts.length;i++){
+        const a=pts[i], b=pts[(i+1)%pts.length];
+        next.push({x:0.75*a.x+0.25*b.x,y:0.75*a.y+0.25*b.y});
+        next.push({x:0.25*a.x+0.75*b.x,y:0.25*a.y+0.75*b.y});
+      }
+      pts=next;
+    }
+    return pts;
+  }
+
+  function reducePoints(points,step){
+    if(step<=1) return points;
+    return points.filter((_,i)=>i%step===0);
+  }
+
+  function renderMask(mask,w,h){
+    const image=ctx.createImageData(w,h);
+    for(let i=0;i<mask.length;i++){
+      const c=mask[i]?35:248;
+      const j=i*4;
+      image.data[j]=image.data[j+1]=image.data[j+2]=c;
+      image.data[j+3]=255;
+    }
+    ctx.putImageData(image,0,0);
   }
 
   function drawContour(points){
     ctx.save();
-    ctx.strokeStyle = '#d97f00';
-    ctx.lineWidth = Math.max(2, canvas.width/350);
+    ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#d98200';
+    ctx.lineWidth=Math.max(2,canvas.width/350);
     ctx.beginPath();
     ctx.moveTo(points[0].x,points[0].y);
     for(let i=1;i<points.length;i++) ctx.lineTo(points[i].x,points[i].y);
@@ -330,55 +406,56 @@
     ctx.restore();
   }
 
+  function fail(message){
+    contour=[];
+    pointCount.textContent='0';
+    status.textContent=message;
+    svgBtn.disabled=true;
+    dxfBtn.disabled=true;
+  }
+
   function normalizedPoints(){
-    if(contour.length < 3) return [];
+    if(contour.length<3) return [];
     let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
-    contour.forEach(p=>{
+    for(const p of contour){
       minX=Math.min(minX,p.x); minY=Math.min(minY,p.y);
       maxX=Math.max(maxX,p.x); maxY=Math.max(maxY,p.y);
-    });
-    const targetH = Math.max(0.1, FaaborgTools.parseNumber(heightMm.value));
-    const scale = targetH / Math.max(1,maxY-minY);
-    return contour.map(p=>({
-      x:(p.x-minX)*scale,
-      y:(maxY-p.y)*scale
-    }));
+    }
+    const targetH=Math.max(0.1,FaaborgTools.parseNumber(heightMm.value));
+    const s=targetH/Math.max(1,maxY-minY);
+    return contour.map(p=>({x:(p.x-minX)*s,y:(maxY-p.y)*s}));
   }
 
   function download(name,content,type){
-    const blob = new Blob([content],{type});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href=url;
-    a.download=name;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    const blob=new Blob([content],{type});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
 
-  svgButton.addEventListener('click',()=>{
-    const pts = normalizedPoints();
+  svgBtn.onclick=()=>{
+    const pts=normalizedPoints();
     if(!pts.length) return;
-    const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y);
-    const width=Math.max(...xs), height=Math.max(...ys);
+    const width=Math.max(...pts.map(p=>p.x));
+    const height=Math.max(...pts.map(p=>p.y));
     const path=pts.map((p,i)=>(i?'L':'M')+p.x.toFixed(3)+' '+p.y.toFixed(3)).join(' ')+' Z';
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${width.toFixed(3)}mm" height="${height.toFixed(3)}mm" viewBox="0 0 ${width.toFixed(3)} ${height.toFixed(3)}"><path d="${path}" fill="none" stroke="black" stroke-width="0.2"/></svg>`;
     download('profil.svg',svg,'image/svg+xml');
-  });
+  };
 
-  dxfButton.addEventListener('click',()=>{
-    const pts = normalizedPoints();
+  dxfBtn.onclick=()=>{
+    const pts=normalizedPoints();
     if(!pts.length) return;
     let dxf='0\nSECTION\n2\nENTITIES\n0\nLWPOLYLINE\n8\n0\n90\n'+pts.length+'\n70\n1\n';
-    pts.forEach(p=>{
-      dxf += '10\n'+p.x.toFixed(4)+'\n20\n'+p.y.toFixed(4)+'\n';
-    });
-    dxf += '0\nENDSEC\n0\nEOF\n';
+    for(const p of pts) dxf+='10\n'+p.x.toFixed(4)+'\n20\n'+p.y.toFixed(4)+'\n';
+    dxf+='0\nENDSEC\n0\nEOF\n';
     download('profil.dxf',dxf,'application/dxf');
-  });
+  };
 
-  FaaborgTools.bindInfoDialog();
+  const dialog=document.getElementById('infoDialog');
+  document.getElementById('infoBtn').onclick=()=>dialog.showModal();
+  document.getElementById('closeInfo').onclick=()=>dialog.close();
 })();
 </script>
 </body>
