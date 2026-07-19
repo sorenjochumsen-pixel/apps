@@ -33,6 +33,23 @@ main{
   display:flex;
   flex-direction:column;
 }
+.back{
+  position:fixed;
+  z-index:10;
+  left:max(12px,calc((100vw - 430px)/2 + 12px));
+  top:calc(env(safe-area-inset-top) + 8px);
+  width:34px;
+  height:34px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:var(--text);
+  font-size:32px;
+  line-height:30px;
+  font-weight:400;
+  cursor:pointer;
+}
 .result{
   text-align:center;
   padding:2px 0 13px;
@@ -179,6 +196,7 @@ input{
   font-variant-numeric:tabular-nums;
   -moz-appearance:textfield;
 }
+input::selection{background:#b9d7ff}
 input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .unit{
   flex:0 0 auto;
@@ -287,6 +305,7 @@ dialog button{
 </style>
 </head>
 <body>
+<button id="backButton" class="back" type="button" aria-label="Back to Faaborg Tools">‹</button>
 <main>
   <section class="result" aria-live="polite">
     <div class="result-label">TOTAL WEIGHT</div>
@@ -406,8 +425,9 @@ dialog button{
   <p><strong>Shapes</strong><br>Plate / Block · Round Tube · Round Rod · Box Section · Volume (m³)</p>
   <p><strong>Units</strong><br>Dimensions: mm<br>Density: g/cm³<br>Result: kg</p>
   <p><strong>Materials</strong><br>Standard material densities are included. A custom density can also be entered manually.</p>
+  <p><strong>Input</strong><br>Tap a number once to select the complete value, then type the replacement.</p>
   <p><strong>Note</strong><br>Calculated values are estimates based on nominal dimensions and density. Actual weight may vary because of material specifications and manufacturing tolerances.</p>
-  <p class="signature">Designed by Søren Faaborg<br>Version 1.0</p>
+  <p class="signature">Designed by Søren Faaborg<br>Version 1.1</p>
   <button id="closeInfo" type="button">Close</button>
 </dialog>
 
@@ -494,12 +514,11 @@ function showError(message){
 
 function calculate(){
   const density = num('density');
-  const quantity = num('quantity');
+  const quantity = Math.max(1, Math.round(num('quantity')));
   let volumeM3 = 0;
   let kgPerMetre = null;
 
   if(density <= 0) return showError('Enter a positive density');
-  if(quantity <= 0) return showError('Enter a positive quantity');
 
   if(shape === 'plate'){
     const l = num('plateLength');
@@ -554,7 +573,7 @@ function calculate(){
 
   $('resultNumber').textContent = smartWeight(total);
   const pieces = quantity === 1 ? 'piece' : 'pieces';
-  let status = `${smartWeight(each)} kg each · ${format(quantity, Number.isInteger(quantity) ? 0 : 1)} ${pieces}`;
+  let status = `${smartWeight(each)} kg each · ${quantity} ${pieces}`;
   if(kgPerMetre !== null) status += ` · ${format(kgPerMetre, 2)} kg/m`;
   $('status').textContent = status;
   save();
@@ -573,9 +592,40 @@ $('material').addEventListener('change', () => {
   calculate();
 });
 
+function selectCompleteValue(input){
+  requestAnimationFrame(() => {
+    try{
+      input.focus({preventScroll:true});
+      input.select();
+      input.setSelectionRange(0, input.value.length);
+    }catch(error){
+      console.warn('The value could not be selected.', error);
+    }
+  });
+}
+
 fieldIds.forEach(id => {
-  $(id).addEventListener('input', calculate);
-  $(id).addEventListener('change', calculate);
+  const element = $(id);
+  element.addEventListener('input', calculate);
+  element.addEventListener('change', () => {
+    if(id === 'quantity'){
+      element.value = String(Math.max(1, Math.round(num('quantity'))));
+    }
+    calculate();
+  });
+
+  if(element.tagName === 'INPUT'){
+    element.addEventListener('focus', () => selectCompleteValue(element));
+    element.addEventListener('click', () => selectCompleteValue(element));
+    element.addEventListener('touchend', event => {
+      event.preventDefault();
+      selectCompleteValue(element);
+    }, {passive:false});
+  }
+});
+
+$('backButton').addEventListener('click', () => {
+  window.location.href = '../';
 });
 
 $('infoButton').addEventListener('click', () => {
@@ -603,6 +653,7 @@ $('infoDialog').addEventListener('click', event => {
 });
 
 load();
+$('quantity').value = String(Math.max(1, Math.round(num('quantity'))));
 showShape();
 calculate();
 </script>
