@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="da">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Tapet">
+<meta name="apple-mobile-web-app-title" content="Wallpaper">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffffff">
-<title>Tapetberegner</title>
+<title>Wallpaper Calculator</title>
 <style>
 :root{
   --bg:#ffffff;
@@ -118,6 +118,17 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
   font-weight:600;
   color:var(--muted);
 }
+.chevron{
+  flex:0 0 auto;
+  width:9px;
+  height:9px;
+  margin-left:7px;
+  margin-bottom:5px;
+  border-right:1.5px solid var(--muted);
+  border-bottom:1.5px solid var(--muted);
+  transform:rotate(45deg);
+  opacity:.8;
+}
 .info{
   position:fixed;
   right:max(16px,calc((100vw - 430px)/2 + 16px));
@@ -166,58 +177,64 @@ dialog button{
 <body>
 <main>
   <section class="result" aria-live="polite">
-    <div class="result-label">DU SKAL BRUGE</div>
+    <div class="result-label">YOU NEED</div>
     <div id="resultNumber" class="result-number">4</div>
-    <div id="resultUnit" class="result-unit">ruller</div>
-    <div id="status" class="status">15 baner · 3 baner pr. rulle · 2,50 m pr. bane</div>
+    <div id="resultUnit" class="result-unit">rolls</div>
+    <div id="status" class="status">15 drops · 3 drops per roll · 2.50 m per drop</div>
   </section>
 
   <section class="grid">
     <div class="card">
-      <label for="area">Vægareal</label>
+      <label for="area">Wall area</label>
       <div class="input-line">
         <input id="area" inputmode="decimal" type="text" value="20">
         <span class="unit">m²</span>
+        <span class="chevron" aria-hidden="true"></span>
       </div>
     </div>
 
     <div class="card">
-      <label for="height">Væghøjde</label>
+      <label for="height">Wall height</label>
       <div class="input-line">
-        <input id="height" inputmode="decimal" type="text" value="2,50">
+        <input id="height" inputmode="decimal" type="text" value="2.50">
         <span class="unit">m</span>
+        <span class="chevron" aria-hidden="true"></span>
       </div>
     </div>
 
     <div class="card">
-      <label for="rollWidth">Rullebredde</label>
+      <label for="rollWidth">Roll width</label>
       <div class="input-line">
         <input id="rollWidth" inputmode="decimal" type="text" value="53">
         <span class="unit">cm</span>
+        <span class="chevron" aria-hidden="true"></span>
       </div>
     </div>
 
     <div class="card">
-      <label for="rollLength">Rullelængde</label>
+      <label for="rollLength">Roll length</label>
       <div class="input-line">
         <input id="rollLength" inputmode="decimal" type="text" value="10">
         <span class="unit">m</span>
+        <span class="chevron" aria-hidden="true"></span>
       </div>
     </div>
 
     <div class="card">
-      <label for="repeat">Rapport</label>
+      <label for="repeat">Pattern repeat</label>
       <div class="input-line">
         <input id="repeat" inputmode="decimal" type="text" value="0">
         <span class="unit">cm</span>
+        <span class="chevron" aria-hidden="true"></span>
       </div>
     </div>
 
     <div class="card">
-      <label for="waste">Ekstra tillæg</label>
+      <label for="waste">Extra allowance</label>
       <div class="input-line">
         <input id="waste" inputmode="decimal" type="text" value="0">
         <span class="unit">%</span>
+        <span class="chevron" aria-hidden="true"></span>
       </div>
     </div>
   </section>
@@ -226,12 +243,12 @@ dialog button{
 <button id="infoButton" class="info" type="button" aria-label="Information">i</button>
 
 <dialog id="infoDialog">
-  <h2>Tapetberegner</h2>
-  <p>Indtast det samlede vægareal uden fradrag for små døre og vinduer.</p>
-  <p>Ved mønstret tapet angives rapporten i centimeter. Appen afrunder hver bane op til nærmeste hele rapport.</p>
-  <p>Beregningen bruger kun hele baner og hele ruller. Ekstra tillæg kan bruges ved skæve vægge, vanskelige mønstre eller ønsket reserve.</p>
-  <p class="signature">Designed by Søren Faaborg<br>Version 2.0</p>
-  <button id="closeInfo" type="button">Luk</button>
+  <h2>Wallpaper Calculator</h2>
+  <p>Enter the total wall area without subtracting small doors and windows.</p>
+  <p>For patterned wallpaper, enter the pattern repeat in centimetres. Each drop is rounded up to the next full repeat.</p>
+  <p>The calculation uses whole drops and whole rolls only. Extra allowance can be used for uneven walls, difficult patterns or spare material.</p>
+  <p class="signature">Designed by Søren Faaborg<br>Version 2.1</p>
+  <button id="closeInfo" type="button">Close</button>
 </dialog>
 
 <script>
@@ -248,7 +265,7 @@ function num(id){
 }
 
 function fmt(value, decimals = 0){
-  return Number(value).toLocaleString('da-DK',{
+  return Number(value).toLocaleString('en-GB',{
     minimumFractionDigits:decimals,
     maximumFractionDigits:decimals
   });
@@ -267,7 +284,7 @@ function load(){
       if(data[id] !== undefined) $(id).value = data[id];
     });
   }catch(error){
-    console.warn('Gemte værdier kunne ikke indlæses.', error);
+    console.warn('Saved values could not be loaded.', error);
   }
 }
 
@@ -285,18 +302,18 @@ function calculate(){
   const repeatM = num('repeat') / 100;
   const wastePercent = num('waste');
 
-  if(area <= 0) return showError('Indtast et positivt vægareal');
-  if(height <= 0) return showError('Indtast en positiv væghøjde');
-  if(rollWidthM <= 0) return showError('Indtast en positiv rullebredde');
-  if(rollLength <= 0) return showError('Indtast en positiv rullelængde');
-  if(repeatM < 0 || wastePercent < 0) return showError('Rapport og tillæg må ikke være negative');
+  if(area <= 0) return showError('Enter a positive wall area');
+  if(height <= 0) return showError('Enter a positive wall height');
+  if(rollWidthM <= 0) return showError('Enter a positive roll width');
+  if(rollLength <= 0) return showError('Enter a positive roll length');
+  if(repeatM < 0 || wastePercent < 0) return showError('Pattern repeat and allowance cannot be negative');
 
   const effectiveArea = area * (1 + wastePercent / 100);
   const cutLength = repeatM > 0 ? Math.ceil(height / repeatM) * repeatM : height;
   const stripsPerRoll = Math.floor((rollLength + 1e-9) / cutLength);
 
   if(stripsPerRoll < 1){
-    return showError('Rullen er kortere end én tapetbane');
+    return showError('The roll is shorter than one wallpaper drop');
   }
 
   const stripArea = height * rollWidthM;
@@ -306,19 +323,34 @@ function calculate(){
   const leftover = Math.max(0, rollLength - usedLength);
 
   $('resultNumber').textContent = fmt(rolls);
-  $('resultUnit').textContent = rolls === 1 ? 'rulle' : 'ruller';
+  $('resultUnit').textContent = rolls === 1 ? 'roll' : 'rolls';
 
-  let text = `${fmt(stripsNeeded)} baner · ${fmt(stripsPerRoll)} baner pr. rulle · ${fmt(cutLength,2)} m pr. bane`;
-  if(repeatM > 0) text += ` · rapport ${fmt(repeatM * 100,1)} cm`;
-  if(leftover >= 0.01) text += ` · ${fmt(leftover,2)} m rest`;
+  let text = `${fmt(stripsNeeded)} drops · ${fmt(stripsPerRoll)} drops per roll · ${fmt(cutLength,2)} m per drop`;
+  if(repeatM > 0) text += ` · repeat ${fmt(repeatM * 100,1)} cm`;
+  if(leftover >= 0.01) text += ` · ${fmt(leftover,2)} m left`;
   $('status').textContent = text;
 
   save();
 }
 
 fieldIds.forEach(id => {
-  $(id).addEventListener('input', calculate);
-  $(id).addEventListener('change', calculate);
+  const input = $(id);
+
+  input.addEventListener('focus', () => {
+    requestAnimationFrame(() => input.select());
+  });
+
+  input.addEventListener('click', () => input.select());
+
+  input.addEventListener('input', calculate);
+  input.addEventListener('change', calculate);
+
+  input.closest('.card').addEventListener('click', event => {
+    if(event.target !== input){
+      input.focus();
+      input.select();
+    }
+  });
 });
 
 $('infoButton').addEventListener('click', () => $('infoDialog').showModal());
