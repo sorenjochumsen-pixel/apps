@@ -257,6 +257,21 @@ input[type=number]{
   font-size:13px;
   margin:10px 8px 0;
 }
+.back{
+  position:absolute;
+  left:0;
+  top:-2px;
+  width:44px;
+  height:44px;
+  border:0;
+  background:transparent;
+  color:var(--text);
+  font-size:38px;
+  line-height:1;
+  font-weight:400;
+  padding:0;
+  cursor:pointer;
+}
 .info{
   position:absolute;
   right:0;
@@ -302,6 +317,7 @@ dialog p{line-height:1.45;color:#555}
 <body>
 <main class="app">
   <header class="header">
+    <button class="back" id="back" aria-label="Tilbage">←</button>
     <h1>Profilscanner</h1>
     <p class="sub">Foto → Profilkurve (DXF / SVG)</p>
     <button class="info" id="info" aria-label="Information">i</button>
@@ -309,7 +325,7 @@ dialog p{line-height:1.45;color:#555}
 
   <section class="preview">
     <canvas id="canvas" width="900" height="650"></canvas>
-    <div id="status" class="status">Klar – vælg et billede</div>
+    <div id="status" class="status">Vælg et billede, og tryk derefter på selve emnet</div>
   </section>
 
   <section class="quick-actions">
@@ -400,9 +416,9 @@ dialog p{line-height:1.45;color:#555}
 
 <dialog id="dialog">
   <h2>Profilscanner</h2>
-  <p>Appen finder den største mørke silhuet, registrerer den mest lige side som bagside og lukker profilen hele vejen rundt.</p>
+  <p>Appen finder først den største mørke silhuet. Du kan derefter trykke direkte på det emne, der skal traces. Kun den sammenhængende flade omkring det valgte punkt bruges.</p>
   <p><b>Antal punkter</b> bestemmer detaljegraden. 50–100 punkter er normalt passende til SketchUp. Flere punkter følger billedet tættere, men giver tungere geometri.</p>
-  <p>Tag fotoet helt vinkelret og med jævnt lys for at få den mest præcise profil.</p>
+  <p>Tag fotoet helt vinkelret og med jævnt lys. Tryk inde på selve profilen – ikke på baggrunden eller en skygge.</p>
   <button class="close" id="close">Luk</button>
 </dialog>
 
@@ -422,6 +438,7 @@ const ctx = E.canvas.getContext('2d',{willReadFrequently:true});
 let sourceImage = null;
 let profilePixels = [];
 let exportPoints = [];
+let selectedSeed = null;
 let timer = null;
 
 const settings = ['threshold','smooth','heightMm','pointCount','invert','mirror','profileOnly','showImage'];
@@ -466,6 +483,7 @@ function openFile(file){
   const im=new Image();
   im.onload=()=>{
     sourceImage=im;
+    selectedSeed=null;
     URL.revokeObjectURL(url);
     processImage();
   };
@@ -516,6 +534,31 @@ function largestComponent(mask,w,h){
     if(comp.length>best.length)best=comp;
   }
   return best;
+}
+
+function componentFromSeed(mask,w,h,seedX,seedY){
+  const sx=Math.max(0,Math.min(w-1,Math.round(seedX)));
+  const sy=Math.max(0,Math.min(h-1,Math.round(seedY)));
+  const start=sy*w+sx;
+  if(!mask[start]) return [];
+  const seen=new Uint8Array(mask.length);
+  const queue=[start], comp=[];
+  const dirs=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]];
+  seen[start]=1;
+  for(let q=0;q<queue.length;q++){
+    const cur=queue[q], x=cur%w, y=(cur/w)|0;
+    comp.push(cur);
+    for(const [dx,dy] of dirs){
+      const nx=x+dx, ny=y+dy;
+      if(nx<0||ny<0||nx>=w||ny>=h)continue;
+      const ni=ny*w+nx;
+      if(mask[ni]&&!seen[ni]){
+        seen[ni]=1;
+        queue.push(ni);
+      }
+    }
+  }
+  return comp;
 }
 function rowEdges(component,w,h){
   const left=new Array(h).fill(Infinity);
@@ -599,7 +642,17 @@ function processImage(){
         mask[j]=invert ? (g<th?1:0) : (g>=th?1:0);
       }
 
-      const comp=largestComponent(mask,w,h);
+      let comp;
+      if(selectedSeed){
+        comp=componentFromSeed(mask,w,h,selectedSeed.x,selectedSeed.y);
+        if(comp.length<20){
+          E.status.textContent='Det valgte punkt ligger ikke på den fundne flade. Tryk på emnet igen eller justér kontrasten.';
+          drawSelectionHint(w,h);
+          return;
+        }
+      }else{
+        comp=largestComponent(mask,w,h);
+      }
       if(comp.length<20){
         E.status.textContent='Ingen tydelig profil fundet. Justér kontrastgrænsen.';
         drawEmpty(w,h);
@@ -643,7 +696,7 @@ function processImage(){
       const mmPerPx=targetH/Math.max(1,b.maxY-b.minY);
       const width=(b.maxX-b.minX)*mmPerPx;
       E.status.textContent=
-        `${exportPoints.length} punkter · ca. ${width.toFixed(1).replace('.',',')} × ${targetH.toFixed(1).replace('.',',')} mm`;
+        `${exportPoints.length} punkter · ca. ${width.toFixed(1).replace('.',',')} × ${targetH.toFixed(1).replace('.',',')} mm · tryk på emnet for at vælge kant`;
 
       E.svg.disabled=false;E.dxf.disabled=false;
     }catch(err){
@@ -672,6 +725,42 @@ function drawResult(w,h,straightSide,backX){
   ctx.closePath();
   ctx.stroke();
 }
+
+function drawSelectionHint(w,h){
+  if(sourceImage){
+    ctx.globalAlpha=.35;
+    ctx.drawImage(sourceImage,0,0,w,h);
+    ctx.globalAlpha=1;
+  }
+  if(selectedSeed){
+    ctx.strokeStyle='#0a56db';
+    ctx.lineWidth=Math.max(2,w/350);
+    ctx.beginPath();
+    ctx.arc(selectedSeed.x,selectedSeed.y,Math.max(8,w/70),0,Math.PI*2);
+    ctx.stroke();
+  }
+}
+
+E.canvas.addEventListener('click',event=>{
+  if(!sourceImage)return;
+  const rect=E.canvas.getBoundingClientRect();
+  const x=(event.clientX-rect.left)*(E.canvas.width/rect.width);
+  const y=(event.clientY-rect.top)*(E.canvas.height/rect.height);
+  selectedSeed={x,y};
+  processImage();
+});
+
+E.canvas.addEventListener('touchend',event=>{
+  if(!sourceImage || !event.changedTouches?.length)return;
+  const touch=event.changedTouches[0];
+  const rect=E.canvas.getBoundingClientRect();
+  const x=(touch.clientX-rect.left)*(E.canvas.width/rect.width);
+  const y=(touch.clientY-rect.top)*(E.canvas.height/rect.height);
+  selectedSeed={x,y};
+  event.preventDefault();
+  processImage();
+},{passive:false});
+
 function scaledPoints(){
   const b=bounds(exportPoints);
   const targetH=Number(E.height.value);
@@ -724,6 +813,13 @@ E.svg.onclick=()=>{
   download(makeSVG(),name,'image/svg+xml');
 };
 
+$('back').onclick=()=>{
+  if(history.length>1){
+    history.back();
+  }else{
+    window.location.href='../index.html';
+  }
+};
 $('info').onclick=()=>$('dialog').showModal();
 $('close').onclick=()=>$('dialog').close();
 
