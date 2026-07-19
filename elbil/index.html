@@ -1,412 +1,317 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="da">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#ffffff">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Elbil">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Ladetid</title>
-
+<meta name="theme-color" content="#ffffff">
+<title>Elbil · Ladetid</title>
 <style>
 :root{
-  --number:#8a8d91;
-  --text:#2f3133;
-  --line:#e8e8e8;
+  --bg:#ffffff;
+  --text:#3f3f42;
+  --muted:#8b8b90;
+  --field:#f3f3f5;
+  --line:#e4e4e7;
 }
-
-*{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  background:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:var(--text);
-}
-
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg)}
 body{
-  overflow:hidden;
-  padding:max(13px,env(safe-area-inset-top)) 13px max(13px,env(safe-area-inset-bottom));
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  overscroll-behavior:none;
 }
-
-.app{
-  width:100%;
-  max-width:430px;
-  height:100%;
-  margin:auto;
-  display:grid;
-  grid-template-rows:1fr auto auto;
-  gap:13px;
-}
-
-.hero{
+button,input{font:inherit;color:inherit}
+main{
+  width:min(100%,430px);
+  min-height:100dvh;
+  margin:0 auto;
+  padding:calc(env(safe-area-inset-top) + 13px) 16px calc(env(safe-area-inset-bottom) + 55px);
   display:flex;
   flex-direction:column;
-  justify-content:center;
-  align-items:center;
+}
+.result{
   text-align:center;
+  padding:3px 0 18px;
 }
-
-#time{
-  color:var(--number);
-  font-size:clamp(76px,24vw,112px);
-  line-height:.9;
-  letter-spacing:-4px;
+.result-label{
+  min-height:18px;
+  font-size:13px;
   font-weight:600;
+  letter-spacing:.02em;
+  color:var(--muted);
 }
-
-#route{
-  margin-top:13px;
-  color:var(--number);
-  font-size:clamp(19px,5vw,25px);
+.result-number{
+  margin-top:1px;
+  font-size:clamp(66px,20vw,90px);
+  line-height:.92;
   font-weight:500;
+  letter-spacing:-.065em;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
 }
-
+.result-unit{
+  margin-top:5px;
+  font-size:18px;
+  font-weight:500;
+  color:var(--muted);
+}
+.status{
+  min-height:36px;
+  margin-top:7px;
+  padding:0 8px;
+  font-size:13px;
+  line-height:1.35;
+  color:var(--muted);
+}
 .grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
 }
-
 .card{
-  min-height:118px;
-  padding:13px;
-  border:1px solid var(--line);
-  border-radius:13px;
-  background:#fff;
+  min-width:0;
+  height:112px;
+  border-radius:17px;
+  background:var(--field);
+  padding:12px 10px 10px;
   display:flex;
   flex-direction:column;
-  justify-content:space-between;
-}
-
-.value{
-  min-height:55px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
   justify-content:center;
+  text-align:center;
 }
-
+.card label{
+  display:block;
+  margin-bottom:5px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.input-line{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  min-width:0;
+}
 input{
   width:100%;
+  min-width:0;
+  height:49px;
+  padding:0;
   border:0;
   outline:0;
-  margin:0;
-  padding:0;
   background:transparent;
-  color:var(--number);
   text-align:center;
-  font-size:clamp(38px,11vw,52px);
+  font-size:31px;
   line-height:1;
   font-weight:500;
-  caret-color:#6f9cff;
-  -webkit-appearance:none;
-  appearance:none;
+  font-variant-numeric:tabular-nums;
+  -moz-appearance:textfield;
 }
-
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .unit{
-  margin-top:8px;
-  color:var(--number);
-  font-size:18px;
-  line-height:1;
-  white-space:nowrap;
-  pointer-events:none;
+  flex:0 0 auto;
+  margin-left:4px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--muted);
 }
-
-.divider{
-  height:1px;
-  margin:8px 0;
-  background:var(--line);
-}
-
-.label{
-  color:var(--text);
-  font-size:16px;
-  font-weight:500;
-  text-align:center;
-}
-
 .info{
-  justify-self:end;
-  width:34px;
-  height:34px;
+  position:fixed;
+  right:max(16px,calc((100vw - 430px)/2 + 16px));
+  bottom:calc(env(safe-area-inset-bottom) + 12px);
+  width:30px;
+  height:30px;
   padding:0;
-  border:1px solid var(--number);
+  border:1px solid var(--line);
   border-radius:50%;
   background:#fff;
-  color:var(--number);
-  font-size:17px;
+  color:var(--muted);
+  font-size:16px;
   font-weight:600;
-  line-height:31px;
   cursor:pointer;
 }
-
-.info-panel{
-  display:none;
-  position:fixed;
-  left:13px;
-  right:13px;
-  bottom:max(55px,env(safe-area-inset-bottom));
-  z-index:20;
-  max-width:404px;
-  margin:auto;
-  padding:21px;
-  border:1px solid var(--line);
-  border-radius:13px;
-  background:#fff;
-  box-shadow:0 8px 34px rgba(0,0,0,.14);
+dialog{
+  width:min(calc(100% - 32px),390px);
+  border:0;
+  border-radius:22px;
+  padding:22px;
+  color:var(--text);
+  box-shadow:0 18px 60px rgba(0,0,0,.22);
 }
-
-.info-panel.open{display:block}
-
-.info-row{
-  display:flex;
-  justify-content:space-between;
-  gap:13px;
-  padding:8px 0;
-  color:#666;
-  font-size:14px;
+dialog::backdrop{background:rgba(0,0,0,.35)}
+dialog h2{margin:0 0 14px;font-size:24px}
+dialog p{margin:0 0 12px;font-size:15px;line-height:1.45;color:#555}
+dialog .signature{margin-top:20px;color:var(--muted);font-size:13px}
+dialog button{
+  width:100%;
+  height:46px;
+  margin-top:8px;
+  border:0;
+  border-radius:14px;
+  background:var(--field);
+  font-weight:600;
 }
-
-.info-row strong{
-  color:var(--number);
-  text-align:right;
-}
-
-.info-text{
-  margin:13px 0 0;
-  color:#777;
-  font-size:13px;
-  line-height:1.45;
-}
-
-.error{
-  color:#a04444!important;
-  font-size:28px!important;
-  line-height:1.1!important;
-  letter-spacing:-1px!important;
-  text-align:center;
-}
-
-@media(max-height:700px){
-  .app{gap:8px}
-  #time{font-size:72px}
-  .card{min-height:96px;padding:8px}
-  input{font-size:36px}
-  .unit{font-size:15px;margin-top:5px}
-  .label{font-size:14px}
+@media(max-height:690px){
+  main{padding-top:calc(env(safe-area-inset-top) + 7px)}
+  .result{padding-bottom:11px}
+  .result-number{font-size:61px}
+  .status{min-height:30px}
+  .card{height:98px}
+  input{height:43px;font-size:28px}
 }
 </style>
 </head>
-
 <body>
-<form class="app" id="chargeForm" autocomplete="off">
-
-  <main class="hero">
-    <div id="time">4:12</div>
-    <div id="route">20 % → 80 %</div>
-  </main>
-
-  <section class="grid">
-
-    <label class="card">
-      <div class="value">
-        <input id="from" type="text" inputmode="numeric" pattern="[0-9]*"
-               value="20" enterkeyhint="next" aria-label="Batteri nu">
-        <span class="unit">%</span>
-      </div>
-      <div class="divider"></div>
-      <div class="label">Nu</div>
-    </label>
-
-    <label class="card">
-      <div class="value">
-        <input id="to" type="text" inputmode="numeric" pattern="[0-9]*"
-               value="80" enterkeyhint="next" aria-label="Mål">
-        <span class="unit">%</span>
-      </div>
-      <div class="divider"></div>
-      <div class="label">Mål</div>
-    </label>
-
-    <label class="card">
-      <div class="value">
-        <input id="capacity" type="text" inputmode="decimal"
-               value="77" enterkeyhint="next" aria-label="Kapacitet">
-        <span class="unit">kWh</span>
-      </div>
-      <div class="divider"></div>
-      <div class="label">Kapacitet</div>
-    </label>
-
-    <label class="card">
-      <div class="value">
-        <input id="power" type="text" inputmode="decimal"
-               value="11" enterkeyhint="done" aria-label="Ladeeffekt">
-        <span class="unit">kW</span>
-      </div>
-      <div class="divider"></div>
-      <div class="label">Ladeeffekt</div>
-    </label>
-
+<main>
+  <section class="result" aria-live="polite">
+    <div class="result-label">FORVENTET LADETID</div>
+    <div id="resultNumber" class="result-number">4:12</div>
+    <div id="resultUnit" class="result-unit">timer</div>
+    <div id="status" class="status">46,2 kWh · 14,3 % pr. time · fra 20 % til 80 %</div>
   </section>
 
-  <button id="infoButton" class="info" type="button" aria-label="Vis information">i</button>
-</form>
+  <section class="grid">
+    <div class="card">
+      <label for="current">Nu</label>
+      <div class="input-line">
+        <input id="current" inputmode="numeric" type="text" value="20">
+        <span class="unit">%</span>
+      </div>
+    </div>
 
-<div id="infoPanel" class="info-panel" aria-hidden="true">
-  <div class="info-row">
-    <span>Energi til batteriet</span>
-    <strong id="energyInfo">46,2 kWh</strong>
-  </div>
-  <div class="info-row">
-    <span>Ladehastighed</span>
-    <strong id="speedInfo">14,3 % pr. time</strong>
-  </div>
-  <p class="info-text">
-    Beregningen forudsætter konstant ladeeffekt. Den virkelige ladetid kan være længere på grund af ladetab og bilens ladekurve.
-  </p>
-</div>
+    <div class="card">
+      <label for="target">Mål</label>
+      <div class="input-line">
+        <input id="target" inputmode="numeric" type="text" value="80">
+        <span class="unit">%</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <label for="battery">Kapacitet</label>
+      <div class="input-line">
+        <input id="battery" inputmode="decimal" type="text" value="77">
+        <span class="unit">kWh</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <label for="power">Ladeeffekt</label>
+      <div class="input-line">
+        <input id="power" inputmode="decimal" type="text" value="11">
+        <span class="unit">kW</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<button id="infoButton" class="info" type="button" aria-label="Information">i</button>
+
+<dialog id="infoDialog">
+  <h2>Elbil · Ladetid</h2>
+  <p>Indtast bilens nuværende batteriprocent, ønsket mål, batterikapacitet og ladeeffekt.</p>
+  <p>Beregningen forudsætter konstant ladeeffekt. Ladetab, temperatur og bilens ladekurve er ikke medregnet, så den faktiske ladetid kan være længere.</p>
+  <p>Ved hurtigladning falder ladeeffekten normalt, især ved høj batteriprocent.</p>
+  <p class="signature">Designed by Søren Faaborg<br>Version 2.0</p>
+  <button id="closeInfo" type="button">Luk</button>
+</dialog>
 
 <script>
-(function(){
+'use strict';
 
-  var fieldIds=["from","to","capacity","power"];
-  var storageKey="ladeapp-vaerdier-v1";
+const $ = id => document.getElementById(id);
+const storageKey = 'elbilLadetid_v2';
+const fieldIds = ['current','target','battery','power'];
 
-  function readNumber(id){
-    return parseFloat(
-      String(document.getElementById(id).value).trim().replace(",",".")
-    );
-  }
+function num(id){
+  const value = String($(id).value).trim().replace(',', '.');
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
 
-  function oneDecimal(value){
-    return value.toFixed(1).replace(".",",");
-  }
-
-  function saveValues(){
-    var values={};
-    fieldIds.forEach(function(id){
-      values[id]=document.getElementById(id).value;
-    });
-
-    try{
-      localStorage.setItem(storageKey,JSON.stringify(values));
-    }catch(error){}
-  }
-
-  function loadValues(){
-    try{
-      var saved=localStorage.getItem(storageKey);
-      if(!saved){return}
-
-      var values=JSON.parse(saved);
-
-      fieldIds.forEach(function(id){
-        if(values[id]!==undefined && values[id]!==null && values[id]!==""){
-          document.getElementById(id).value=values[id];
-        }
-      });
-    }catch(error){}
-  }
-
-  function calculate(){
-    var from=readNumber("from");
-    var to=readNumber("to");
-    var capacity=readNumber("capacity");
-    var power=readNumber("power");
-
-    var time=document.getElementById("time");
-    var route=document.getElementById("route");
-
-    if(
-      isNaN(from) || isNaN(to) || isNaN(capacity) || isNaN(power) ||
-      from<0 || from>100 || to<0 || to>100 ||
-      capacity<=0 || power<=0
-    ){
-      time.className="error";
-      time.textContent="Kontrollér tallene";
-      route.textContent="";
-      saveValues();
-      return;
-    }
-
-    if(to<=from){
-      time.className="error";
-      time.textContent="Målet skal være højere";
-      route.textContent="";
-      saveValues();
-      return;
-    }
-
-    var energy=capacity*(to-from)/100;
-    var speed=power/capacity*100;
-    var totalMinutes=Math.round((energy/power)*60);
-
-    var hours=Math.floor(totalMinutes/60);
-    var minutes=totalMinutes%60;
-
-    time.className="";
-    time.textContent=hours+":"+(minutes<10?"0":"")+minutes;
-    route.textContent=Math.round(from)+" % → "+Math.round(to)+" %";
-
-    document.getElementById("energyInfo").textContent=oneDecimal(energy)+" kWh";
-    document.getElementById("speedInfo").textContent=oneDecimal(speed)+" % pr. time";
-
-    saveValues();
-  }
-
-  loadValues();
-
-  fieldIds.forEach(function(id,index){
-    var field=document.getElementById(id);
-
-    field.addEventListener("focus",function(){
-      var current=this;
-      setTimeout(function(){ current.select(); },50);
-    });
-
-    field.addEventListener("input",calculate);
-
-    field.addEventListener("keydown",function(event){
-      if(event.key==="Enter"){
-        event.preventDefault();
-
-        if(index<fieldIds.length-1){
-          document.getElementById(fieldIds[index+1]).focus();
-        }else{
-          this.blur();
-        }
-      }
-    });
+function fmt(value, decimals = 0){
+  return Number(value).toLocaleString('da-DK',{
+    minimumFractionDigits:decimals,
+    maximumFractionDigits:decimals
   });
+}
 
-  document.getElementById("chargeForm").addEventListener("submit",function(event){
-    event.preventDefault();
+function save(){
+  try{
+    const data = {};
+    fieldIds.forEach(id => data[id] = $(id).value);
+    localStorage.setItem(storageKey, JSON.stringify(data));
+  }catch(error){
+    console.warn('Værdierne kunne ikke gemmes.', error);
+  }
+}
+
+function load(){
+  try{
+    const data = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    fieldIds.forEach(id => {
+      if(data[id] !== undefined) $(id).value = data[id];
+    });
+  }catch(error){
+    console.warn('Gemte værdier kunne ikke indlæses.', error);
+  }
+}
+
+function showError(message){
+  $('resultNumber').textContent = '—';
+  $('resultUnit').textContent = 'timer';
+  $('status').textContent = message;
+}
+
+function calculate(){
+  const current = num('current');
+  const target = num('target');
+  const battery = num('battery');
+  const power = num('power');
+
+  if(current < 0 || current > 100) return showError('Nu skal være mellem 0 og 100 %');
+  if(target < 0 || target > 100) return showError('Mål skal være mellem 0 og 100 %');
+  if(target <= current) return showError('Mål skal være højere end Nu');
+  if(battery <= 0) return showError('Indtast en positiv batterikapacitet');
+  if(power <= 0) return showError('Indtast en positiv ladeeffekt');
+
+  const percentageNeeded = target - current;
+  const energyNeeded = battery * percentageNeeded / 100;
+  const chargingHours = energyNeeded / power;
+  const totalMinutes = Math.max(1, Math.round(chargingHours * 60));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const percentPerHour = power / battery * 100;
+
+  $('resultNumber').textContent = `${hours}:${String(minutes).padStart(2,'0')}`;
+  $('resultUnit').textContent = hours === 1 ? 'time' : 'timer';
+  $('status').textContent =
+    `${fmt(energyNeeded,1)} kWh · ${fmt(percentPerHour,1)} % pr. time · fra ${fmt(current)} % til ${fmt(target)} %`;
+
+  save();
+}
+
+fieldIds.forEach(id => {
+  $(id).addEventListener('focus', function(){
+    const input = this;
+    setTimeout(() => input.select(), 50);
   });
+  $(id).addEventListener('input', calculate);
+  $(id).addEventListener('change', calculate);
+});
 
-  document.getElementById("infoButton").addEventListener("click",function(){
-    var panel=document.getElementById("infoPanel");
-    var isOpen=panel.classList.contains("open");
+$('infoButton').addEventListener('click', () => $('infoDialog').showModal());
+$('closeInfo').addEventListener('click', () => $('infoDialog').close());
+$('infoDialog').addEventListener('click', event => {
+  if(event.target === $('infoDialog')) $('infoDialog').close();
+});
 
-    if(isOpen){
-      panel.classList.remove("open");
-      panel.setAttribute("aria-hidden","true");
-      this.textContent="i";
-      this.setAttribute("aria-label","Vis information");
-    }else{
-      panel.classList.add("open");
-      panel.setAttribute("aria-hidden","false");
-      this.textContent="×";
-      this.setAttribute("aria-label","Luk information");
-    }
-  });
-
-  calculate();
-
-})();
+load();
+calculate();
 </script>
 </body>
 </html>
