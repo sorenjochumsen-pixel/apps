@@ -5,17 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Faaborg Tools">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
 <link rel="stylesheet" href="./assets/faaborg.css">
 <title>Faaborg Tools</title>
+<style>
+.ft-home-header{margin-bottom:34px}
+</style>
 </head>
 <body>
 <main class="ft-app">
   <header class="ft-home-header">
     <h1 class="ft-home-title">Faaborg Tools</h1>
-    <div class="ft-home-subtitle">Enkle værktøjer</div>
   </header>
 
   <section class="ft-grid">
@@ -46,9 +49,10 @@
 </main>
 
 <button class="ft-info" id="infoButton" type="button" aria-label="Information">i</button>
+
 <dialog class="ft-dialog" id="infoDialog">
   <h2>Faaborg Tools</h2>
-  <p>En samling enkle værktøjer udviklet til iPhone og computer.</p>
+  <p>En samling fokuserede værktøjer udviklet til iPhone og computer.</p>
   <p>Version 1.1<br>Designed by Søren Faaborg</p>
   <button id="closeInfo" type="button">Luk</button>
 </dialog>
