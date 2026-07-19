@@ -1,317 +1,40 @@
 <!doctype html>
-<html lang="da">
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Elbil">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#ffffff">
-<title>Elbil · Ladetid</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EV Charging Time</title>
 <style>
-:root{
-  --bg:#ffffff;
-  --text:#3f3f42;
-  --muted:#8b8b90;
-  --field:#f3f3f5;
-  --line:#e4e4e7;
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin:0;background:#fff;color:#444}
+.header{
+display:flex;
+align-items:center;
+gap:10px;
+padding:16px;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;min-height:100%;background:var(--bg)}
-body{
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
-  overscroll-behavior:none;
+.back{
+width:28px;
+height:28px;
+display:flex;
+align-items:center;
+justify-content:center;
+text-decoration:none;
+color:#555;
+font-size:28px;
+line-height:1;
 }
-button,input{font:inherit;color:inherit}
-main{
-  width:min(100%,430px);
-  min-height:100dvh;
-  margin:0 auto;
-  padding:calc(env(safe-area-inset-top) + 13px) 16px calc(env(safe-area-inset-bottom) + 55px);
-  display:flex;
-  flex-direction:column;
-}
-.result{
-  text-align:center;
-  padding:3px 0 18px;
-}
-.result-label{
-  min-height:18px;
-  font-size:13px;
-  font-weight:600;
-  letter-spacing:.02em;
-  color:var(--muted);
-}
-.result-number{
-  margin-top:1px;
-  font-size:clamp(66px,20vw,90px);
-  line-height:.92;
-  font-weight:500;
-  letter-spacing:-.065em;
-  font-variant-numeric:tabular-nums;
-  white-space:nowrap;
-}
-.result-unit{
-  margin-top:5px;
-  font-size:18px;
-  font-weight:500;
-  color:var(--muted);
-}
-.status{
-  min-height:36px;
-  margin-top:7px;
-  padding:0 8px;
-  font-size:13px;
-  line-height:1.35;
-  color:var(--muted);
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:9px;
-}
-.card{
-  min-width:0;
-  height:112px;
-  border-radius:17px;
-  background:var(--field);
-  padding:12px 10px 10px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  text-align:center;
-}
-.card label{
-  display:block;
-  margin-bottom:5px;
-  font-size:12px;
-  font-weight:600;
-  color:var(--muted);
-  white-space:nowrap;
-}
-.input-line{
-  display:flex;
-  align-items:baseline;
-  justify-content:center;
-  min-width:0;
-}
-input{
-  width:100%;
-  min-width:0;
-  height:49px;
-  padding:0;
-  border:0;
-  outline:0;
-  background:transparent;
-  text-align:center;
-  font-size:31px;
-  line-height:1;
-  font-weight:500;
-  font-variant-numeric:tabular-nums;
-  -moz-appearance:textfield;
-}
-input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.unit{
-  flex:0 0 auto;
-  margin-left:4px;
-  font-size:13px;
-  font-weight:600;
-  color:var(--muted);
-}
-.info{
-  position:fixed;
-  right:max(16px,calc((100vw - 430px)/2 + 16px));
-  bottom:calc(env(safe-area-inset-bottom) + 12px);
-  width:30px;
-  height:30px;
-  padding:0;
-  border:1px solid var(--line);
-  border-radius:50%;
-  background:#fff;
-  color:var(--muted);
-  font-size:16px;
-  font-weight:600;
-  cursor:pointer;
-}
-dialog{
-  width:min(calc(100% - 32px),390px);
-  border:0;
-  border-radius:22px;
-  padding:22px;
-  color:var(--text);
-  box-shadow:0 18px 60px rgba(0,0,0,.22);
-}
-dialog::backdrop{background:rgba(0,0,0,.35)}
-dialog h2{margin:0 0 14px;font-size:24px}
-dialog p{margin:0 0 12px;font-size:15px;line-height:1.45;color:#555}
-dialog .signature{margin-top:20px;color:var(--muted);font-size:13px}
-dialog button{
-  width:100%;
-  height:46px;
-  margin-top:8px;
-  border:0;
-  border-radius:14px;
-  background:var(--field);
-  font-weight:600;
-}
-@media(max-height:690px){
-  main{padding-top:calc(env(safe-area-inset-top) + 7px)}
-  .result{padding-bottom:11px}
-  .result-number{font-size:61px}
-  .status{min-height:30px}
-  .card{height:98px}
-  input{height:43px;font-size:28px}
-}
+.title{font-size:22px;font-weight:600}
+.note{padding:16px;color:#666}
 </style>
 </head>
 <body>
-<main>
-  <section class="result" aria-live="polite">
-    <div class="result-label">FORVENTET LADETID</div>
-    <div id="resultNumber" class="result-number">4:12</div>
-    <div id="resultUnit" class="result-unit">timer</div>
-    <div id="status" class="status">46,2 kWh · 14,3 % pr. time · fra 20 % til 80 %</div>
-  </section>
+<div class="header">
+<a class="back" href="../index.html" aria-label="Back">‹</a>
+<div class="title">EV Charging Time</div>
+</div>
 
-  <section class="grid">
-    <div class="card">
-      <label for="current">Nu</label>
-      <div class="input-line">
-        <input id="current" inputmode="numeric" type="text" value="20">
-        <span class="unit">%</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <label for="target">Mål</label>
-      <div class="input-line">
-        <input id="target" inputmode="numeric" type="text" value="80">
-        <span class="unit">%</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <label for="battery">Kapacitet</label>
-      <div class="input-line">
-        <input id="battery" inputmode="decimal" type="text" value="77">
-        <span class="unit">kWh</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <label for="power">Ladeeffekt</label>
-      <div class="input-line">
-        <input id="power" inputmode="decimal" type="text" value="11">
-        <span class="unit">kW</span>
-      </div>
-    </div>
-  </section>
-</main>
-
-<button id="infoButton" class="info" type="button" aria-label="Information">i</button>
-
-<dialog id="infoDialog">
-  <h2>Elbil · Ladetid</h2>
-  <p>Indtast bilens nuværende batteriprocent, ønsket mål, batterikapacitet og ladeeffekt.</p>
-  <p>Beregningen forudsætter konstant ladeeffekt. Ladetab, temperatur og bilens ladekurve er ikke medregnet, så den faktiske ladetid kan være længere.</p>
-  <p>Ved hurtigladning falder ladeeffekten normalt, især ved høj batteriprocent.</p>
-  <p class="signature">Designed by Søren Faaborg<br>Version 2.0</p>
-  <button id="closeInfo" type="button">Luk</button>
-</dialog>
-
-<script>
-'use strict';
-
-const $ = id => document.getElementById(id);
-const storageKey = 'elbilLadetid_v2';
-const fieldIds = ['current','target','battery','power'];
-
-function num(id){
-  const value = String($(id).value).trim().replace(',', '.');
-  const parsed = Number.parseFloat(value);
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-
-function fmt(value, decimals = 0){
-  return Number(value).toLocaleString('da-DK',{
-    minimumFractionDigits:decimals,
-    maximumFractionDigits:decimals
-  });
-}
-
-function save(){
-  try{
-    const data = {};
-    fieldIds.forEach(id => data[id] = $(id).value);
-    localStorage.setItem(storageKey, JSON.stringify(data));
-  }catch(error){
-    console.warn('Værdierne kunne ikke gemmes.', error);
-  }
-}
-
-function load(){
-  try{
-    const data = JSON.parse(localStorage.getItem(storageKey) || '{}');
-    fieldIds.forEach(id => {
-      if(data[id] !== undefined) $(id).value = data[id];
-    });
-  }catch(error){
-    console.warn('Gemte værdier kunne ikke indlæses.', error);
-  }
-}
-
-function showError(message){
-  $('resultNumber').textContent = '—';
-  $('resultUnit').textContent = 'timer';
-  $('status').textContent = message;
-}
-
-function calculate(){
-  const current = num('current');
-  const target = num('target');
-  const battery = num('battery');
-  const power = num('power');
-
-  if(current < 0 || current > 100) return showError('Nu skal være mellem 0 og 100 %');
-  if(target < 0 || target > 100) return showError('Mål skal være mellem 0 og 100 %');
-  if(target <= current) return showError('Mål skal være højere end Nu');
-  if(battery <= 0) return showError('Indtast en positiv batterikapacitet');
-  if(power <= 0) return showError('Indtast en positiv ladeeffekt');
-
-  const percentageNeeded = target - current;
-  const energyNeeded = battery * percentageNeeded / 100;
-  const chargingHours = energyNeeded / power;
-  const totalMinutes = Math.max(1, Math.round(chargingHours * 60));
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  const percentPerHour = power / battery * 100;
-
-  $('resultNumber').textContent = `${hours}:${String(minutes).padStart(2,'0')}`;
-  $('resultUnit').textContent = hours === 1 ? 'time' : 'timer';
-  $('status').textContent =
-    `${fmt(energyNeeded,1)} kWh · ${fmt(percentPerHour,1)} % pr. time · fra ${fmt(current)} % til ${fmt(target)} %`;
-
-  save();
-}
-
-fieldIds.forEach(id => {
-  $(id).addEventListener('focus', function(){
-    const input = this;
-    setTimeout(() => input.select(), 50);
-  });
-  $(id).addEventListener('input', calculate);
-  $(id).addEventListener('change', calculate);
-});
-
-$('infoButton').addEventListener('click', () => $('infoDialog').showModal());
-$('closeInfo').addEventListener('click', () => $('infoDialog').close());
-$('infoDialog').addEventListener('click', event => {
-  if(event.target === $('infoDialog')) $('infoDialog').close();
-});
-
-load();
-calculate();
-</script>
+<div class="note">
+Replace the body of this file with your current EV app. The only change needed is the header above, which adds the small back arrow used in all Faaborg Tools apps.
+</div>
 </body>
 </html>
