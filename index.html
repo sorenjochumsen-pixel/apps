@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="da">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -9,40 +9,207 @@
 <meta name="apple-mobile-web-app-title" content="Faaborg Tools">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<link rel="stylesheet" href="./assets/faaborg.css">
 <title>Faaborg Tools</title>
+
 <style>
-.ft-home-header{margin-bottom:34px}
+:root{
+  --bg:#ffffff;
+  --panel:#f7f7f5;
+  --panel-2:#fbfbfa;
+  --text:#353538;
+  --muted:#7d7d84;
+  --line:#dedee2;
+  --blue:#0a56db;
+  --radius:24px;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+}
+
+body{
+  min-height:100vh;
+  padding:
+    calc(18px + env(safe-area-inset-top))
+    0
+    calc(18px + env(safe-area-inset-bottom));
+}
+
+.ft-app{
+  width:min(100%,820px);
+  margin:0 auto;
+  padding:0 16px;
+}
+
+.ft-home-header{
+  position:relative;
+  text-align:center;
+  margin:10px 0 30px;
+}
+
+.ft-home-title{
+  margin:0;
+  font-size:clamp(40px,8vw,60px);
+  line-height:1;
+  letter-spacing:-2px;
+  font-weight:740;
+}
+
+.ft-home-subtitle{
+  margin:10px 0 0;
+  color:var(--muted);
+  font-size:clamp(16px,4vw,21px);
+}
+
+.ft-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.ft-tool{
+  min-height:180px;
+  padding:24px 18px;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--panel-2);
+  color:var(--text);
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.ft-tool:active{
+  transform:scale(.985);
+  background:var(--panel);
+}
+
+.ft-tool-symbol{
+  width:68px;
+  height:68px;
+  margin-bottom:18px;
+  border-radius:20px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--blue);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:38px;
+  line-height:1;
+}
+
+.ft-tool-name{
+  font-size:26px;
+  font-weight:720;
+  letter-spacing:-.5px;
+}
+
+.ft-tool-description{
+  margin-top:7px;
+  color:var(--muted);
+  font-size:16px;
+}
+
+.ft-info{
+  position:fixed;
+  right:18px;
+  bottom:calc(18px + env(safe-area-inset-bottom));
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--text);
+  font:italic 700 24px Georgia,serif;
+  box-shadow:0 4px 18px #0001;
+}
+
+.ft-dialog{
+  border:0;
+  border-radius:24px;
+  width:calc(100% - 32px);
+  max-width:520px;
+  padding:26px;
+}
+
+.ft-dialog::backdrop{
+  background:#0007;
+}
+
+.ft-dialog h2{
+  margin:0 0 12px;
+  font-size:28px;
+}
+
+.ft-dialog p{
+  color:#555;
+  line-height:1.5;
+}
+
+.ft-dialog button{
+  width:100%;
+  min-height:54px;
+  margin-top:12px;
+  border:0;
+  border-radius:16px;
+  background:var(--text);
+  color:#fff;
+  font-size:18px;
+  font-weight:700;
+}
+
+@media(max-width:600px){
+  .ft-app{padding:0 10px}
+  .ft-grid{gap:10px}
+  .ft-tool{min-height:155px;padding:20px 12px}
+  .ft-tool-symbol{width:58px;height:58px;font-size:32px;margin-bottom:14px}
+  .ft-tool-name{font-size:22px}
+  .ft-tool-description{font-size:14px}
+}
 </style>
 </head>
+
 <body>
 <main class="ft-app">
   <header class="ft-home-header">
     <h1 class="ft-home-title">Faaborg Tools</h1>
+    <p class="ft-home-subtitle">Simple tools for everyday calculations</p>
   </header>
 
   <section class="ft-grid">
-    <a class="ft-tool" href="./elbil/">
+    <a class="ft-tool" href="./ev-charge/">
       <div class="ft-tool-symbol">ϟ</div>
-      <div class="ft-tool-name">Elbil</div>
-      <div class="ft-tool-description">Beregn ladetid</div>
+      <div class="ft-tool-name">EV Charge</div>
+      <div class="ft-tool-description">Charging Time</div>
     </a>
 
     <a class="ft-tool" href="./weight/">
       <div class="ft-tool-symbol">⚖︎</div>
       <div class="ft-tool-name">Weight</div>
-      <div class="ft-tool-description">Materialevægt</div>
+      <div class="ft-tool-description">Material Weight</div>
     </a>
 
-    <a class="ft-tool" href="./tapet/">
+    <a class="ft-tool" href="./wallpaper/">
       <div class="ft-tool-symbol">▦</div>
-      <div class="ft-tool-name">Tapet</div>
-      <div class="ft-tool-description">Tapetruller</div>
+      <div class="ft-tool-name">Wallpaper</div>
+      <div class="ft-tool-description">Wallpaper Calculator</div>
     </a>
 
     <a class="ft-tool" href="./profile/">
       <div class="ft-tool-symbol">⌁</div>
-      <div class="ft-tool-name">profile</div>
+      <div class="ft-tool-name">Profile</div>
       <div class="ft-tool-description">DXF · SVG</div>
     </a>
   </section>
@@ -52,15 +219,24 @@
 
 <dialog class="ft-dialog" id="infoDialog">
   <h2>Faaborg Tools</h2>
-  <p>En samling fokuserede værktøjer udviklet til iPhone og computer.</p>
-  <p>Version 1.1<br>Designed by Søren Faaborg</p>
-  <button id="closeInfo" type="button">Luk</button>
+  <p>A collection of focused tools designed for iPhone and desktop.</p>
+  <p>Version 1.2<br>Designed by Søren Faaborg</p>
+  <button id="closeInfo" type="button">Close</button>
 </dialog>
 
-<script src="./assets/faaborg.js"></script>
 <script>
-FaaborgTools.bindInfoDialog();
-FaaborgTools.registerServiceWorker('./sw.js');
+const infoButton = document.getElementById('infoButton');
+const infoDialog = document.getElementById('infoDialog');
+const closeInfo = document.getElementById('closeInfo');
+
+infoButton.addEventListener('click', () => infoDialog.showModal());
+closeInfo.addEventListener('click', () => infoDialog.close());
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
 </script>
 </body>
 </html>
