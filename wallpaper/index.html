@@ -2,365 +2,159 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Wallpaper">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Wallpaper">
+<link rel="stylesheet" href="../assets/faaborg.css">
 <title>Wallpaper Calculator</title>
-<style>
-:root{
-  --bg:#ffffff;
-  --text:#3f3f42;
-  --muted:#8b8b90;
-  --field:#f3f3f5;
-  --line:#e4e4e7;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;min-height:100%;background:var(--bg)}
-body{
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
-  overscroll-behavior:none;
-}
-button,input{font:inherit;color:inherit}
-main{
-  width:min(100%,430px);
-  min-height:100dvh;
-  margin:0 auto;
-  padding:calc(env(safe-area-inset-top) + 13px) 16px calc(env(safe-area-inset-bottom) + 55px);
-  display:flex;
-  flex-direction:column;
-}
-.result{
-  text-align:center;
-  padding:3px 0 16px;
-}
-.result-label{
-  min-height:18px;
-  font-size:13px;
-  font-weight:600;
-  letter-spacing:.02em;
-  color:var(--muted);
-}
-.result-number{
-  margin-top:1px;
-  font-size:clamp(72px,22vw,96px);
-  line-height:.92;
-  font-weight:500;
-  letter-spacing:-.07em;
-  font-variant-numeric:tabular-nums;
-}
-.result-unit{
-  margin-top:5px;
-  font-size:18px;
-  font-weight:500;
-  color:var(--muted);
-}
-.status{
-  min-height:36px;
-  margin-top:7px;
-  padding:0 8px;
-  font-size:13px;
-  line-height:1.35;
-  color:var(--muted);
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:9px;
-}
-.card{
-  min-width:0;
-  height:101px;
-  border-radius:17px;
-  background:var(--field);
-  padding:11px 10px 9px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  text-align:center;
-}
-.card label{
-  display:block;
-  margin-bottom:4px;
-  font-size:12px;
-  font-weight:600;
-  color:var(--muted);
-  white-space:nowrap;
-}
-.input-line{
-  display:flex;
-  align-items:baseline;
-  justify-content:center;
-  min-width:0;
-}
-input{
-  width:100%;
-  min-width:0;
-  height:45px;
-  padding:0;
-  border:0;
-  outline:0;
-  background:transparent;
-  text-align:center;
-  font-size:29px;
-  line-height:1;
-  font-weight:500;
-  font-variant-numeric:tabular-nums;
-  -moz-appearance:textfield;
-}
-input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.unit{
-  flex:0 0 auto;
-  margin-left:4px;
-  font-size:13px;
-  font-weight:600;
-  color:var(--muted);
-}
-.chevron{
-  flex:0 0 auto;
-  width:9px;
-  height:9px;
-  margin-left:7px;
-  margin-bottom:5px;
-  border-right:1.5px solid var(--muted);
-  border-bottom:1.5px solid var(--muted);
-  transform:rotate(45deg);
-  opacity:.8;
-}
-.info{
-  position:fixed;
-  right:max(16px,calc((100vw - 430px)/2 + 16px));
-  bottom:calc(env(safe-area-inset-bottom) + 12px);
-  width:30px;
-  height:30px;
-  padding:0;
-  border:1px solid var(--line);
-  border-radius:50%;
-  background:#fff;
-  color:var(--muted);
-  font-size:16px;
-  font-weight:600;
-  cursor:pointer;
-}
-dialog{
-  width:min(calc(100% - 32px),390px);
-  border:0;
-  border-radius:22px;
-  padding:22px;
-  color:var(--text);
-  box-shadow:0 18px 60px rgba(0,0,0,.22);
-}
-dialog::backdrop{background:rgba(0,0,0,.35)}
-dialog h2{margin:0 0 14px;font-size:24px}
-dialog p{margin:0 0 12px;font-size:15px;line-height:1.45;color:#555}
-dialog .signature{margin-top:20px;color:var(--muted);font-size:13px}
-dialog button{
-  width:100%;
-  height:46px;
-  margin-top:8px;
-  border:0;
-  border-radius:14px;
-  background:var(--field);
-  font-weight:600;
-}
-@media(max-height:690px){
-  main{padding-top:calc(env(safe-area-inset-top) + 7px)}
-  .result{padding-bottom:10px}
-  .result-number{font-size:66px}
-  .status{min-height:30px}
-  .card{height:91px}
-}
-</style>
 </head>
 <body>
-<main>
-  <section class="result" aria-live="polite">
-    <div class="result-label">YOU NEED</div>
-    <div id="resultNumber" class="result-number">4</div>
-    <div id="resultUnit" class="result-unit">rolls</div>
-    <div id="status" class="status">15 drops · 3 drops per roll · 2.50 m per drop</div>
+
+<main class="ft-app">
+  <section class="ft-result" aria-live="polite">
+    <div class="ft-result-label">YOU NEED</div>
+    <div id="resultNumber" class="ft-result-number">4</div>
+    <div id="resultUnit" class="ft-result-unit">rolls</div>
+    <div id="status" class="ft-status"></div>
   </section>
 
-  <section class="grid">
-    <div class="card">
+  <section class="ft-grid">
+    <div class="ft-card">
       <label for="area">Wall area</label>
-      <div class="input-line">
-        <input id="area" inputmode="decimal" type="text" value="20">
-        <span class="unit">m²</span>
-        <span class="chevron" aria-hidden="true"></span>
+      <div class="ft-input-line">
+        <input id="area" class="ft-input" inputmode="decimal" type="text" value="20">
+        <span class="ft-unit">m²</span>
+        <span class="ft-chevron" aria-hidden="true"></span>
       </div>
     </div>
 
-    <div class="card">
+    <div class="ft-card">
       <label for="height">Wall height</label>
-      <div class="input-line">
-        <input id="height" inputmode="decimal" type="text" value="2.50">
-        <span class="unit">m</span>
-        <span class="chevron" aria-hidden="true"></span>
+      <div class="ft-input-line">
+        <input id="height" class="ft-input" inputmode="decimal" type="text" value="2.50">
+        <span class="ft-unit">m</span>
+        <span class="ft-chevron" aria-hidden="true"></span>
       </div>
     </div>
 
-    <div class="card">
+    <div class="ft-card">
       <label for="rollWidth">Roll width</label>
-      <div class="input-line">
-        <input id="rollWidth" inputmode="decimal" type="text" value="53">
-        <span class="unit">cm</span>
-        <span class="chevron" aria-hidden="true"></span>
+      <div class="ft-input-line">
+        <input id="rollWidth" class="ft-input" inputmode="decimal" type="text" value="53">
+        <span class="ft-unit">cm</span>
+        <span class="ft-chevron" aria-hidden="true"></span>
       </div>
     </div>
 
-    <div class="card">
+    <div class="ft-card">
       <label for="rollLength">Roll length</label>
-      <div class="input-line">
-        <input id="rollLength" inputmode="decimal" type="text" value="10">
-        <span class="unit">m</span>
-        <span class="chevron" aria-hidden="true"></span>
+      <div class="ft-input-line">
+        <input id="rollLength" class="ft-input" inputmode="decimal" type="text" value="10">
+        <span class="ft-unit">m</span>
+        <span class="ft-chevron" aria-hidden="true"></span>
       </div>
     </div>
 
-    <div class="card">
+    <div class="ft-card">
       <label for="repeat">Pattern repeat</label>
-      <div class="input-line">
-        <input id="repeat" inputmode="decimal" type="text" value="0">
-        <span class="unit">cm</span>
-        <span class="chevron" aria-hidden="true"></span>
+      <div class="ft-input-line">
+        <input id="repeat" class="ft-input" inputmode="decimal" type="text" value="0">
+        <span class="ft-unit">cm</span>
+        <span class="ft-chevron" aria-hidden="true"></span>
       </div>
     </div>
 
-    <div class="card">
+    <div class="ft-card">
       <label for="waste">Extra allowance</label>
-      <div class="input-line">
-        <input id="waste" inputmode="decimal" type="text" value="0">
-        <span class="unit">%</span>
-        <span class="chevron" aria-hidden="true"></span>
+      <div class="ft-input-line">
+        <input id="waste" class="ft-input" inputmode="decimal" type="text" value="0">
+        <span class="ft-unit">%</span>
+        <span class="ft-chevron" aria-hidden="true"></span>
       </div>
     </div>
   </section>
 </main>
 
-<button id="infoButton" class="info" type="button" aria-label="Information">i</button>
+<button id="infoButton" class="ft-info" type="button" aria-label="Information">i</button>
 
-<dialog id="infoDialog">
+<dialog id="infoDialog" class="ft-dialog">
   <h2>Wallpaper Calculator</h2>
   <p>Enter the total wall area without subtracting small doors and windows.</p>
-  <p>For patterned wallpaper, enter the pattern repeat in centimetres. Each drop is rounded up to the next full repeat.</p>
-  <p>The calculation uses whole drops and whole rolls only. Extra allowance can be used for uneven walls, difficult patterns or spare material.</p>
-  <p class="signature">Designed by Søren Faaborg<br>Version 2.1</p>
+  <p>For patterned wallpaper, enter the pattern repeat in centimetres.</p>
+  <p>The calculation uses whole drops and whole rolls only.</p>
+  <p class="ft-signature">Designed by Søren Faaborg<br>Version 3.0</p>
   <button id="closeInfo" type="button">Close</button>
 </dialog>
 
+<script src="../assets/faaborg.js"></script>
 <script>
 'use strict';
 
-const $ = id => document.getElementById(id);
-const storageKey = 'tapetCalculator_v2';
-const fieldIds = ['area','height','rollWidth','rollLength','repeat','waste'];
+const resultNumber = document.getElementById('resultNumber');
+const resultUnit = document.getElementById('resultUnit');
+const status = document.getElementById('status');
 
-function num(id){
-  const value = String($(id).value).trim().replace(',', '.');
-  const parsed = Number.parseFloat(value);
-  return Number.isFinite(parsed) ? parsed : 0;
+function value(id) {
+  return FaaborgUI.parseNumber(document.getElementById(id).value);
 }
 
-function fmt(value, decimals = 0){
-  return Number(value).toLocaleString('en-GB',{
-    minimumFractionDigits:decimals,
-    maximumFractionDigits:decimals
-  });
+function showError(message) {
+  resultNumber.textContent = '—';
+  resultUnit.textContent = 'rolls';
+  status.textContent = message;
 }
 
-function save(){
-  const data = {};
-  fieldIds.forEach(id => data[id] = $(id).value);
-  localStorage.setItem(storageKey, JSON.stringify(data));
-}
+function calculate() {
+  const area = value('area');
+  const height = value('height');
+  const rollWidth = value('rollWidth') / 100;
+  const rollLength = value('rollLength');
+  const repeat = value('repeat') / 100;
+  const allowance = value('waste');
 
-function load(){
-  try{
-    const data = JSON.parse(localStorage.getItem(storageKey) || '{}');
-    fieldIds.forEach(id => {
-      if(data[id] !== undefined) $(id).value = data[id];
-    });
-  }catch(error){
-    console.warn('Saved values could not be loaded.', error);
+  if (area <= 0) return showError('Enter a positive wall area');
+  if (height <= 0) return showError('Enter a positive wall height');
+  if (rollWidth <= 0) return showError('Enter a positive roll width');
+  if (rollLength <= 0) return showError('Enter a positive roll length');
+  if (repeat < 0 || allowance < 0) {
+    return showError('Repeat and allowance cannot be negative');
   }
-}
 
-function showError(message){
-  $('resultNumber').textContent = '—';
-  $('resultUnit').textContent = 'ruller';
-  $('status').textContent = message;
-}
+  const adjustedArea = area * (1 + allowance / 100);
+  const cutLength = repeat > 0
+    ? Math.ceil(height / repeat) * repeat
+    : height;
 
-function calculate(){
-  const area = num('area');
-  const height = num('height');
-  const rollWidthM = num('rollWidth') / 100;
-  const rollLength = num('rollLength');
-  const repeatM = num('repeat') / 100;
-  const wastePercent = num('waste');
+  const dropsPerRoll = Math.floor((rollLength + 1e-9) / cutLength);
 
-  if(area <= 0) return showError('Enter a positive wall area');
-  if(height <= 0) return showError('Enter a positive wall height');
-  if(rollWidthM <= 0) return showError('Enter a positive roll width');
-  if(rollLength <= 0) return showError('Enter a positive roll length');
-  if(repeatM < 0 || wastePercent < 0) return showError('Pattern repeat and allowance cannot be negative');
-
-  const effectiveArea = area * (1 + wastePercent / 100);
-  const cutLength = repeatM > 0 ? Math.ceil(height / repeatM) * repeatM : height;
-  const stripsPerRoll = Math.floor((rollLength + 1e-9) / cutLength);
-
-  if(stripsPerRoll < 1){
+  if (dropsPerRoll < 1) {
     return showError('The roll is shorter than one wallpaper drop');
   }
 
-  const stripArea = height * rollWidthM;
-  const stripsNeeded = Math.ceil(effectiveArea / stripArea);
-  const rolls = Math.ceil(stripsNeeded / stripsPerRoll);
-  const usedLength = stripsPerRoll * cutLength;
-  const leftover = Math.max(0, rollLength - usedLength);
+  const areaPerDrop = height * rollWidth;
+  const dropsNeeded = Math.ceil(adjustedArea / areaPerDrop);
+  const rolls = Math.ceil(dropsNeeded / dropsPerRoll);
 
-  $('resultNumber').textContent = fmt(rolls);
-  $('resultUnit').textContent = rolls === 1 ? 'roll' : 'rolls';
-
-  let text = `${fmt(stripsNeeded)} drops · ${fmt(stripsPerRoll)} drops per roll · ${fmt(cutLength,2)} m per drop`;
-  if(repeatM > 0) text += ` · repeat ${fmt(repeatM * 100,1)} cm`;
-  if(leftover >= 0.01) text += ` · ${fmt(leftover,2)} m left`;
-  $('status').textContent = text;
-
-  save();
+  resultNumber.textContent = FaaborgUI.formatNumber(rolls);
+  resultUnit.textContent = rolls === 1 ? 'roll' : 'rolls';
+  status.textContent =
+    `${dropsNeeded} drops · ${dropsPerRoll} per roll · ` +
+    `${FaaborgUI.formatNumber(cutLength, 2)} m per drop`;
 }
 
-fieldIds.forEach(id => {
-  const input = $(id);
-
-  input.addEventListener('focus', () => {
-    requestAnimationFrame(() => input.select());
-  });
-
-  input.addEventListener('click', () => input.select());
-
-  input.addEventListener('input', calculate);
-  input.addEventListener('change', calculate);
-
-  input.closest('.card').addEventListener('click', event => {
-    if(event.target !== input){
-      input.focus();
-      input.select();
-    }
-  });
+FaaborgUI.bindNumberInputs({
+  selector: '.ft-input',
+  storageKey: 'faaborg-wallpaper-v3',
+  onChange: calculate
 });
 
-$('infoButton').addEventListener('click', () => $('infoDialog').showModal());
-$('closeInfo').addEventListener('click', () => $('infoDialog').close());
-$('infoDialog').addEventListener('click', event => {
-  if(event.target === $('infoDialog')) $('infoDialog').close();
+FaaborgUI.bindDialog({
+  openButton: '#infoButton',
+  dialog: '#infoDialog',
+  closeButton: '#closeInfo'
 });
-
-load();
-calculate();
 </script>
 </body>
 </html>
