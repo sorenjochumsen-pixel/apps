@@ -5,180 +5,58 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Faaborg Tools">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="stylesheet" href="./assets/faaborg.css">
 <title>Faaborg Tools</title>
-<style>
-:root{
-  --bg:#fff;
-  --text:#3f3f42;
-  --muted:#8a8d93;
-  --card:#f3f3f5;
-  --line:#dedee3;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;min-height:100%;background:var(--bg)}
-body{
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
-}
-main{
-  width:min(100%,430px);
-  min-height:100dvh;
-  margin:0 auto;
-  padding:calc(env(safe-area-inset-top) + 38px) 18px calc(env(safe-area-inset-bottom) + 80px);
-  position:relative;
-}
-header{text-align:center;margin-bottom:30px}
-h1{
-  margin:0;
-  font-size:44px;
-  line-height:1;
-  font-weight:700;
-  letter-spacing:-.045em;
-}
-.subtitle{
-  margin-top:10px;
-  color:var(--muted);
-  font-size:17px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:13px;
-}
-.tool{
-  min-height:156px;
-  padding:18px 12px;
-  border-radius:25px;
-  background:var(--card);
-  color:var(--text);
-  text-decoration:none;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  transition:transform .12s ease,filter .12s ease;
-}
-.tool:active{transform:scale(.97);filter:brightness(.98)}
-.symbol{
-  width:54px;
-  height:54px;
-  margin-bottom:15px;
-  border:2px solid #96969c;
-  border-radius:17px;
-  display:grid;
-  place-items:center;
-  color:#66666b;
-  font-size:27px;
-  font-weight:500;
-  line-height:1;
-}
-.tool:first-child .symbol{color:#d98a00}
-.name{font-size:20px;font-weight:650}
-.description{margin-top:5px;color:var(--muted);font-size:13px}
-.info{
-  position:fixed;
-  right:max(18px,calc((100vw - 430px)/2 + 18px));
-  bottom:calc(env(safe-area-inset-bottom) + 15px);
-  width:38px;
-  height:38px;
-  border:1px solid var(--line);
-  border-radius:50%;
-  background:#fff;
-  color:var(--muted);
-  font-size:18px;
-  font-weight:600;
-}
-dialog{
-  width:min(calc(100% - 32px),390px);
-  border:0;
-  border-radius:22px;
-  padding:22px;
-  color:var(--text);
-  box-shadow:0 18px 60px rgba(0,0,0,.2);
-}
-dialog::backdrop{background:rgba(0,0,0,.22)}
-dialog h2{margin:0 0 12px;font-size:23px}
-dialog p{margin:0 0 11px;color:#66666a;font-size:14px;line-height:1.45}
-dialog button{
-  width:100%;
-  height:45px;
-  margin-top:7px;
-  border:0;
-  border-radius:13px;
-  background:#454548;
-  color:#fff;
-  font-weight:600;
-}
-@media(max-height:700px){
-  main{padding-top:calc(env(safe-area-inset-top) + 20px)}
-  header{margin-bottom:20px}
-  h1{font-size:37px}
-  .tool{min-height:128px}
-}
-</style>
 </head>
 <body>
-<main>
-  <header>
-    <h1>Faaborg Tools</h1>
-    <div class="subtitle">Enkle værktøjer</div>
+<main class="ft-app">
+  <header class="ft-home-header">
+    <h1 class="ft-home-title">Faaborg Tools</h1>
+    <div class="ft-home-subtitle">Enkle værktøjer</div>
   </header>
 
-  <section class="grid">
-    <a class="tool" href="./elbil/">
-      <div class="symbol">ϟ</div>
-      <div class="name">Elbil</div>
-      <div class="description">Beregn ladetid</div>
+  <section class="ft-grid">
+    <a class="ft-tool" href="./elbil/">
+      <div class="ft-tool-symbol">ϟ</div>
+      <div class="ft-tool-name">Elbil</div>
+      <div class="ft-tool-description">Beregn ladetid</div>
     </a>
 
-    <a class="tool" href="./weight/">
-      <div class="symbol">⚖︎</div>
-      <div class="name">Weight</div>
-      <div class="description">Materialevægt</div>
+    <a class="ft-tool" href="./weight/">
+      <div class="ft-tool-symbol">⚖︎</div>
+      <div class="ft-tool-name">Weight</div>
+      <div class="ft-tool-description">Materialevægt</div>
     </a>
 
-    <a class="tool" href="./tapet/">
-      <div class="symbol">▦</div>
-      <div class="name">Tapet</div>
-      <div class="description">Tapetruller</div>
+    <a class="ft-tool" href="./tapet/">
+      <div class="ft-tool-symbol">▦</div>
+      <div class="ft-tool-name">Tapet</div>
+      <div class="ft-tool-description">Tapetruller</div>
     </a>
 
-    <a class="tool" href="./profil/">
-      <div class="symbol">⌁</div>
-      <div class="name">Profil</div>
-      <div class="description">DXF · SVG</div>
+    <a class="ft-tool" href="./profil/">
+      <div class="ft-tool-symbol">⌁</div>
+      <div class="ft-tool-name">Profil</div>
+      <div class="ft-tool-description">DXF · SVG</div>
     </a>
   </section>
 </main>
 
-<button class="info" id="infoButton" type="button" aria-label="Information">i</button>
-
-<dialog id="infoDialog">
+<button class="ft-info" id="infoButton" type="button" aria-label="Information">i</button>
+<dialog class="ft-dialog" id="infoDialog">
   <h2>Faaborg Tools</h2>
   <p>En samling enkle værktøjer udviklet til iPhone og computer.</p>
-  <p>Værktøjerne kræver ingen login og gemmer kun relevante indstillinger lokalt på din egen enhed.</p>
-  <p><strong>Version 1.0</strong><br>Designed by Søren Faaborg</p>
+  <p>Version 1.1<br>Designed by Søren Faaborg</p>
   <button id="closeInfo" type="button">Luk</button>
 </dialog>
 
+<script src="./assets/faaborg.js"></script>
 <script>
-const dialog = document.getElementById('infoDialog');
-document.getElementById('infoButton').addEventListener('click', () => dialog.showModal());
-document.getElementById('closeInfo').addEventListener('click', () => dialog.close());
-dialog.addEventListener('click', event => {
-  if(event.target === dialog) dialog.close();
-});
-
-if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(console.warn);
-  });
-}
+FaaborgTools.bindInfoDialog();
+FaaborgTools.registerServiceWorker('./sw.js');
 </script>
 </body>
 </html>

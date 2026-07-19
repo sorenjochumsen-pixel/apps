@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Appnavn · Faaborg Tools</title>
+<link rel="stylesheet" href="../assets/faaborg.css">
+</head>
+<body>
+<main class="ft-app">
+
+  <section class="ft-result" aria-live="polite">
+    <div class="ft-result-label">RESULTAT</div>
+    <div class="ft-result-number" id="result">0</div>
+    <div class="ft-result-unit">enhed</div>
+    <div class="ft-status" id="status">Indtast værdier</div>
+  </section>
+
+  <section class="ft-grid">
+    <div class="ft-card">
+      <label class="ft-label" for="inputA">Værdi A</label>
+      <div class="ft-input-line">
+        <input class="ft-input" id="inputA" inputmode="decimal" value="0">
+        <span class="ft-unit">mm</span>
+      </div>
+    </div>
+
+    <div class="ft-card">
+      <label class="ft-label" for="inputB">Værdi B</label>
+      <div class="ft-input-line">
+        <input class="ft-input" id="inputB" inputmode="decimal" value="0">
+        <span class="ft-unit">mm</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<button class="ft-info" id="infoButton" type="button" aria-label="Information">i</button>
+<dialog class="ft-dialog" id="infoDialog">
+  <h2>Appnavn</h2>
+  <p>Kort forklaring på appens funktion.</p>
+  <p>Version 1.0<br>Designed by Søren Faaborg</p>
+  <button id="closeInfo" type="button">Luk</button>
+</dialog>
+
+<script src="../assets/faaborg.js"></script>
+<script>
+const ids = ['inputA','inputB'];
+FaaborgTools.bindPersistence('faaborg-appnavn-v1', ids);
+FaaborgTools.bindInfoDialog();
+
+function calculate(){
+  const a = FaaborgTools.parseNumber(document.getElementById('inputA').value);
+  const b = FaaborgTools.parseNumber(document.getElementById('inputB').value);
+  document.getElementById('result').textContent = FaaborgTools.formatNumber(a * b, 1);
+  document.getElementById('status').textContent = 'Automatisk beregning';
+}
+
+ids.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+calculate();
+</script>
+</body>
+</html>
