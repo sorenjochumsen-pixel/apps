@@ -1,202 +1,334 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="da">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tapet">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
 <title>Tapetberegner</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #f5f5f0;
-    min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 24px 16px;
-  }
-  .wrap { width: 100%; max-width: 480px; }
-  h1 { font-size: 18px; font-weight: 600; color: #1a1a1a; margin-bottom: 16px; }
-
-  .metrics {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .metric {
-    background: #fff;
-    border-radius: 12px;
-    padding: 12px;
-    border: 1px solid #e8e8e4;
-  }
-  .metric.accent { background: #EBF4FD; border-color: #b5d4f4; }
-  .mlbl { font-size: 10px; color: #888; letter-spacing: .05em; margin-bottom: 3px; text-transform: uppercase; }
-  .mval { font-size: 18px; font-weight: 600; color: #1a1a1a; }
-  .metric.accent .mlbl { color: #185FA5; }
-  .metric.accent .mval { color: #0C447C; }
-
-  .card {
-    background: #fff;
-    border-radius: 16px;
-    border: 1px solid #e8e8e4;
-    padding: 16px;
-  }
-  .srow { margin-bottom: 16px; }
-  .srow:last-of-type { margin-bottom: 0; }
-  .sheader {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 8px;
-  }
-  .slbl { font-size: 13px; color: #666; }
-  .sval { font-size: 15px; font-weight: 600; color: #1a1a1a; }
-
-  input[type=range] {
-    width: 100%;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 32px;
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-  }
-  input[type=range]::-webkit-slider-runnable-track {
-    height: 4px;
-    border-radius: 2px;
-    background: #ddd;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #fff;
-    border: 2.5px solid #378ADD;
-    margin-top: -14px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.12);
-  }
-  input[type=range]::-moz-range-track {
-    height: 4px;
-    border-radius: 2px;
-    background: #ddd;
-  }
-  input[type=range]::-moz-range-thumb {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #fff;
-    border: 2.5px solid #378ADD;
-    box-shadow: 0 1px 4px rgba(0,0,0,.12);
-  }
-
-  .divider { border: none; border-top: 1px solid #efefeb; margin: 14px 0; }
-
-  .notes { display: flex; flex-direction: column; gap: 6px; }
-  .note {
-    font-size: 12px;
-    color: #666;
-    padding: 5px 0 5px 10px;
-    border-left: 2.5px solid #85B7EB;
-  }
-
-  .footer {
-    text-align: center;
-    margin-top: 16px;
-    font-size: 11px;
-    color: #aaa;
-  }
+:root{
+  --bg:#ffffff;
+  --text:#3f3f42;
+  --muted:#8b8b90;
+  --field:#f3f3f5;
+  --line:#e4e4e7;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg)}
+body{
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  overscroll-behavior:none;
+}
+button,input{font:inherit;color:inherit}
+main{
+  width:min(100%,430px);
+  min-height:100dvh;
+  margin:0 auto;
+  padding:calc(env(safe-area-inset-top) + 13px) 16px calc(env(safe-area-inset-bottom) + 55px);
+  display:flex;
+  flex-direction:column;
+}
+.result{
+  text-align:center;
+  padding:3px 0 16px;
+}
+.result-label{
+  min-height:18px;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.02em;
+  color:var(--muted);
+}
+.result-number{
+  margin-top:1px;
+  font-size:clamp(72px,22vw,96px);
+  line-height:.92;
+  font-weight:500;
+  letter-spacing:-.07em;
+  font-variant-numeric:tabular-nums;
+}
+.result-unit{
+  margin-top:5px;
+  font-size:18px;
+  font-weight:500;
+  color:var(--muted);
+}
+.status{
+  min-height:36px;
+  margin-top:7px;
+  padding:0 8px;
+  font-size:13px;
+  line-height:1.35;
+  color:var(--muted);
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+.card{
+  min-width:0;
+  height:101px;
+  border-radius:17px;
+  background:var(--field);
+  padding:11px 10px 9px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-align:center;
+}
+.card label{
+  display:block;
+  margin-bottom:4px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.input-line{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  min-width:0;
+}
+input{
+  width:100%;
+  min-width:0;
+  height:45px;
+  padding:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  text-align:center;
+  font-size:29px;
+  line-height:1;
+  font-weight:500;
+  font-variant-numeric:tabular-nums;
+  -moz-appearance:textfield;
+}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.unit{
+  flex:0 0 auto;
+  margin-left:4px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--muted);
+}
+.info{
+  position:fixed;
+  right:max(16px,calc((100vw - 430px)/2 + 16px));
+  bottom:calc(env(safe-area-inset-bottom) + 12px);
+  width:30px;
+  height:30px;
+  padding:0;
+  border:1px solid var(--line);
+  border-radius:50%;
+  background:#fff;
+  color:var(--muted);
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+dialog{
+  width:min(calc(100% - 32px),390px);
+  border:0;
+  border-radius:22px;
+  padding:22px;
+  color:var(--text);
+  box-shadow:0 18px 60px rgba(0,0,0,.22);
+}
+dialog::backdrop{background:rgba(0,0,0,.35)}
+dialog h2{margin:0 0 14px;font-size:24px}
+dialog p{margin:0 0 12px;font-size:15px;line-height:1.45;color:#555}
+dialog .signature{margin-top:20px;color:var(--muted);font-size:13px}
+dialog button{
+  width:100%;
+  height:46px;
+  margin-top:8px;
+  border:0;
+  border-radius:14px;
+  background:var(--field);
+  font-weight:600;
+}
+@media(max-height:690px){
+  main{padding-top:calc(env(safe-area-inset-top) + 7px)}
+  .result{padding-bottom:10px}
+  .result-number{font-size:66px}
+  .status{min-height:30px}
+  .card{height:91px}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Tapetberegner</h1>
+<main>
+  <section class="result" aria-live="polite">
+    <div class="result-label">DU SKAL BRUGE</div>
+    <div id="resultNumber" class="result-number">4</div>
+    <div id="resultUnit" class="result-unit">ruller</div>
+    <div id="status" class="status">15 baner · 3 baner pr. rulle · 2,50 m pr. bane</div>
+  </section>
 
-  <div class="metrics">
-    <div class="metric">
-      <div class="mlbl">Vægreal</div>
-      <div class="mval" id="m-areal">66 m²</div>
-    </div>
-    <div class="metric">
-      <div class="mlbl">Uden rapport</div>
-      <div class="mval" id="m-uden">—</div>
-    </div>
-    <div class="metric accent">
-      <div class="mlbl">Bestil</div>
-      <div class="mval" id="m-med">—</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="srow">
-      <div class="sheader"><span class="slbl">Vægreal</span><span class="sval"><span id="v-areal">66</span> m²</span></div>
-      <input type="range" min="10" max="150" value="66" id="s-areal" step="1" oninput="b()">
-    </div>
-    <div class="srow">
-      <div class="sheader"><span class="slbl">Rapport</span><span class="sval"><span id="v-rapport">90</span> cm</span></div>
-      <input type="range" min="0" max="150" value="90" id="s-rapport" step="1" oninput="b()">
-    </div>
-    <div class="srow">
-      <div class="sheader"><span class="slbl">Rullebredde</span><span class="sval"><span id="v-bredde">53</span> cm</span></div>
-      <input type="range" min="40" max="100" value="53" id="s-bredde" step="1" oninput="b()">
-    </div>
-    <div class="srow">
-      <div class="sheader"><span class="slbl">Rullelængde</span><span class="sval"><span id="v-laengde">10</span> m</span></div>
-      <input type="range" min="5" max="20" value="10" id="s-laengde" step="1" oninput="b()">
-    </div>
-    <div class="srow">
-      <div class="sheader"><span class="slbl">Loftshøjde</span><span class="sval"><span id="v-hoejde">2,0</span> m</span></div>
-      <input type="range" min="150" max="400" value="200" id="s-hoejde" step="5" oninput="b()">
+  <section class="grid">
+    <div class="card">
+      <label for="area">Vægareal</label>
+      <div class="input-line">
+        <input id="area" inputmode="decimal" type="text" value="20">
+        <span class="unit">m²</span>
+      </div>
     </div>
 
-    <hr class="divider">
-
-    <div class="notes">
-      <div class="note" id="note1">—</div>
-      <div class="note" id="note2">—</div>
-      <div class="note" id="note3">—</div>
+    <div class="card">
+      <label for="height">Væghøjde</label>
+      <div class="input-line">
+        <input id="height" inputmode="decimal" type="text" value="2,50">
+        <span class="unit">m</span>
+      </div>
     </div>
-  </div>
 
-  <div class="footer">Virker offline · åbn i Safari eller Chrome</div>
-</div>
+    <div class="card">
+      <label for="rollWidth">Rullebredde</label>
+      <div class="input-line">
+        <input id="rollWidth" inputmode="decimal" type="text" value="53">
+        <span class="unit">cm</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <label for="rollLength">Rullelængde</label>
+      <div class="input-line">
+        <input id="rollLength" inputmode="decimal" type="text" value="10">
+        <span class="unit">m</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <label for="repeat">Rapport</label>
+      <div class="input-line">
+        <input id="repeat" inputmode="decimal" type="text" value="0">
+        <span class="unit">cm</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <label for="waste">Ekstra tillæg</label>
+      <div class="input-line">
+        <input id="waste" inputmode="decimal" type="text" value="0">
+        <span class="unit">%</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<button id="infoButton" class="info" type="button" aria-label="Information">i</button>
+
+<dialog id="infoDialog">
+  <h2>Tapetberegner</h2>
+  <p>Indtast det samlede vægareal uden fradrag for små døre og vinduer.</p>
+  <p>Ved mønstret tapet angives rapporten i centimeter. Appen afrunder hver bane op til nærmeste hele rapport.</p>
+  <p>Beregningen bruger kun hele baner og hele ruller. Ekstra tillæg kan bruges ved skæve vægge, vanskelige mønstre eller ønsket reserve.</p>
+  <p class="signature">Designed by Søren Faaborg<br>Version 2.0</p>
+  <button id="closeInfo" type="button">Luk</button>
+</dialog>
 
 <script>
-function b() {
-  const A = parseInt(document.getElementById('s-areal').value);
-  const R = parseInt(document.getElementById('s-rapport').value);
-  const W = parseInt(document.getElementById('s-bredde').value) / 100;
-  const L = parseInt(document.getElementById('s-laengde').value);
-  const H = parseInt(document.getElementById('s-hoejde').value) / 100;
+'use strict';
 
-  document.getElementById('v-areal').textContent = A;
-  document.getElementById('v-rapport').textContent = R;
-  document.getElementById('v-bredde').textContent = parseInt(document.getElementById('s-bredde').value);
-  document.getElementById('v-laengde').textContent = L;
-  document.getElementById('v-hoejde').textContent = H.toFixed(1).replace('.', ',');
-  document.getElementById('m-areal').textContent = A + ' m²';
+const $ = id => document.getElementById(id);
+const storageKey = 'tapetCalculator_v2';
+const fieldIds = ['area','height','rollWidth','rollLength','repeat','waste'];
 
-  const base = A / (W * L);
-  document.getElementById('m-uden').textContent = base.toFixed(1).replace('.', ',') + ' rul.';
-
-  const Rm = R / 100;
-  let factor = 1;
-  if (Rm > 0) {
-    const baner = Math.ceil(L / (H + Rm));
-    factor = (baner * (H + Rm)) / (baner * H);
-  }
-  const justA = A * factor;
-  const raw = justA / (W * L);
-  const bestil = Math.ceil(raw) + 1;
-  document.getElementById('m-med').textContent = bestil + ' ruller';
-
-  const pct = Math.round((factor - 1) * 100);
-  document.getElementById('note1').textContent = 'Bane: ' + H.toFixed(2).replace('.', ',') + ' + ' + Rm.toFixed(2).replace('.', ',') + ' m rapport = ' + (H + Rm).toFixed(2).replace('.', ',') + ' m';
-  document.getElementById('note2').textContent = 'Rapportspild ~' + pct + '% → ' + justA.toFixed(1).replace('.', ',') + ' m² justeret';
-  document.getElementById('note3').textContent = Math.ceil(raw) + ' beregnet + 1 sikkerhed = ' + bestil + ' ruller';
+function num(id){
+  const value = String($(id).value).trim().replace(',', '.');
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : 0;
 }
-b();
+
+function fmt(value, decimals = 0){
+  return Number(value).toLocaleString('da-DK',{
+    minimumFractionDigits:decimals,
+    maximumFractionDigits:decimals
+  });
+}
+
+function save(){
+  const data = {};
+  fieldIds.forEach(id => data[id] = $(id).value);
+  localStorage.setItem(storageKey, JSON.stringify(data));
+}
+
+function load(){
+  try{
+    const data = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    fieldIds.forEach(id => {
+      if(data[id] !== undefined) $(id).value = data[id];
+    });
+  }catch(error){
+    console.warn('Gemte værdier kunne ikke indlæses.', error);
+  }
+}
+
+function showError(message){
+  $('resultNumber').textContent = '—';
+  $('resultUnit').textContent = 'ruller';
+  $('status').textContent = message;
+}
+
+function calculate(){
+  const area = num('area');
+  const height = num('height');
+  const rollWidthM = num('rollWidth') / 100;
+  const rollLength = num('rollLength');
+  const repeatM = num('repeat') / 100;
+  const wastePercent = num('waste');
+
+  if(area <= 0) return showError('Indtast et positivt vægareal');
+  if(height <= 0) return showError('Indtast en positiv væghøjde');
+  if(rollWidthM <= 0) return showError('Indtast en positiv rullebredde');
+  if(rollLength <= 0) return showError('Indtast en positiv rullelængde');
+  if(repeatM < 0 || wastePercent < 0) return showError('Rapport og tillæg må ikke være negative');
+
+  const effectiveArea = area * (1 + wastePercent / 100);
+  const cutLength = repeatM > 0 ? Math.ceil(height / repeatM) * repeatM : height;
+  const stripsPerRoll = Math.floor((rollLength + 1e-9) / cutLength);
+
+  if(stripsPerRoll < 1){
+    return showError('Rullen er kortere end én tapetbane');
+  }
+
+  const stripArea = height * rollWidthM;
+  const stripsNeeded = Math.ceil(effectiveArea / stripArea);
+  const rolls = Math.ceil(stripsNeeded / stripsPerRoll);
+  const usedLength = stripsPerRoll * cutLength;
+  const leftover = Math.max(0, rollLength - usedLength);
+
+  $('resultNumber').textContent = fmt(rolls);
+  $('resultUnit').textContent = rolls === 1 ? 'rulle' : 'ruller';
+
+  let text = `${fmt(stripsNeeded)} baner · ${fmt(stripsPerRoll)} baner pr. rulle · ${fmt(cutLength,2)} m pr. bane`;
+  if(repeatM > 0) text += ` · rapport ${fmt(repeatM * 100,1)} cm`;
+  if(leftover >= 0.01) text += ` · ${fmt(leftover,2)} m rest`;
+  $('status').textContent = text;
+
+  save();
+}
+
+fieldIds.forEach(id => {
+  $(id).addEventListener('input', calculate);
+  $(id).addEventListener('change', calculate);
+});
+
+$('infoButton').addEventListener('click', () => $('infoDialog').showModal());
+$('closeInfo').addEventListener('click', () => $('infoDialog').close());
+$('infoDialog').addEventListener('click', event => {
+  if(event.target === $('infoDialog')) $('infoDialog').close();
+});
+
+load();
+calculate();
 </script>
 </body>
 </html>
