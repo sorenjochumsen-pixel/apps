@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
-<title>Profilscanner v4</title>
+<title>Profile Scanner</title>
 <style>
 :root{
   --bg:#ffffff;
@@ -70,11 +70,21 @@ canvas{
 }
 .status{
   text-align:center;
-  min-height:30px;
+  min-height:24px;
   padding-top:10px;
   color:var(--muted);
   font-size:15px;
   font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.hint{
+  text-align:center;
+  min-height:20px;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:13px;
 }
 .quick-actions{
   display:grid;
@@ -317,66 +327,67 @@ dialog p{line-height:1.45;color:#555}
 <body>
 <main class="app">
   <header class="header">
-    <button class="back" id="back" aria-label="Tilbage">←</button>
-    <h1>Profilscanner</h1>
-    <p class="sub">Foto → Profilkurve (DXF / SVG)</p>
+    <button class="back" id="back" aria-label="Back">←</button>
+    <h1>Profile Scanner</h1>
+    <p class="sub">Photo → Profile Curve (DXF / SVG)</p>
     <button class="info" id="info" aria-label="Information">i</button>
   </header>
 
   <section class="preview">
     <canvas id="canvas" width="900" height="650"></canvas>
-    <div id="status" class="status">Vælg et billede, og tryk derefter på selve emnet</div>
+    <div id="status" class="status">Choose an image</div>
+    <div class="hint">Tap the object in the preview to select its edge</div>
   </section>
 
   <section class="quick-actions">
     <label class="quick" for="file">
       <input id="file" type="file" accept="image/*">
       <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="1.5"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg>
-      <span>Vælg billede</span>
+      <span>Choose Image</span>
     </label>
 
     <label class="quick" for="camera">
       <input id="camera" type="file" accept="image/*" capture="environment">
       <svg viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10H3V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="4"/></svg>
-      <span>Tag foto</span>
+      <span>Take Photo</span>
     </label>
 
     <label class="quick" id="invertQuick">
       <input id="invert" type="checkbox" checked>
       <svg viewBox="0 0 24 24"><path d="M7 7h10M7 7l3-3M7 7l3 3M17 17H7m10 0l-3-3m3 3l-3 3"/></svg>
-      <span>Vend lys/mørk</span>
+      <span>Invert Light/Dark</span>
     </label>
 
     <label class="quick" id="profileQuick">
       <input id="profileOnly" type="checkbox" checked>
       <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2" stroke-dasharray="3 2"/></svg>
-      <span>Lukket profil</span>
+      <span>Closed Profile</span>
     </label>
   </section>
 
   <section class="grid">
     <div class="card">
-      <label for="threshold">Kontrastgrænse</label>
+      <label for="threshold">Threshold</label>
       <div class="value" id="thresholdValue">128</div>
       <input id="threshold" type="range" min="0" max="255" value="128">
-      <div class="range-labels"><span>Lav</span><span>Høj</span></div>
+      <div class="range-labels"><span>Low</span><span>High</span></div>
     </div>
 
     <div class="card">
-      <label for="smooth">Glatning</label>
+      <label for="smooth">Smoothing</label>
       <div class="value" id="smoothValue">4</div>
       <input id="smooth" type="range" min="0" max="12" step="1" value="4">
-      <div class="range-labels"><span>Lav</span><span>Høj</span></div>
+      <div class="range-labels"><span>Low</span><span>High</span></div>
     </div>
 
     <div class="card">
-      <label for="heightMm">Profilhøjde (mm)</label>
+      <label for="heightMm">Profile Height (mm)</label>
       <input id="heightMm" type="number" min="1" step="0.1" inputmode="decimal" value="90">
     </div>
 
     <div class="card">
-      <label for="pointCount">Antal punkter</label>
-      <div class="value"><span id="pointValue">80</span> <span class="unit">pkt.</span></div>
+      <label for="pointCount">Number of Points</label>
+      <div class="value"><span id="pointValue">80</span> <span class="unit">pts.</span></div>
       <input id="pointCount" type="range" min="12" max="300" step="1" value="80">
       <div class="range-labels"><span>12</span><span>300</span></div>
     </div>
@@ -384,7 +395,7 @@ dialog p{line-height:1.45;color:#555}
 
   <section class="toggle-row">
     <label class="toggle-card">
-      <span>Vis foto under</span>
+      <span>Show Photo Underlay</span>
       <span class="switch">
         <input id="showImage" type="checkbox">
         <span class="slider"></span>
@@ -392,7 +403,7 @@ dialog p{line-height:1.45;color:#555}
     </label>
 
     <label class="toggle-card">
-      <span>Spejlvend</span>
+      <span>Mirror</span>
       <span class="switch">
         <input id="mirror" type="checkbox">
         <span class="slider"></span>
@@ -403,23 +414,23 @@ dialog p{line-height:1.45;color:#555}
   <section class="export-row">
     <button class="export" id="svg" disabled>
       <span class="file-icon">SVG</span>
-      Eksportér SVG
+      Export SVG
     </button>
     <button class="export" id="dxf" disabled>
       <span class="file-icon">DXF</span>
-      Eksportér DXF
+      Export DXF
     </button>
   </section>
 
-  <p class="foot">Filerne eksporteres i korrekt skala og er klar til SketchUp, CNC og laser.</p>
+  <p class="foot">Files are exported at the correct scale for SketchUp, CNC, and laser cutting.</p>
 </main>
 
 <dialog id="dialog">
-  <h2>Profilscanner</h2>
-  <p>Appen finder først den største mørke silhuet. Du kan derefter trykke direkte på det emne, der skal traces. Kun den sammenhængende flade omkring det valgte punkt bruges.</p>
-  <p><b>Antal punkter</b> bestemmer detaljegraden. 50–100 punkter er normalt passende til SketchUp. Flere punkter følger billedet tættere, men giver tungere geometri.</p>
-  <p>Tag fotoet helt vinkelret og med jævnt lys. Tryk inde på selve profilen – ikke på baggrunden eller en skygge.</p>
-  <button class="close" id="close">Luk</button>
+  <h2>Profile Scanner</h2>
+  <p>The app first detects the largest dark silhouette. You can then tap directly on the object you want to trace. Only the connected area around the selected point is used.</p>
+  <p><b>Number of Points</b> bestemmer detaljegraden. 50–100 points er normalt passende til SketchUp. Flere points følger billedet tættere, men giver tungere geometri.</p>
+  <p>Take Photoet helt vinkelret og med jævnt lys. Tryk inde på selve profilen – ikke på baggrunden eller en skygge.</p>
+  <button class="close" id="close">Close</button>
 </dialog>
 
 <script>
@@ -446,12 +457,12 @@ const settings = ['threshold','smooth','heightMm','pointCount','invert','mirror'
 function saveSettings(){
   for(const id of settings){
     const el=$(id);
-    localStorage.setItem('profil_v4_'+id, el.type==='checkbox' ? String(el.checked) : el.value);
+    localStorage.setItem('profile_v4_'+id, el.type==='checkbox' ? String(el.checked) : el.value);
   }
 }
 function loadSettings(){
   for(const id of settings){
-    const el=$(id), value=localStorage.getItem('profil_v4_'+id);
+    const el=$(id), value=localStorage.getItem('profile_v4_'+id);
     if(value!==null) el.type==='checkbox' ? el.checked=value==='true' : el.value=value;
   }
   updateLabels();
@@ -489,7 +500,7 @@ function openFile(file){
   };
   im.onerror=()=>{
     URL.revokeObjectURL(url);
-    E.status.textContent='Billedet kunne ikke åbnes.';
+    E.status.textContent='The image could not be opened.';
   };
   im.src=url;
 }
@@ -620,7 +631,7 @@ function makeClosedContour(profile,backX){
 function processImage(){
   if(!sourceImage)return;
 
-  E.status.textContent='Behandler billede…';
+  E.status.textContent='Processing image…';
   E.svg.disabled=E.dxf.disabled=true;
 
   setTimeout(()=>{
@@ -646,7 +657,7 @@ function processImage(){
       if(selectedSeed){
         comp=componentFromSeed(mask,w,h,selectedSeed.x,selectedSeed.y);
         if(comp.length<20){
-          E.status.textContent='Det valgte punkt ligger ikke på den fundne flade. Tryk på emnet igen eller justér kontrasten.';
+          E.status.textContent='The selected point is not on the detected area. Tap the object again or adjust the threshold.';
           drawSelectionHint(w,h);
           return;
         }
@@ -654,14 +665,14 @@ function processImage(){
         comp=largestComponent(mask,w,h);
       }
       if(comp.length<20){
-        E.status.textContent='Ingen tydelig profil fundet. Justér kontrastgrænsen.';
+        E.status.textContent='No clear profile found. Adjust the threshold.';
         drawEmpty(w,h);
         return;
       }
 
       const rows=rowEdges(comp,w,h);
       if(rows.length<5){
-        E.status.textContent='Profilen er for lille eller utydelig.';
+        E.status.textContent='The profile is too small or unclear.';
         drawEmpty(w,h);
         return;
       }
@@ -690,18 +701,18 @@ function processImage(){
       const b=bounds(exportPoints);
       const targetH=Number(E.height.value);
       if(!(targetH>0)){
-        E.status.textContent='Angiv en gyldig profilhøjde.';
+        E.status.textContent='Enter a valid profile height.';
         return;
       }
       const mmPerPx=targetH/Math.max(1,b.maxY-b.minY);
       const width=(b.maxX-b.minX)*mmPerPx;
       E.status.textContent=
-        `${exportPoints.length} punkter · ca. ${width.toFixed(1).replace('.',',')} × ${targetH.toFixed(1).replace('.',',')} mm · tryk på emnet for at vælge kant`;
+        `${exportPoints.length} points · approx. ${width.toFixed(1)} × ${targetH.toFixed(1)} mm`;
 
       E.svg.disabled=false;E.dxf.disabled=false;
     }catch(err){
       console.error(err);
-      E.status.textContent='Billedet kunne ikke behandles.';
+      E.status.textContent='The image could not be processed.';
     }
   },15);
 }
@@ -805,11 +816,11 @@ function makeSVG(){
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${s.width.toFixed(3)}mm" height="${s.height.toFixed(3)}mm" viewBox="0 0 ${s.width.toFixed(3)} ${s.height.toFixed(3)}"><path d="${path}" fill="none" stroke="black" stroke-width="0.2"/></svg>`;
 }
 E.dxf.onclick=()=>{
-  const name=`profil_${String(E.height.value).replace('.','_')}mm_${E.points.value}pkt.dxf`;
+  const name=`profile_${String(E.height.value).replace('.','_')}mm_${E.points.value}pts.dxf`;
   download(makeDXF(),name,'application/dxf');
 };
 E.svg.onclick=()=>{
-  const name=`profil_${String(E.height.value).replace('.','_')}mm_${E.points.value}pkt.svg`;
+  const name=`profile_${String(E.height.value).replace('.','_')}mm_${E.points.value}pts.svg`;
   download(makeSVG(),name,'image/svg+xml');
 };
 
