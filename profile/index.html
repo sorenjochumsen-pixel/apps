@@ -186,17 +186,24 @@ input[type=number]{
   border:1px solid var(--line);
   border-radius:18px;
   min-height:70px;
-  padding:0 18px;
-  display:flex;
+  padding:0 16px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 56px;
+  gap:12px;
   align-items:center;
-  justify-content:space-between;
   font-size:16px;
   font-weight:600;
+}
+.toggle-card > span:first-child{
+  min-width:0;
+  line-height:1.15;
 }
 .switch{
   position:relative;
   width:56px;
   height:34px;
+  justify-self:end;
+  flex:0 0 56px;
 }
 .switch input{
   position:absolute;
@@ -329,7 +336,7 @@ dialog p{line-height:1.45;color:#555}
   <header class="header">
     <button class="back" id="back" aria-label="Back">←</button>
     <h1>Profile Scanner</h1>
-    <p class="sub">Photo → Profile Curve (DXF / SVG)</p>
+    <p class="sub">Photo → Vector Profile (DXF / SVG)</p>
     <button class="info" id="info" aria-label="Information">i</button>
   </header>
 
@@ -367,7 +374,7 @@ dialog p{line-height:1.45;color:#555}
 
   <section class="grid">
     <div class="card">
-      <label for="threshold">Threshold</label>
+      <label for="threshold">Edge Strength</label>
       <div class="value" id="thresholdValue">128</div>
       <input id="threshold" type="range" min="0" max="255" value="128">
       <div class="range-labels"><span>Low</span><span>High</span></div>
@@ -422,14 +429,14 @@ dialog p{line-height:1.45;color:#555}
     </button>
   </section>
 
-  <p class="foot">Files are exported at the correct scale for SketchUp, CNC, and laser cutting.</p>
+  <p class="foot">Best results: even light, clear contrast, and a photo taken straight on.</p>
 </main>
 
 <dialog id="dialog">
   <h2>Profile Scanner</h2>
-  <p>The app first detects the largest dark silhouette. You can then tap directly on the object you want to trace. Only the connected area around the selected point is used.</p>
-  <p><b>Number of Points</b> bestemmer detaljegraden. 50–100 points er normalt passende til SketchUp. Flere points følger billedet tættere, men giver tungere geometri.</p>
-  <p>Take Photoet helt vinkelret og med jævnt lys. Tryk inde på selve profilen – ikke på baggrunden eller en skygge.</p>
+  <p>The app combines dark-area detection with local edge searching. Tap close to the edge you want to trace; the scanner searches the surrounding area and selects the nearest usable connected contour.</p>
+  <p><b>Number of Points</b> controls the level of detail. 50–100 points are normally suitable for SketchUp. More points follow the image more closely but create heavier geometry.</p>
+  <p>Take the photo straight on with even lighting. Tap inside the profile itself, not on the background or a shadow.</p>
   <button class="close" id="close">Close</button>
 </dialog>
 
@@ -525,7 +532,7 @@ function movingAverage(values,radius){
 function largestComponent(mask,w,h){
   const seen=new Uint8Array(mask.length);
   let best=[];
-  const dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+  const dirs=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]];
   for(let i=0;i<mask.length;i++){
     if(!mask[i]||seen[i])continue;
     const queue=[i], comp=[];
@@ -545,6 +552,58 @@ function largestComponent(mask,w,h){
     if(comp.length>best.length)best=comp;
   }
   return best;
+}
+
+
+function closeMask(mask,w,h,iterations=2){
+  let current=mask;
+  for(let pass=0;pass<iterations;pass++){
+    const dilated=new Uint8Array(current.length);
+    for(let y=1;y<h-1;y++){
+      for(let x=1;x<w-1;x++){
+        let on=0;
+        for(let yy=-1;yy<=1&&!on;yy++){
+          for(let xx=-1;xx<=1;xx++){
+            if(current[(y+yy)*w+x+xx]){on=1;break;}
+          }
+        }
+        dilated[y*w+x]=on;
+      }
+    }
+    const eroded=new Uint8Array(current.length);
+    for(let y=1;y<h-1;y++){
+      for(let x=1;x<w-1;x++){
+        let on=1;
+        for(let yy=-1;yy<=1&&on;yy++){
+          for(let xx=-1;xx<=1;xx++){
+            if(!dilated[(y+yy)*w+x+xx]){on=0;break;}
+          }
+        }
+        eroded[y*w+x]=on;
+      }
+    }
+    current=eroded;
+  }
+  return current;
+}
+
+function nearestMaskPoint(mask,w,h,seedX,seedY,maxRadius=90){
+  const sx=Math.max(0,Math.min(w-1,Math.round(seedX)));
+  const sy=Math.max(0,Math.min(h-1,Math.round(seedY)));
+  if(mask[sy*w+sx]) return {x:sx,y:sy};
+  for(let r=1;r<=maxRadius;r++){
+    const x0=Math.max(0,sx-r),x1=Math.min(w-1,sx+r);
+    const y0=Math.max(0,sy-r),y1=Math.min(h-1,sy+r);
+    for(let x=x0;x<=x1;x++){
+      if(mask[y0*w+x]) return {x,y:y0};
+      if(mask[y1*w+x]) return {x,y:y1};
+    }
+    for(let y=y0+1;y<y1;y++){
+      if(mask[y*w+x0]) return {x:x0,y};
+      if(mask[y*w+x1]) return {x:x1,y};
+    }
+  }
+  return null;
 }
 
 function componentFromSeed(mask,w,h,seedX,seedY){
@@ -653,19 +712,27 @@ function processImage(){
         mask[j]=invert ? (g<th?1:0) : (g>=th?1:0);
       }
 
+      const repairedMask=closeMask(mask,w,h,Math.max(1,Math.min(3,Number(E.smooth.value))));
       let comp;
       if(selectedSeed){
-        comp=componentFromSeed(mask,w,h,selectedSeed.x,selectedSeed.y);
+        const nearest=nearestMaskPoint(repairedMask,w,h,selectedSeed.x,selectedSeed.y,90);
+        if(!nearest){
+          E.status.textContent='No usable edge found near the selected point. Lower Edge Strength.';
+          drawSelectionHint(w,h);
+          return;
+        }
+        comp=componentFromSeed(repairedMask,w,h,nearest.x,nearest.y);
+        selectedSeed={x:nearest.x,y:nearest.y};
         if(comp.length<20){
-          E.status.textContent='The selected point is not on the detected area. Tap the object again or adjust the threshold.';
+          E.status.textContent='The detected edge is too small. Lower Edge Strength or tap another edge.';
           drawSelectionHint(w,h);
           return;
         }
       }else{
-        comp=largestComponent(mask,w,h);
+        comp=largestComponent(repairedMask,w,h);
       }
       if(comp.length<20){
-        E.status.textContent='No clear profile found. Adjust the threshold.';
+        E.status.textContent='No usable contour found. Lower Edge Strength.';
         drawEmpty(w,h);
         return;
       }
