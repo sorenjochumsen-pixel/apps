@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Weight">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<title>Weight Calculator</title>
+<style>
+:root{
+  --bg:#ffffff;
+  --text:#3f3f42;
+  --muted:#8b8b90;
+  --field:#f3f3f5;
+  --line:#e4e4e7;
+  --active:#454548;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg)}
+body{
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  overscroll-behavior:none;
+}
+button,input,select{font:inherit;color:inherit}
+main{
+  width:min(100%,430px);
+  min-height:100dvh;
+  margin:0 auto;
+  padding:calc(env(safe-area-inset-top) + 13px) 16px calc(env(safe-area-inset-bottom) + 55px);
+  display:flex;
+  flex-direction:column;
+}
+.result{
+  text-align:center;
+  padding:2px 0 13px;
+}
+.result-label{
+  min-height:18px;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.02em;
+  color:var(--muted);
+}
+.result-number{
+  margin-top:1px;
+  font-size:clamp(62px,19vw,88px);
+  line-height:.94;
+  font-weight:500;
+  letter-spacing:-.07em;
+  font-variant-numeric:tabular-nums;
+}
+.result-unit{
+  margin-top:4px;
+  font-size:18px;
+  font-weight:500;
+  color:var(--muted);
+}
+.status{
+  min-height:18px;
+  margin-top:7px;
+  font-size:13px;
+  color:var(--muted);
+}
+.segmented{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:5px;
+  margin:1px 0 10px;
+}
+.segmented button{
+  min-width:0;
+  height:42px;
+  padding:0 3px;
+  border:0;
+  border-radius:12px;
+  background:var(--field);
+  font-size:11px;
+  font-weight:600;
+  line-height:1.05;
+  cursor:pointer;
+}
+.segmented button.active{
+  background:var(--active);
+  color:white;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+.card{
+  min-width:0;
+  height:88px;
+  border-radius:17px;
+  background:var(--field);
+  padding:10px 10px 8px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-align:center;
+}
+.card.wide{grid-column:1/-1}
+.dimensions-card{
+  height:142px;
+  padding:13px 14px 9px;
+}
+.dimensions-title{
+  font-size:14px;
+  font-weight:650;
+  color:var(--muted);
+  line-height:1.15;
+}
+.dimensions-subtitle{
+  margin-top:3px;
+  font-size:12px;
+  font-weight:550;
+  color:var(--muted);
+  line-height:1.15;
+}
+.dimensions-line{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr) 18px minmax(0,.62fr);
+  align-items:center;
+  gap:3px;
+  width:100%;
+  margin-top:5px;
+}
+.dimensions-line input{
+  width:100%;
+  height:46px;
+  min-width:0;
+  font-size:26px;
+  letter-spacing:-.025em;
+  overflow:visible;
+}
+.times{
+  text-align:center;
+  color:var(--muted);
+  font-size:22px;
+  font-weight:500;
+}
+.dimensions-unit{
+  margin-top:0;
+  font-size:13px;
+  font-weight:600;
+  color:var(--muted);
+}
+.card label{
+  display:block;
+  margin-bottom:2px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.input-line{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  min-width:0;
+}
+input{
+  width:100%;
+  min-width:0;
+  height:43px;
+  padding:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  text-align:center;
+  font-size:28px;
+  line-height:1;
+  font-weight:500;
+  font-variant-numeric:tabular-nums;
+  -moz-appearance:textfield;
+}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.unit{
+  flex:0 0 auto;
+  margin-left:4px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--muted);
+}
+select{
+  width:100%;
+  height:43px;
+  padding:0 22px 0 4px;
+  border:0;
+  outline:0;
+  background:transparent;
+  text-align:center;
+  text-align-last:center;
+  font-size:16px;
+  font-weight:600;
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:
+    linear-gradient(45deg,transparent 50%,var(--muted) 50%),
+    linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:
+    calc(100% - 12px) 19px,
+    calc(100% - 7px) 19px;
+  background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat;
+}
+.contents{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+.contents > .wide{grid-column:1/-1}
+.hidden{display:none!important}
+.info{
+  position:fixed;
+  right:max(16px,calc((100vw - 430px)/2 + 16px));
+  bottom:calc(env(safe-area-inset-bottom) + 12px);
+  width:30px;
+  height:30px;
+  padding:0;
+  border:1px solid var(--line);
+  border-radius:50%;
+  background:#fff;
+  color:var(--muted);
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+dialog[open]{
+  position:fixed;
+  inset:50% auto auto 50%;
+  transform:translate(-50%,-50%);
+  z-index:20;
+}
+dialog{
+  width:min(calc(100% - 32px),390px);
+  border:0;
+  border-radius:22px;
+  padding:22px;
+  color:var(--text);
+  box-shadow:0 18px 60px rgba(0,0,0,.2);
+}
+dialog::backdrop{background:rgba(0,0,0,.22)}
+dialog h2{margin:0 0 12px;font-size:22px}
+dialog p{margin:0 0 11px;font-size:14px;line-height:1.45;color:#66666a}
+dialog p strong{color:var(--text)}
+dialog .signature{
+  margin-top:17px;
+  padding-top:14px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:13px;
+}
+dialog button{
+  width:100%;
+  height:45px;
+  margin-top:5px;
+  border:0;
+  border-radius:13px;
+  background:var(--active);
+  color:white;
+  font-weight:600;
+}
+@media (max-height:700px){
+  .contents{gap:7px}
+  main{padding-top:calc(env(safe-area-inset-top) + 7px)}
+  .result{padding-bottom:8px}
+  .result-number{font-size:58px}
+  .segmented{margin-bottom:7px}
+  .segmented button{height:37px}
+  .grid{gap:7px}
+  .card{height:76px;padding:7px 9px 5px}
+  .dimensions-card{height:122px;padding:8px 11px 6px}
+  .dimensions-subtitle{margin-top:2px}
+  .dimensions-line{grid-template-columns:minmax(0,1fr) 16px minmax(0,1fr) 16px minmax(0,.62fr);gap:2px;margin-top:3px}
+  .dimensions-line input{height:38px;font-size:22px}
+  .times{font-size:19px}
+  input{height:38px;font-size:25px}
+  select{height:38px;background-position:calc(100% - 12px) 16px,calc(100% - 7px) 16px}
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="result" aria-live="polite">
+    <div class="result-label">TOTAL WEIGHT</div>
+    <div id="resultNumber" class="result-number">196,3</div>
+    <div class="result-unit">kg</div>
+    <div id="status" class="status">78,5 kg each · 2 pieces</div>
+  </section>
+
+  <nav class="segmented" aria-label="Shape">
+    <button type="button" data-shape="plate" class="active">Plate</button>
+    <button type="button" data-shape="roundTube">Tube</button>
+    <button type="button" data-shape="roundRod">Rod</button>
+    <button type="button" data-shape="boxSection">Box</button>
+    <button type="button" data-shape="volume">m³</button>
+  </nav>
+
+  <section class="grid">
+    <div class="card wide">
+      <label for="material">Material</label>
+      <select id="material">
+        <option value="7.85">Steel / Iron</option>
+        <option value="2.70">Aluminium</option>
+        <option value="8.90">Copper</option>
+        <option value="8.50">Brass</option>
+        <option value="1.18">Acrylic / Plexiglass</option>
+        <option value="1.40">PVC</option>
+        <option value="0.70">MDF approx.</option>
+        <option value="0.60">Plywood approx.</option>
+        <option value="2.40">Concrete approx.</option>
+        <option value="2.50">Glass approx.</option>
+        <option value="custom">Custom density</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <label for="density">Density</label>
+      <div class="input-line"><input id="density" inputmode="decimal" type="text" value="7.85"><span class="unit">g/cm³</span></div>
+    </div>
+    <div class="card">
+      <label for="quantity">Quantity</label>
+      <div class="input-line"><input id="quantity" inputmode="numeric" type="text" value="1"><span class="unit">pcs</span></div>
+    </div>
+
+    <div id="plateFields" class="contents">
+      <div class="card wide dimensions-card">
+        <div class="dimensions-title">Dimensions</div>
+        <div class="dimensions-subtitle">Length × Width × Thickness</div>
+        <div class="dimensions-line">
+          <input id="plateLength" aria-label="Length in millimetres" inputmode="decimal" type="text" value="2500">
+          <span class="times">×</span>
+          <input id="plateWidth" aria-label="Width in millimetres" inputmode="decimal" type="text" value="1250">
+          <span class="times">×</span>
+          <input id="plateThickness" aria-label="Thickness in millimetres" inputmode="decimal" type="text" value="8">
+        </div>
+        <div class="dimensions-unit">mm</div>
+      </div>
+    </div>
+
+    <div id="roundTubeFields" class="contents hidden">
+      <div class="card wide">
+        <label for="tubeLength">Length</label>
+        <div class="input-line"><input id="tubeLength" inputmode="decimal" type="text" value="3000"><span class="unit">mm</span></div>
+      </div>
+      <div class="card">
+        <label for="tubeOuter">Outer diameter</label>
+        <div class="input-line"><input id="tubeOuter" inputmode="decimal" type="text" value="48.3"><span class="unit">mm</span></div>
+      </div>
+      <div class="card">
+        <label for="tubeWall">Wall</label>
+        <div class="input-line"><input id="tubeWall" inputmode="decimal" type="text" value="3.2"><span class="unit">mm</span></div>
+      </div>
+    </div>
+
+    <div id="roundRodFields" class="contents hidden">
+      <div class="card">
+        <label for="rodLength">Length</label>
+        <div class="input-line"><input id="rodLength" inputmode="decimal" type="text" value="1000"><span class="unit">mm</span></div>
+      </div>
+      <div class="card">
+        <label for="rodDiameter">Diameter</label>
+        <div class="input-line"><input id="rodDiameter" inputmode="decimal" type="text" value="20"><span class="unit">mm</span></div>
+      </div>
+    </div>
+
+    <div id="boxSectionFields" class="contents hidden">
+      <div class="card wide">
+        <label for="boxLength">Length</label>
+        <div class="input-line"><input id="boxLength" inputmode="decimal" type="text" value="3000"><span class="unit">mm</span></div>
+      </div>
+      <div class="card">
+        <label for="boxWidth">Outer width</label>
+        <div class="input-line"><input id="boxWidth" inputmode="decimal" type="text" value="50"><span class="unit">mm</span></div>
+      </div>
+      <div class="card">
+        <label for="boxHeight">Outer height</label>
+        <div class="input-line"><input id="boxHeight" inputmode="decimal" type="text" value="50"><span class="unit">mm</span></div>
+      </div>
+      <div class="card wide">
+        <label for="boxWall">Wall</label>
+        <div class="input-line"><input id="boxWall" inputmode="decimal" type="text" value="3"><span class="unit">mm</span></div>
+      </div>
+    </div>
+
+    <div id="volumeFields" class="contents hidden">
+      <div class="card wide">
+        <label for="volume">Volume</label>
+        <div class="input-line"><input id="volume" inputmode="decimal" type="text" value="1"><span class="unit">m³</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<button id="infoButton" class="info" type="button" aria-label="Information">i</button>
+<dialog id="infoDialog">
+  <h2>Weight Calculator</h2>
+  <p>Calculate the weight of common materials from their dimensions.</p>
+  <p><strong>Shapes</strong><br>Plate / Block · Round Tube · Round Rod · Box Section · Volume (m³)</p>
+  <p><strong>Units</strong><br>Dimensions: mm<br>Density: g/cm³<br>Result: kg</p>
+  <p><strong>Materials</strong><br>Standard material densities are included. A custom density can also be entered manually.</p>
+  <p><strong>Note</strong><br>Calculated values are estimates based on nominal dimensions and density. Actual weight may vary because of material specifications and manufacturing tolerances.</p>
+  <p class="signature">Designed by Søren Faaborg<br>Version 1.0</p>
+  <button id="closeInfo" type="button">Close</button>
+</dialog>
+
+<script>
+'use strict';
+
+const $ = id => document.getElementById(id);
+const storageKey = 'weightCalculator_v3';
+const fieldIds = [
+  'material','density','quantity','plateLength','plateWidth','plateThickness',
+  'tubeLength','tubeOuter','tubeWall','rodLength','rodDiameter',
+  'boxLength','boxWidth','boxHeight','boxWall','volume'
+];
+let shape = 'plate';
+
+function num(id){
+  const value = String($(id).value).trim().replace(',', '.');
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function format(value, decimals){
+  return Number(value).toLocaleString('en-GB',{
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  });
+}
+
+function smartWeight(value){
+  if(value >= 1000) return format(value, 0);
+  if(value >= 100) return format(value, 1);
+  if(value >= 10) return format(value, 2);
+  return format(value, 3);
+}
+
+function save(){
+  try{
+    const data = {shape};
+    fieldIds.forEach(id => data[id] = $(id).value);
+    localStorage.setItem(storageKey, JSON.stringify(data));
+  }catch(error){
+    // Safari may block localStorage for local files or private browsing.
+    console.warn('Values could not be saved on this device.', error);
+  }
+}
+
+function load(){
+  try{
+    const data = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    if(data.shape) shape = data.shape;
+    fieldIds.forEach(id => {
+      if(data[id] !== undefined) $(id).value = data[id];
+    });
+  }catch(error){
+    console.warn('Saved values could not be loaded.', error);
+  }
+}
+
+function materialChanged(){
+  if($('material').value !== 'custom'){
+    $('density').value = $('material').value;
+  }
+}
+
+function showShape(){
+  const map = {
+    plate:'plateFields',
+    roundTube:'roundTubeFields',
+    roundRod:'roundRodFields',
+    boxSection:'boxSectionFields',
+    volume:'volumeFields'
+  };
+  Object.values(map).forEach(id => $(id).classList.add('hidden'));
+  $(map[shape]).classList.remove('hidden');
+  document.querySelectorAll('[data-shape]').forEach(button => {
+    button.classList.toggle('active', button.dataset.shape === shape);
+  });
+}
+
+function showError(message){
+  $('resultNumber').textContent = '—';
+  $('status').textContent = message;
+}
+
+function calculate(){
+  const density = num('density');
+  const quantity = num('quantity');
+  let volumeM3 = 0;
+  let kgPerMetre = null;
+
+  if(density <= 0) return showError('Enter a positive density');
+  if(quantity <= 0) return showError('Enter a positive quantity');
+
+  if(shape === 'plate'){
+    const l = num('plateLength');
+    const w = num('plateWidth');
+    const t = num('plateThickness');
+    if(l <= 0 || w <= 0 || t <= 0) return showError('Enter positive dimensions');
+    volumeM3 = l * w * t / 1e9;
+  }
+
+  if(shape === 'roundTube'){
+    const l = num('tubeLength');
+    const outer = num('tubeOuter');
+    const wall = num('tubeWall');
+    const inner = outer - 2 * wall;
+    if(l <= 0 || outer <= 0 || wall <= 0) return showError('Enter positive dimensions');
+    if(inner <= 0) return showError('Wall is too large');
+    const areaMm2 = Math.PI * (outer * outer - inner * inner) / 4;
+    volumeM3 = areaMm2 * l / 1e9;
+    kgPerMetre = areaMm2 * density / 1000;
+  }
+
+  if(shape === 'roundRod'){
+    const l = num('rodLength');
+    const diameter = num('rodDiameter');
+    if(l <= 0 || diameter <= 0) return showError('Enter positive dimensions');
+    const areaMm2 = Math.PI * diameter * diameter / 4;
+    volumeM3 = areaMm2 * l / 1e9;
+    kgPerMetre = areaMm2 * density / 1000;
+  }
+
+  if(shape === 'boxSection'){
+    const l = num('boxLength');
+    const w = num('boxWidth');
+    const h = num('boxHeight');
+    const wall = num('boxWall');
+    if(l <= 0 || w <= 0 || h <= 0 || wall <= 0) return showError('Enter positive dimensions');
+    const innerW = w - 2 * wall;
+    const innerH = h - 2 * wall;
+    if(innerW <= 0 || innerH <= 0) return showError('Wall is too large');
+    const areaMm2 = w * h - innerW * innerH;
+    volumeM3 = areaMm2 * l / 1e9;
+    kgPerMetre = areaMm2 * density / 1000;
+  }
+
+  if(shape === 'volume'){
+    volumeM3 = num('volume');
+    if(volumeM3 <= 0) return showError('Enter a positive volume');
+  }
+
+  const each = volumeM3 * density * 1000;
+  const total = each * quantity;
+
+  $('resultNumber').textContent = smartWeight(total);
+  const pieces = quantity === 1 ? 'piece' : 'pieces';
+  let status = `${smartWeight(each)} kg each · ${format(quantity, Number.isInteger(quantity) ? 0 : 1)} ${pieces}`;
+  if(kgPerMetre !== null) status += ` · ${format(kgPerMetre, 2)} kg/m`;
+  $('status').textContent = status;
+  save();
+}
+
+document.querySelectorAll('[data-shape]').forEach(button => {
+  button.addEventListener('click', () => {
+    shape = button.dataset.shape;
+    showShape();
+    calculate();
+  });
+});
+
+$('material').addEventListener('change', () => {
+  materialChanged();
+  calculate();
+});
+
+fieldIds.forEach(id => {
+  $(id).addEventListener('input', calculate);
+  $(id).addEventListener('change', calculate);
+});
+
+$('infoButton').addEventListener('click', () => {
+  const dialog = $('infoDialog');
+  if(typeof dialog.showModal === 'function'){
+    dialog.showModal();
+  }else{
+    dialog.setAttribute('open', '');
+  }
+});
+$('closeInfo').addEventListener('click', () => {
+  const dialog = $('infoDialog');
+  if(typeof dialog.close === 'function'){
+    dialog.close();
+  }else{
+    dialog.removeAttribute('open');
+  }
+});
+$('infoDialog').addEventListener('click', event => {
+  if(event.target === $('infoDialog')){
+    const dialog = $('infoDialog');
+    if(typeof dialog.close === 'function') dialog.close();
+    else dialog.removeAttribute('open');
+  }
+});
+
+load();
+showShape();
+calculate();
+</script>
+</body>
+</html>
