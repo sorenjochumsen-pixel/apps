@@ -1,69 +1,385 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="da">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
-<title>Profilscanner – DXF / SVG</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Profil · Faaborg Tools</title>
+<link rel="stylesheet" href="../assets/faaborg.css">
 <style>
-:root{--bg:#fff;--panel:#f3f3f1;--text:#333;--muted:#777;--line:#d8d8d5;--dark:#303030;--r:20px}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
-body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-.app{width:min(100%,780px);margin:auto;padding:14px}
-h1{margin:8px 0 4px;text-align:center;font-size:clamp(30px,7vw,46px);letter-spacing:-1.3px;line-height:1;font-weight:650}
-.sub{text-align:center;color:var(--muted);font-size:14px;margin:0 0 14px}.upload{display:block;background:var(--panel);border:1px dashed #aaa;border-radius:var(--r);padding:16px;text-align:center;cursor:pointer}.upload input{display:none}.upload b{display:block;font-size:18px}.upload span{font-size:13px;color:var(--muted)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.card{background:var(--panel);border-radius:var(--r);padding:11px;min-width:0}.card label{display:block;text-align:center;color:var(--muted);font-size:13px;margin-bottom:7px}.value{text-align:center;font-size:28px;line-height:1.05;margin-bottom:7px;font-variant-numeric:tabular-nums}.unit{font-size:14px;color:var(--muted)}
-input[type=number],select{width:100%;height:48px;border:0;border-radius:13px;background:#fff;color:var(--text);font-size:22px;text-align:center;padding:0 8px}input[type=range]{width:100%;accent-color:#444}.switches{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.chip{position:relative;background:var(--panel);border-radius:15px;padding:12px 6px;text-align:center;font-size:13px}.chip input{position:absolute;opacity:0}.chip:has(input:checked){background:var(--dark);color:#fff}
-.preview{margin-top:10px;background:var(--panel);border-radius:var(--r);padding:10px}canvas{display:block;width:100%;height:auto;max-height:43vh;object-fit:contain;background:#fff;border-radius:14px}.status{text-align:center;min-height:24px;color:var(--muted);font-size:13px;padding-top:8px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}button{height:56px;border:0;border-radius:17px;background:var(--dark);color:#fff;font-size:18px;font-weight:650}button:disabled{opacity:.3}.info{position:fixed;right:16px;bottom:calc(14px + env(safe-area-inset-bottom));width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--text);font-size:20px;box-shadow:0 3px 15px #0001;padding:0}dialog{border:0;border-radius:22px;width:calc(100% - 32px);max-width:520px;padding:22px;color:var(--text)}dialog::backdrop{background:#0006}dialog h2{margin-top:0}dialog p{line-height:1.45;color:#555}.close{width:100%;margin-top:8px}
-@media(max-width:560px){.app{padding:12px}h1{font-size:32px}.card{padding:10px}.preview canvas{max-height:34vh}}
+  .profile-app{
+    width:min(100%,430px);
+    min-height:100dvh;
+    margin:0 auto;
+    padding:calc(env(safe-area-inset-top) + 18px) 14px calc(env(safe-area-inset-bottom) + 64px);
+    color:#3f3f42;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  }
+  .profile-head{text-align:center;margin-bottom:12px}
+  .profile-title{margin:0;font-size:28px;font-weight:700;letter-spacing:-.03em}
+  .profile-status{margin-top:4px;color:#8a8d93;font-size:13px}
+  .preview-card{
+    position:relative;
+    height:286px;
+    border-radius:22px;
+    overflow:hidden;
+    background:#f3f3f5;
+    display:grid;
+    place-items:center;
+  }
+  #preview{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    touch-action:none;
+  }
+  .empty-state{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    text-align:center;
+    color:#8a8d93;
+    pointer-events:none;
+  }
+  .empty-symbol{font-size:44px;line-height:1;margin-bottom:14px}
+  .empty-title{font-size:18px;font-weight:650;color:#55555a}
+  .empty-text{margin-top:6px;font-size:13px;line-height:1.35}
+  .controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .control-card{
+    min-height:86px;
+    padding:10px;
+    border-radius:18px;
+    background:#f3f3f5;
+    text-align:center;
+  }
+  .control-card label{
+    display:block;
+    margin-bottom:6px;
+    color:#8a8d93;
+    font-size:12px;
+    font-weight:650;
+  }
+  .control-value{font-size:13px;color:#67676c;margin-top:4px}
+  input[type=range]{width:100%}
+  .size-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:center;
+    gap:4px;
+  }
+  .size-input{
+    width:92px;
+    border:0;
+    outline:0;
+    background:transparent;
+    text-align:center;
+    font-size:28px;
+    font-weight:500;
+  }
+  .unit{font-size:13px;color:#8a8d93;font-weight:650}
+  .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .action{
+    height:48px;
+    border:0;
+    border-radius:15px;
+    background:#f3f3f5;
+    color:#454548;
+    font-size:15px;
+    font-weight:650;
+  }
+  .action.primary{background:#454548;color:#fff}
+  .action:disabled{opacity:.35}
+  .file-input{display:none}
+  .bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  dialog{
+    width:min(calc(100% - 32px),390px);
+    border:0;
+    border-radius:22px;
+    padding:22px;
+    color:#3f3f42;
+    box-shadow:0 18px 60px rgba(0,0,0,.2);
+  }
+  dialog::backdrop{background:rgba(0,0,0,.22)}
+  dialog h2{margin:0 0 12px;font-size:22px}
+  dialog p{margin:0 0 10px;color:#66666a;font-size:14px;line-height:1.45}
+  dialog button{
+    width:100%;height:44px;margin-top:7px;border:0;border-radius:13px;
+    background:#454548;color:#fff;font-weight:650;
+  }
+  .info{
+    position:fixed;
+    right:max(16px,calc((100vw - 430px)/2 + 16px));
+    bottom:calc(env(safe-area-inset-bottom) + 13px);
+    width:34px;height:34px;padding:0;border:1px solid #dedee3;border-radius:50%;
+    background:#fff;color:#8a8d93;font-size:17px;font-weight:650;
+  }
 </style>
 </head>
 <body>
-<main class="app">
-<h1>Profilscanner</h1><p class="sub">Foto til lukket DXF- eller SVG-kontur – uden ekstern billedmotor.</p>
-<label class="upload" for="file"><input id="file" type="file" accept="image/*" capture="environment"><b>Vælg eller tag et foto</b><span>Bedst: foto lige forfra, jævnt lys og tydelig kontrast</span></label>
-<section class="grid">
-<div class="card"><label for="heightMm">Profilhøjde</label><input id="heightMm" type="number" min="1" step="0.1" inputmode="decimal" value="90"><div style="text-align:center;color:var(--muted);font-size:13px;margin-top:5px">mm</div></div>
-<div class="card"><label for="mode">Metode</label><select id="mode"><option value="silhouette">Silhuet</option><option value="edges">Fotokanter</option></select></div>
-<div class="card"><label for="threshold">Tærskel</label><div class="value" id="thresholdValue">128</div><input id="threshold" type="range" min="0" max="255" value="128"></div>
-<div class="card"><label for="contrast">Kontrast</label><div class="value" id="contrastValue">1,4</div><input id="contrast" type="range" min="0.5" max="3" step="0.1" value="1.4"></div>
-<div class="card"><label for="blur">Udglatning</label><div class="value" id="blurValue">2</div><input id="blur" type="range" min="0" max="5" step="1" value="2"></div>
-<div class="card"><label for="simplify">Forenkling</label><div class="value" id="simplifyValue">1,5</div><input id="simplify" type="range" min="0.2" max="8" step="0.1" value="1.5"></div>
-<div class="card"><label for="minArea">Fjern små områder</label><div class="value"><span id="minAreaValue">0,15</span><span class="unit"> %</span></div><input id="minArea" type="range" min="0" max="5" step="0.05" value="0.15"></div>
-<div class="card"><label for="edgeStrength">Kantstyrke</label><div class="value" id="edgeStrengthValue">70</div><input id="edgeStrength" type="range" min="10" max="200" value="70"></div>
-</section>
-<section class="switches"><label class="chip"><input id="invert" type="checkbox" checked>Vend lys/mørk</label><label class="chip"><input id="largestOnly" type="checkbox" checked>Kun største</label><label class="chip"><input id="mirror" type="checkbox">Spejlvend</label></section>
-<section class="preview"><canvas id="canvas" width="900" height="600"></canvas><div id="status" class="status">Klar – vælg et foto</div></section>
-<section class="actions"><button id="dxf" disabled>Hent DXF</button><button id="svg" disabled>Hent SVG</button></section>
+<main class="profile-app">
+  <header class="profile-head">
+    <h1 class="profile-title">Profil</h1>
+    <div class="profile-status" id="status">Vælg eller fotografér en profil</div>
+  </header>
+
+  <section class="preview-card">
+    <canvas id="preview"></canvas>
+    <div class="empty-state" id="emptyState">
+      <div class="empty-symbol">⌁</div>
+      <div class="empty-title">Indlæs et profilbillede</div>
+      <div class="empty-text">Brug et billede med tydelig kontrast og en ensfarvet baggrund.</div>
+    </div>
+  </section>
+
+  <div class="action-grid">
+    <button class="action primary" id="chooseButton" type="button">Vælg billede</button>
+    <button class="action" id="cameraButton" type="button">Tag foto</button>
+  </div>
+
+  <input class="file-input" id="libraryInput" type="file" accept="image/*">
+  <input class="file-input" id="cameraInput" type="file" accept="image/*" capture="environment">
+
+  <section class="controls">
+    <div class="control-card">
+      <label for="threshold">Kontrast</label>
+      <input id="threshold" type="range" min="20" max="235" value="128">
+      <div class="control-value" id="thresholdValue">128</div>
+    </div>
+
+    <div class="control-card">
+      <label for="smooth">Glatning</label>
+      <input id="smooth" type="range" min="0" max="8" value="2">
+      <div class="control-value" id="smoothValue">2</div>
+    </div>
+
+    <div class="control-card">
+      <label for="heightMm">Profilhøjde</label>
+      <div class="size-row">
+        <input class="size-input" id="heightMm" inputmode="decimal" value="90">
+        <span class="unit">mm</span>
+      </div>
+    </div>
+
+    <div class="control-card">
+      <label>Fundet kontur</label>
+      <div class="size-row">
+        <span class="size-input" id="pointCount">0</span>
+        <span class="unit">pkt.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="bottom-row">
+    <button class="action" id="svgButton" type="button" disabled>Eksportér SVG</button>
+    <button class="action" id="dxfButton" type="button" disabled>Eksportér DXF</button>
+  </section>
 </main>
-<button class="info" id="info">i</button>
-<dialog id="dialog"><h2>Sådan bruges appen</h2><p><b>Silhuet</b> er bedst til en mørk profil på lys baggrund. <b>Fotokanter</b> finder kraftige kontrastkanter i et almindeligt foto, men kræver ofte mere justering.</p><p>Profilen skaleres efter den angivne højde. Eksporten bruger millimeter. Appen virker lokalt og på iPhone uden OpenCV eller andre eksterne biblioteker.</p><p>Et fotografi kan give perspektivfejl. Præcis CAD-geometri kræver et foto taget helt vinkelret på profilen.</p><button class="close" id="close">Luk</button></dialog>
+
+<button class="info" id="infoButton" type="button" aria-label="Information">i</button>
+
+<dialog id="infoDialog">
+  <h2>Profil</h2>
+  <p>Appen omdanner et profilfoto til en enkel kontur og eksporterer den som SVG eller DXF.</p>
+  <p>Bedste resultat fås med mørk profil mod lys, ensfarvet baggrund og et foto taget vinkelret på profilen.</p>
+  <p>Dette er første arbejdsudkast. Perspektivkorrektion og manuel beskæring kommer i næste version.</p>
+  <button id="closeInfo" type="button">Luk</button>
+</dialog>
+
+<script src="../assets/faaborg.js"></script>
 <script>
-'use strict';
-const $=id=>document.getElementById(id);const E={file:$('file'),height:$('heightMm'),mode:$('mode'),threshold:$('threshold'),contrast:$('contrast'),blur:$('blur'),simplify:$('simplify'),minArea:$('minArea'),edgeStrength:$('edgeStrength'),invert:$('invert'),largestOnly:$('largestOnly'),mirror:$('mirror'),canvas:$('canvas'),status:$('status'),dxf:$('dxf'),svg:$('svg')};
-const ctx=E.canvas.getContext('2d',{willReadFrequently:true});let img=null,contoursOut=[],timer=null;
-const keys=['heightMm','mode','threshold','contrast','blur','simplify','minArea','edgeStrength','invert','largestOnly','mirror'];
-function load(){for(const k of keys){const el=$(k),v=localStorage.getItem('profile_'+k);if(v!==null){el.type==='checkbox'?el.checked=v==='true':el.value=v}}labels()}
-function save(){for(const k of keys){const el=$(k);localStorage.setItem('profile_'+k,el.type==='checkbox'?el.checked:el.value)}}
-function labels(){$('thresholdValue').textContent=E.threshold.value;$('contrastValue').textContent=Number(E.contrast.value).toFixed(1).replace('.',',');$('blurValue').textContent=E.blur.value;$('simplifyValue').textContent=Number(E.simplify.value).toFixed(1).replace('.',',');$('minAreaValue').textContent=Number(E.minArea.value).toFixed(2).replace('.',',');$('edgeStrengthValue').textContent=E.edgeStrength.value}
-function queue(){labels();save();clearTimeout(timer);timer=setTimeout(process,90)}
-[...document.querySelectorAll('input,select')].forEach(el=>{if(el!==E.file)el.addEventListener('input',queue)});
-E.file.addEventListener('change',ev=>{const f=ev.target.files?.[0];if(!f)return;const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{img=im;URL.revokeObjectURL(u);process()};im.onerror=()=>{URL.revokeObjectURL(u);E.status.textContent='Fotoet kunne ikke åbnes.'};im.src=u});
-function clamp(v){return v<0?0:v>255?255:v}
-function boxBlur(src,w,h,r){if(r<=0)return src;let a=src,b=new Uint8ClampedArray(src.length);for(let pass=0;pass<r;pass++){for(let y=0;y<h;y++){for(let x=0;x<w;x++){let s=0,n=0;for(let yy=-1;yy<=1;yy++)for(let xx=-1;xx<=1;xx++){const nx=x+xx,ny=y+yy;if(nx>=0&&ny>=0&&nx<w&&ny<h){s+=a[ny*w+nx];n++}}b[y*w+x]=s/n} } const t=a;a=b;b=t}return a}
-function sobel(gray,w,h){const out=new Uint8ClampedArray(w*h);for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=y*w+x;const gx=-gray[i-w-1]-2*gray[i-1]-gray[i+w-1]+gray[i-w+1]+2*gray[i+1]+gray[i+w+1];const gy=-gray[i-w-1]-2*gray[i-w]-gray[i-w+1]+gray[i+w-1]+2*gray[i+w]+gray[i+w+1];out[i]=Math.min(255,Math.hypot(gx,gy))}return out}
-function components(mask,w,h,minPixels){const seen=new Uint8Array(mask.length),list=[];const dirs=[[1,0],[-1,0],[0,1],[0,-1]];for(let i=0;i<mask.length;i++){if(!mask[i]||seen[i])continue;const q=[i],pix=[];seen[i]=1;for(let p=0;p<q.length;p++){const cur=q[p],x=cur%w,y=(cur/w)|0;pix.push(cur);for(const[dX,dY]of dirs){const nx=x+dX,ny=y+dY;if(nx>=0&&ny>=0&&nx<w&&ny<h){const ni=ny*w+nx;if(mask[ni]&&!seen[ni]){seen[ni]=1;q.push(ni)}}}}if(pix.length>=minPixels)list.push(pix)}return list.sort((a,b)=>b.length-a.length)}
-function boundaryOf(pixels,w,h){const set=new Set(pixels),pts=[];for(const i of pixels){const x=i%w,y=(i/w)|0;if(x===0||y===0||x===w-1||y===h-1||!set.has(i-1)||!set.has(i+1)||!set.has(i-w)||!set.has(i+w))pts.push({x,y})}if(pts.length<3)return[];const cx=pts.reduce((s,p)=>s+p.x,0)/pts.length,cy=pts.reduce((s,p)=>s+p.y,0)/pts.length;pts.sort((a,b)=>Math.atan2(a.y-cy,a.x-cx)-Math.atan2(b.y-cy,b.x-cx));return pts}
-function distToSeg(p,a,b){const dx=b.x-a.x,dy=b.y-a.y;if(dx===0&&dy===0)return Math.hypot(p.x-a.x,p.y-a.y);let t=((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy);t=Math.max(0,Math.min(1,t));return Math.hypot(p.x-(a.x+t*dx),p.y-(a.y+t*dy))}
-function rdp(points,eps){if(points.length<3)return points;let max=0,idx=0;for(let i=1;i<points.length-1;i++){const d=distToSeg(points[i],points[0],points.at(-1));if(d>max){max=d;idx=i}}if(max>eps){const l=rdp(points.slice(0,idx+1),eps),r=rdp(points.slice(idx),eps);return l.slice(0,-1).concat(r)}return[points[0],points.at(-1)]}
-function smoothClosed(points,rounds){let a=points.slice();for(let r=0;r<rounds;r++){a=a.map((p,i)=>{const prev=a[(i-1+a.length)%a.length],next=a[(i+1)%a.length];return{x:(prev.x+2*p.x+next.x)/4,y:(prev.y+2*p.y+next.y)/4}})}return a}
-function process(){if(!img)return;E.status.textContent='Behandler foto…';E.dxf.disabled=E.svg.disabled=true;setTimeout(()=>{try{const max=900,s=Math.min(max/img.width,max/img.height,1),w=Math.max(2,Math.round(img.width*s)),h=Math.max(2,Math.round(img.height*s));E.canvas.width=w;E.canvas.height=h;ctx.drawImage(img,0,0,w,h);const data=ctx.getImageData(0,0,w,h).data,gray=new Uint8ClampedArray(w*h),c=Number(E.contrast.value);for(let i=0,j=0;i<data.length;i+=4,j++)gray[j]=clamp((0.2126*data[i]+0.7152*data[i+1]+0.0722*data[i+2]-128)*c+128);const g=boxBlur(gray,w,h,Number(E.blur.value));const mask=new Uint8Array(w*h);if(E.mode.value==='edges'){const ed=sobel(g,w,h),th=Number(E.edgeStrength.value);for(let i=0;i<mask.length;i++)mask[i]=ed[i]>=th?1:0}else{const th=Number(E.threshold.value),inv=E.invert.checked;for(let i=0;i<mask.length;i++)mask[i]=inv?(g[i]<th?1:0):(g[i]>=th?1:0)}const comps=components(mask,w,h,Math.max(10,Math.round(w*h*Number(E.minArea.value)/100)));const chosen=E.largestOnly.checked?comps.slice(0,1):comps.slice(0,20);contoursOut=[];for(const comp of chosen){let p=boundaryOf(comp,w,h);if(p.length<3)continue;p=smoothClosed(p,1);p=rdp(p.concat([p[0]]),Number(E.simplify.value));if(p.length>2&&p.at(-1).x===p[0].x&&p.at(-1).y===p[0].y)p.pop();if(p.length>2)contoursOut.push(p)}drawPreview(w,h);if(!contoursOut.length){E.status.textContent='Ingen brugbar kontur fundet. Justér indstillingerne.';return}const b=bounds(contoursOut),hh=Number(E.height.value);if(!(hh>0)){E.status.textContent='Angiv en gyldig profilhøjde.';return}const mm=hh/(b.maxY-b.minY||1),ww=(b.maxX-b.minX)*mm,total=contoursOut.reduce((n,p)=>n+p.length,0);E.status.textContent=`${contoursOut.length} kontur${contoursOut.length===1?'':'er'} · ${total} punkter · ca. ${ww.toFixed(1).replace('.',',')} × ${hh.toFixed(1).replace('.',',')} mm`;E.dxf.disabled=E.svg.disabled=false}catch(err){console.error(err);E.status.textContent='Billedet kunne ikke behandles.'}},15)}
-function drawPreview(w,h){ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.strokeStyle='#303030';ctx.lineWidth=Math.max(1,w/500);for(const p of contoursOut){ctx.beginPath();p.forEach((q,i)=>i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y));ctx.closePath();ctx.stroke()}}
-function bounds(cs){let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;for(const c of cs)for(const p of c){minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y)}return{minX,minY,maxX,maxY}}
-function scaled(){const b=bounds(contoursOut),height=Number(E.height.value),k=height/(b.maxY-b.minY||1),width=(b.maxX-b.minX)*k;return{width,height,cs:contoursOut.map(c=>c.map(p=>{let x=(p.x-b.minX)*k;if(E.mirror.checked)x=width-x;return{x,y:(b.maxY-p.y)*k}}))}}
-function download(text,name,type){const blob=new Blob([text],{type}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function makeDXF(){const s=scaled(),a=['0','SECTION','2','HEADER','9','$INSUNITS','70','4','0','ENDSEC','0','SECTION','2','ENTITIES'];for(const c of s.cs){a.push('0','LWPOLYLINE','8','PROFILE','90',String(c.length),'70','1');for(const p of c)a.push('10',p.x.toFixed(4),'20',p.y.toFixed(4))}a.push('0','ENDSEC','0','EOF');return a.join('\n')}
-function makeSVG(){const s=scaled(),paths=s.cs.map(c=>`M ${c.map(p=>`${p.x.toFixed(3)},${(s.height-p.y).toFixed(3)}`).join(' L ')} Z`).join(' ');return`<svg xmlns="http://www.w3.org/2000/svg" width="${s.width.toFixed(3)}mm" height="${s.height.toFixed(3)}mm" viewBox="0 0 ${s.width.toFixed(3)} ${s.height.toFixed(3)}"><path d="${paths}" fill="none" stroke="black" stroke-width="0.2"/></svg>`}
-E.dxf.onclick=()=>download(makeDXF(),`profil_${String(E.height.value).replace('.','_')}mm.dxf`,'application/dxf');E.svg.onclick=()=>download(makeSVG(),`profil_${String(E.height.value).replace('.','_')}mm.svg`,'image/svg+xml');$('info').onclick=()=>$('dialog').showModal();$('close').onclick=()=>$('dialog').close();load();
+(() => {
+  const canvas = document.getElementById('preview');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  const emptyState = document.getElementById('emptyState');
+  const status = document.getElementById('status');
+  const libraryInput = document.getElementById('libraryInput');
+  const cameraInput = document.getElementById('cameraInput');
+  const threshold = document.getElementById('threshold');
+  const smooth = document.getElementById('smooth');
+  const heightMm = document.getElementById('heightMm');
+  const thresholdValue = document.getElementById('thresholdValue');
+  const smoothValue = document.getElementById('smoothValue');
+  const pointCount = document.getElementById('pointCount');
+  const svgButton = document.getElementById('svgButton');
+  const dxfButton = document.getElementById('dxfButton');
+
+  let sourceImage = null;
+  let contour = [];
+
+  document.getElementById('chooseButton').addEventListener('click', () => libraryInput.click());
+  document.getElementById('cameraButton').addEventListener('click', () => cameraInput.click());
+  libraryInput.addEventListener('change', handleFile);
+  cameraInput.addEventListener('change', handleFile);
+  threshold.addEventListener('input', processImage);
+  smooth.addEventListener('input', processImage);
+  heightMm.addEventListener('input', () => {
+    FaaborgTools.storage.set('profil-height-mm', heightMm.value);
+  });
+
+  heightMm.value = FaaborgTools.storage.get('profil-height-mm', '90');
+
+  function handleFile(event){
+    const file = event.target.files && event.target.files[0];
+    if(!file) return;
+
+    const img = new Image();
+    img.onload = () => {
+      sourceImage = img;
+      emptyState.hidden = true;
+      processImage();
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => {
+      status.textContent = 'Billedet kunne ikke indlæses';
+    };
+    img.src = URL.createObjectURL(file);
+  }
+
+  function processImage(){
+    thresholdValue.textContent = threshold.value;
+    smoothValue.textContent = smooth.value;
+    if(!sourceImage) return;
+
+    const maxW = 900;
+    const maxH = 650;
+    const scale = Math.min(maxW / sourceImage.naturalWidth, maxH / sourceImage.naturalHeight, 1);
+    canvas.width = Math.max(1, Math.round(sourceImage.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(sourceImage.naturalHeight * scale));
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(sourceImage,0,0,canvas.width,canvas.height);
+
+    const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    const data = imageData.data;
+    const limit = Number(threshold.value);
+    const mask = new Uint8Array(canvas.width * canvas.height);
+
+    for(let i=0,p=0;i<data.length;i+=4,p++){
+      const gray = 0.299*data[i] + 0.587*data[i+1] + 0.114*data[i+2];
+      mask[p] = gray < limit ? 1 : 0;
+      const c = mask[p] ? 35 : 248;
+      data[i] = data[i+1] = data[i+2] = c;
+      data[i+3] = 255;
+    }
+
+    ctx.putImageData(imageData,0,0);
+    contour = extractBoundary(mask, canvas.width, canvas.height);
+    contour = simplify(contour, Number(smooth.value));
+
+    if(contour.length > 2){
+      drawContour(contour);
+      pointCount.textContent = contour.length;
+      status.textContent = 'Kontur fundet';
+      svgButton.disabled = false;
+      dxfButton.disabled = false;
+    }else{
+      pointCount.textContent = '0';
+      status.textContent = 'Ingen tydelig kontur fundet';
+      svgButton.disabled = true;
+      dxfButton.disabled = true;
+    }
+  }
+
+  function extractBoundary(mask,w,h){
+    const points = [];
+    for(let y=1;y<h-1;y++){
+      for(let x=1;x<w-1;x++){
+        const i = y*w+x;
+        if(!mask[i]) continue;
+        if(!mask[i-1] || !mask[i+1] || !mask[i-w] || !mask[i+w]){
+          points.push({x,y});
+        }
+      }
+    }
+    if(points.length < 3) return [];
+
+    // Sorterer punkterne omkring centrum. Det er en enkel første-version,
+    // som virker bedst på én sammenhængende, lukket profil.
+    let cx=0, cy=0;
+    for(const p of points){ cx+=p.x; cy+=p.y; }
+    cx/=points.length; cy/=points.length;
+    points.sort((a,b)=>Math.atan2(a.y-cy,a.x-cx)-Math.atan2(b.y-cy,b.x-cx));
+    return points;
+  }
+
+  function simplify(points, amount){
+    if(amount <= 0 || points.length < 10) return points;
+    const step = Math.max(1, amount * 2);
+    const reduced = [];
+    for(let i=0;i<points.length;i+=step){
+      reduced.push(points[i]);
+    }
+    return reduced;
+  }
+
+  function drawContour(points){
+    ctx.save();
+    ctx.strokeStyle = '#d97f00';
+    ctx.lineWidth = Math.max(2, canvas.width/350);
+    ctx.beginPath();
+    ctx.moveTo(points[0].x,points[0].y);
+    for(let i=1;i<points.length;i++) ctx.lineTo(points[i].x,points[i].y);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function normalizedPoints(){
+    if(contour.length < 3) return [];
+    let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+    contour.forEach(p=>{
+      minX=Math.min(minX,p.x); minY=Math.min(minY,p.y);
+      maxX=Math.max(maxX,p.x); maxY=Math.max(maxY,p.y);
+    });
+    const targetH = Math.max(0.1, FaaborgTools.parseNumber(heightMm.value));
+    const scale = targetH / Math.max(1,maxY-minY);
+    return contour.map(p=>({
+      x:(p.x-minX)*scale,
+      y:(maxY-p.y)*scale
+    }));
+  }
+
+  function download(name,content,type){
+    const blob = new Blob([content],{type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url;
+    a.download=name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+
+  svgButton.addEventListener('click',()=>{
+    const pts = normalizedPoints();
+    if(!pts.length) return;
+    const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y);
+    const width=Math.max(...xs), height=Math.max(...ys);
+    const path=pts.map((p,i)=>(i?'L':'M')+p.x.toFixed(3)+' '+p.y.toFixed(3)).join(' ')+' Z';
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${width.toFixed(3)}mm" height="${height.toFixed(3)}mm" viewBox="0 0 ${width.toFixed(3)} ${height.toFixed(3)}"><path d="${path}" fill="none" stroke="black" stroke-width="0.2"/></svg>`;
+    download('profil.svg',svg,'image/svg+xml');
+  });
+
+  dxfButton.addEventListener('click',()=>{
+    const pts = normalizedPoints();
+    if(!pts.length) return;
+    let dxf='0\nSECTION\n2\nENTITIES\n0\nLWPOLYLINE\n8\n0\n90\n'+pts.length+'\n70\n1\n';
+    pts.forEach(p=>{
+      dxf += '10\n'+p.x.toFixed(4)+'\n20\n'+p.y.toFixed(4)+'\n';
+    });
+    dxf += '0\nENDSEC\n0\nEOF\n';
+    download('profil.dxf',dxf,'application/dxf');
+  });
+
+  FaaborgTools.bindInfoDialog();
+})();
 </script>
-</body></html>
+</body>
+</html>
