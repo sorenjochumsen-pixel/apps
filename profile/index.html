@@ -6,42 +6,41 @@
 <meta name="theme-color" content="#ffffff">
 <title>Profile Trace</title>
 <style>
-:root{--bg:#fff;--panel:#f7f7f5;--panel2:#fbfbfa;--text:#353538;--muted:#7d7d84;--line:#dedee2;--blue:#0a56db;--orange:#ff9f0a;--radius:22px}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
-body{min-height:100vh;padding:calc(10px + env(safe-area-inset-top)) 0 calc(14px + env(safe-area-inset-bottom))}
-button,input{font:inherit}.app{width:min(100%,860px);margin:auto;padding:0 10px}.header{position:relative;text-align:center;margin:4px 0 14px}
-h1{margin:0;font-size:clamp(34px,7vw,52px);line-height:1;letter-spacing:-1.8px}.sub{margin:7px 0 0;color:var(--muted);font-size:clamp(15px,3.8vw,20px)}
-.back,.info{position:absolute;top:-2px;width:44px;height:44px;border:0;background:transparent;color:var(--text);cursor:pointer}.back{left:0;font-size:38px;line-height:1}
-.info{right:0;border:1px solid var(--line);border-radius:50%;background:#fff;font:italic 700 24px Georgia,serif}.preview{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);padding:10px}
-canvas{display:block;width:100%;height:auto;max-height:40vh;object-fit:contain;background:#fff;border-radius:16px;touch-action:manipulation}
-.status{text-align:center;min-height:24px;padding-top:10px;color:var(--muted);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hint{text-align:center;min-height:20px;margin-top:2px;color:var(--muted);font-size:13px}.mode-row,.quick-row,.grid,.toggle-row,.export-row{display:grid;gap:10px;margin-top:10px}
-.mode-row,.quick-row,.toggle-row,.export-row{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr 1fr}.mode,.quick,.export,.action{border:1px solid var(--line);border-radius:18px;background:#fff;color:var(--text);font-weight:700;cursor:pointer}
-.mode{min-height:58px;font-size:17px}.mode.active{box-shadow:inset 0 0 0 2px var(--blue);color:var(--blue)}.quick{min-height:68px;font-size:17px;display:flex;align-items:center;justify-content:center}.quick input{display:none}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:15px}.card label{display:block;text-align:center;color:var(--muted);font-size:15px;font-weight:680;margin-bottom:7px}
-.value{text-align:center;font-size:40px;line-height:1;margin:4px 0 13px;font-variant-numeric:tabular-nums}.unit{color:var(--muted);font-size:18px}
-input[type=range]{width:100%;accent-color:var(--blue)}input[type=number]{width:100%;height:62px;border:0;border-radius:16px;background:#fff;color:var(--text);text-align:center;font-size:34px}
-.range-labels{display:flex;justify-content:space-between;margin-top:4px;color:var(--muted);font-size:12px}.toggle-card{background:var(--panel2);border:1px solid var(--line);border-radius:18px;min-height:70px;padding:0 16px;display:grid;grid-template-columns:minmax(0,1fr) 56px;gap:12px;align-items:center;font-size:16px;font-weight:600}
-.switch{position:relative;width:56px;height:34px;justify-self:end}.switch input{position:absolute;opacity:0}.slider{position:absolute;inset:0;border-radius:999px;background:#e4e4e7}.slider:before{content:"";position:absolute;width:28px;height:28px;left:3px;top:3px;border-radius:50%;background:#fff;box-shadow:0 1px 5px #0003;transition:.2s}
-.switch input:checked + .slider{background:var(--blue)}.switch input:checked + .slider:before{transform:translateX(22px)}.export{min-height:78px;font-size:20px}.export:disabled{opacity:.35;cursor:default}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.action{min-height:54px;font-size:16px}.foot{text-align:center;color:var(--muted);font-size:13px;margin:10px 8px 0}
-dialog{border:0;border-radius:24px;width:calc(100% - 30px);max-width:560px;padding:24px}dialog::backdrop{background:#0007}dialog p{line-height:1.45;color:#555}.close{width:100%;min-height:54px;border:0;border-radius:16px;background:var(--text);color:#fff;font-size:18px;font-weight:700}.trace-only{display:none}
-@media(max-width:600px){canvas{max-height:34vh}.grid{gap:8px}.card{padding:12px}.value{font-size:35px}}
+:root{--bg:#ffffff;--panel:#f7f7f6;--panel2:#fbfbfa;--text:#343438;--muted:#7b7b82;--line:#dddddf;--blue:#2563eb;--radius:22px}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+body{min-height:100vh;padding:calc(8px + env(safe-area-inset-top)) 0 calc(12px + env(safe-area-inset-bottom))}
+button,input{font:inherit}.app{width:min(100%,860px);margin:auto;padding:0 6px}
+.header{position:relative;text-align:center;margin:2px 0 10px}.header h1{margin:0;font-size:clamp(34px,7vw,52px);line-height:1;letter-spacing:-1.8px}.sub{margin:7px 0 0;color:var(--muted);font-size:clamp(15px,3.8vw,20px)}
+.back,.info{position:absolute;top:-3px;width:44px;height:44px;border:0;background:transparent;color:var(--text);cursor:pointer}.back{left:0;font-size:38px;line-height:1}.info{right:0;border:1px solid var(--line);border-radius:50%;background:#fff;font:italic 700 24px Georgia,serif}
+.preview{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);padding:10px}
+canvas{display:block;width:100%;height:auto;max-height:47vh;object-fit:contain;background:#fff;border-radius:16px;touch-action:manipulation}
+.grid,.quick-row,.toggle-row,.mode-row,.export-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.card,.toggle-card,.mode,.quick,.export,.action,.height-card{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:18px}
+.card{background:var(--panel);padding:14px 14px 12px}.card label{display:block;text-align:center;color:var(--muted);font-size:15px;font-weight:700;margin-top:4px}.value{text-align:center;font-size:40px;line-height:1;margin:8px 0 8px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--blue)}.range-labels{display:flex;justify-content:space-between;margin-top:2px;color:var(--muted);font-size:12px}.range-title{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margin-top:-18px;pointer-events:none}
+.quick,.mode,.export,.action{font-weight:750;cursor:pointer}.quick{min-height:62px;display:flex;align-items:center;justify-content:center}.quick input{display:none}.mode{min-height:58px}.mode.active{box-shadow:inset 0 0 0 2px var(--blue);color:var(--blue)}
+.toggle-card{background:var(--panel2);min-height:64px;padding:0 16px;display:grid;grid-template-columns:minmax(0,1fr) 56px;gap:12px;align-items:center;font-size:16px;font-weight:650}
+.switch{position:relative;width:56px;height:34px;justify-self:end}.switch input{position:absolute;opacity:0}.slider{position:absolute;inset:0;border-radius:999px;background:#e2e2e7}.slider:before{content:"";position:absolute;width:28px;height:28px;left:3px;top:3px;border-radius:50%;background:#fff;box-shadow:0 1px 5px #0003;transition:.2s}.switch input:checked + .slider{background:var(--blue)}.switch input:checked + .slider:before{transform:translateX(22px)}
+.height-card{margin-top:10px;background:var(--panel);padding:10px 16px 14px;text-align:center}.height-card label{display:block;color:var(--muted);font-size:22px;font-weight:750;margin-bottom:6px}.height-card input{width:100%;height:76px;border:0;border-radius:18px;background:#fff;color:var(--text);text-align:center;font-size:48px}
+.status{text-align:center;min-height:22px;padding-top:10px;color:var(--muted);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hint{text-align:center;min-height:18px;margin-top:2px;color:var(--muted);font-size:13px}
+.export{min-height:74px;font-size:19px}.export:disabled{opacity:.35;cursor:default}.foot{text-align:center;color:var(--muted);font-size:13px;margin:10px 8px 0}.engine-setting,.actions{display:none!important}
+.crop-overlay{position:fixed;inset:0;z-index:1000;background:#111;display:none;flex-direction:column;padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom))}.crop-overlay.open{display:flex}.crop-header{display:grid;grid-template-columns:88px 1fr 88px;align-items:center;gap:8px;color:#fff;min-height:52px}.crop-title{text-align:center;font-size:20px;font-weight:750}.crop-btn{min-height:44px;border:0;border-radius:14px;background:#2b2b2e;color:#fff;font-weight:700}.crop-btn.primary{background:var(--blue)}.crop-stage{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}.crop-stage canvas{max-width:100%;max-height:100%;width:auto;height:auto;border-radius:0;background:#000;touch-action:none}.crop-help{color:#d1d1d6;text-align:center;font-size:13px;padding:8px 4px 2px}.crop-footer{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:8px}.crop-footer .crop-btn{min-height:50px}
+dialog{border:0;border-radius:24px;width:calc(100% - 30px);max-width:560px;padding:24px}dialog::backdrop{background:#0007}dialog p{line-height:1.45;color:#555}.close{width:100%;min-height:54px;border:0;border-radius:16px;background:var(--text);color:#fff;font-size:18px;font-weight:700}
+@media(max-width:600px){canvas{max-height:46vh}.grid{gap:8px}.card{padding:12px 10px 10px}.value{font-size:36px}.height-card label{font-size:20px}.height-card input{font-size:46px}}
 </style>
 </head>
 <body>
 <main class="app">
 <header class="header"><button class="back" id="back" aria-label="Back">←</button><h1>Profile Trace</h1><p class="sub">Photo → SVG / DXF</p><button class="info" id="info" aria-label="Information">i</button></header>
 
-<section class="preview">
-  <canvas id="canvas" width="900" height="650"></canvas>
-  <div id="status" class="status">Choose an image</div>
-  <div class="hint" id="hint">Single Profile: tap the object you want to trace</div>
-</section>
+<section class="preview"><canvas id="canvas" width="900" height="650"></canvas></section>
 
-<section class="mode-row">
-  <button class="mode active" id="singleMode">Single Profile</button>
-  <button class="mode" id="traceMode">Image Trace</button>
+<section class="grid">
+  <div class="card"><div class="value" id="thresholdValue">128</div><input id="threshold" type="range" min="0" max="255" value="128"><div class="range-labels"><span>Dark</span><span>Light</span></div><div class="range-title">Threshold</div></div>
+  <div class="card"><div class="value" id="blurValue">1</div><input id="blur" type="range" min="0" max="4" value="1"><div class="range-labels"><span>Sharp</span><span>Softer</span></div><div class="range-title">Photo Cleanup</div></div>
+  <div class="card"><div class="value" id="detailValue">1.25</div><input id="detail" type="range" min="0" max="6" step="0.25" value="1.25"><div class="range-labels"><span>More detail</span><span>Less detail</span></div><div class="range-title">Simplification</div></div>
+  <div class="card"><div class="value" id="smoothValue">0</div><input id="smooth" type="range" min="0" max="3" value="0"><div class="range-labels"><span>Off</span><span>More</span></div><div class="range-title">Corner-safe Smoothing</div></div>
 </section>
 
 <section class="quick-row">
@@ -49,26 +48,34 @@ dialog{border:0;border-radius:24px;width:calc(100% - 30px);max-width:560px;paddi
   <label class="quick" for="camera"><input id="camera" type="file" accept="image/*" capture="environment">Take Photo</label>
 </section>
 
-<section class="grid">
-  <div class="card"><label for="threshold">Threshold</label><div class="value" id="thresholdValue">128</div><input id="threshold" type="range" min="0" max="255" value="128"><div class="range-labels"><span>Dark</span><span>Light</span></div></div>
-  <div class="card"><label for="blur">Photo Cleanup</label><div class="value" id="blurValue">1</div><input id="blur" type="range" min="0" max="4" value="1"><div class="range-labels"><span>Sharp</span><span>Softer</span></div></div>
-  <div class="card trace-only"><label for="noise">Remove Small Shapes</label><div class="value" id="noiseValue">80</div><input id="noise" type="range" min="0" max="3000" step="10" value="80"><div class="range-labels"><span>0</span><span>3000 px²</span></div></div>
-  <div class="card"><label for="detail">Simplification</label><div class="value" id="detailValue">1.25</div><input id="detail" type="range" min="0" max="6" step="0.25" value="1.25"><div class="range-labels"><span>More detail</span><span>Less detail</span></div></div>
-  <div class="card"><label for="smooth">Corner-safe Smoothing</label><div class="value" id="smoothValue">0</div><input id="smooth" type="range" min="0" max="3" value="0"><div class="range-labels"><span>Off</span><span>More</span></div></div>
-  <div class="card"><label for="heightMm">Output Height (mm)</label><input id="heightMm" type="number" min="1" step="0.1" value="90" inputmode="decimal"></div>
-</section>
-
 <section class="toggle-row">
   <label class="toggle-card"><span>Automatic Local Threshold</span><span class="switch"><input id="adaptive" type="checkbox" checked><span class="slider"></span></span></label>
-  <label class="toggle-card trace-only"><span>Trace Light Areas</span><span class="switch"><input id="invert" type="checkbox"><span class="slider"></span></span></label>
-  <label class="toggle-card trace-only"><span>Ignore Border Background</span><span class="switch"><input id="ignoreBorder" type="checkbox" checked><span class="slider"></span></span></label>
   <label class="toggle-card"><span>Show Photo Underlay</span><span class="switch"><input id="underlay" type="checkbox" checked><span class="slider"></span></span></label>
 </section>
 
-<section class="actions trace-only"><button class="action" id="selectAll">Select All</button><button class="action" id="clearAll">Clear Selection</button></section>
+<section class="mode-row">
+  <button class="mode active" id="singleMode">Single Profile</button>
+  <button class="mode" id="traceMode">Image Trace</button>
+</section>
+
+<section class="height-card"><label for="heightMm">Output Height (mm)</label><input id="heightMm" type="number" min="1" step="0.1" value="90" inputmode="decimal"></section>
+
+<div id="status" class="status">Choose an image</div>
+<div class="hint" id="hint">Single Profile: tap the object you want to trace</div>
+
+<div class="engine-setting"><input id="noise" type="range" min="0" max="3000" step="10" value="80"><span id="noiseValue">80</span><input id="invert" type="checkbox"><input id="ignoreBorder" type="checkbox" checked></div>
+<section class="actions"><button class="action" id="selectAll">Select All</button><button class="action" id="clearAll">Clear Selection</button></section>
+
 <section class="export-row"><button class="export" id="svg" disabled>Export SVG</button><button class="export" id="dxf" disabled>Export DXF</button></section>
 <p class="foot" id="foot">Single Profile traces one tapped object. Image Trace preserves separate shapes and holes.</p>
 </main>
+
+<section class="crop-overlay" id="cropOverlay" aria-hidden="true">
+  <div class="crop-header"><button class="crop-btn" id="cropCancel">Cancel</button><div class="crop-title">Crop Photo</div><button class="crop-btn primary" id="cropUse">Use Photo</button></div>
+  <div class="crop-stage" id="cropStage"><canvas id="cropCanvas" width="900" height="650"></canvas></div>
+  <div class="crop-help">Drag the frame or its corners so only the object to be traced remains.</div>
+  <div class="crop-footer"><button class="crop-btn" id="cropReset">Reset</button><button class="crop-btn primary" id="cropUseBottom">Use Photo</button></div>
+</section>
 
 <dialog id="dialog">
   <h2>Profile Trace</h2>
@@ -89,6 +96,15 @@ const E = {
   ignoreBorder:$('ignoreBorder'), underlay:$('underlay'), svg:$('svg'), dxf:$('dxf')
 };
 const ctx = E.canvas.getContext('2d', {willReadFrequently:true});
+const cropCanvas = $('cropCanvas');
+const cropCtx = cropCanvas.getContext('2d');
+
+let pendingSource = null;
+let pendingWidth = 0;
+let pendingHeight = 0;
+let cropRect = {x:0,y:0,w:0,h:0};
+let cropDrag = null;
+let cropPointerId = null;
 
 let source = null;
 let sourceWidth = 0;
@@ -155,49 +171,135 @@ function applyModeUI() {
   $('singleMode').classList.toggle('active', single);
   $('traceMode').classList.toggle('active', !single);
   $('hint').textContent = single ? 'Single Profile: tap the object you want to trace' : 'Image Trace: tap a contour or enclosed area to select or deselect it';
-  document.querySelectorAll('.trace-only').forEach(el => el.style.display = single ? 'none' : '');
   $('foot').textContent = single ? 'Tap the intended object; small internal holes are ignored.' : 'Separate shapes and meaningful holes can be selected and exported.';
 }
 $('singleMode').onclick = () => { mode='single'; selected.clear(); applyModeUI(); processImage(); };
 $('traceMode').onclick = () => { mode='trace'; selected.clear(); applyModeUI(); processImage(); };
 
+async function decodeImageFile(file) {
+  if ('createImageBitmap' in window) {
+    try { return await createImageBitmap(file, {imageOrientation:'from-image'}); }
+    catch (_) { return await createImageBitmap(file); }
+  }
+  const url=URL.createObjectURL(file);
+  return await new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Image load failed'))};
+    img.src=url;
+  });
+}
+function pendingSize(img){return {w:img.naturalWidth||img.width,h:img.naturalHeight||img.height};}
+function fitCropCanvas(){
+  if(!pendingSource)return;
+  const stage=$('cropStage').getBoundingClientRect();
+  const maxW=Math.max(280,stage.width),maxH=Math.max(280,stage.height);
+  const scale=Math.min(maxW/pendingWidth,maxH/pendingHeight,1);
+  cropCanvas.width=Math.max(2,Math.round(pendingWidth*scale));
+  cropCanvas.height=Math.max(2,Math.round(pendingHeight*scale));
+  resetCropRect();
+}
+function resetCropRect(){
+  const margin=Math.max(18,Math.round(Math.min(cropCanvas.width,cropCanvas.height)*0.045));
+  cropRect={x:margin,y:margin,w:Math.max(40,cropCanvas.width-2*margin),h:Math.max(40,cropCanvas.height-2*margin)};
+  drawCrop();
+}
+function drawCrop(){
+  if(!pendingSource)return;
+  const w=cropCanvas.width,h=cropCanvas.height;
+  cropCtx.clearRect(0,0,w,h);
+  cropCtx.drawImage(pendingSource,0,0,w,h);
+  cropCtx.save();
+  cropCtx.fillStyle='rgba(0,0,0,.58)';
+  cropCtx.fillRect(0,0,w,h);
+  cropCtx.globalCompositeOperation='destination-out';
+  cropCtx.fillRect(cropRect.x,cropRect.y,cropRect.w,cropRect.h);
+  cropCtx.restore();
+  cropCtx.save();
+  cropCtx.strokeStyle='#fff';cropCtx.lineWidth=Math.max(2,w/420);
+  cropCtx.strokeRect(cropRect.x,cropRect.y,cropRect.w,cropRect.h);
+  cropCtx.strokeStyle='rgba(255,255,255,.65)';cropCtx.lineWidth=1;
+  for(let i=1;i<3;i++){
+    const x=cropRect.x+cropRect.w*i/3,y=cropRect.y+cropRect.h*i/3;
+    cropCtx.beginPath();cropCtx.moveTo(x,cropRect.y);cropCtx.lineTo(x,cropRect.y+cropRect.h);cropCtx.stroke();
+    cropCtx.beginPath();cropCtx.moveTo(cropRect.x,y);cropCtx.lineTo(cropRect.x+cropRect.w,y);cropCtx.stroke();
+  }
+  const r=Math.max(9,w/75);cropCtx.fillStyle='#fff';
+  [[cropRect.x,cropRect.y],[cropRect.x+cropRect.w,cropRect.y],[cropRect.x,cropRect.y+cropRect.h],[cropRect.x+cropRect.w,cropRect.y+cropRect.h]].forEach(([x,y])=>{cropCtx.beginPath();cropCtx.arc(x,y,r,0,Math.PI*2);cropCtx.fill()});
+  cropCtx.restore();
+}
+function cropCanvasPoint(e){
+  const r=cropCanvas.getBoundingClientRect();
+  return {x:(e.clientX-r.left)*cropCanvas.width/r.width,y:(e.clientY-r.top)*cropCanvas.height/r.height};
+}
+function cropHit(p){
+  const hr=Math.max(24,cropCanvas.width/28),x1=cropRect.x,y1=cropRect.y,x2=x1+cropRect.w,y2=y1+cropRect.h;
+  const corners=[['nw',x1,y1],['ne',x2,y1],['sw',x1,y2],['se',x2,y2]];
+  for(const [name,x,y] of corners) if(Math.hypot(p.x-x,p.y-y)<=hr)return name;
+  if(p.x>=x1&&p.x<=x2&&p.y>=y1&&p.y<=y2)return 'move';
+  return null;
+}
+function clampCrop(rect){
+  const min=Math.max(50,Math.min(cropCanvas.width,cropCanvas.height)*.08);
+  rect.w=Math.max(min,Math.min(rect.w,cropCanvas.width));rect.h=Math.max(min,Math.min(rect.h,cropCanvas.height));
+  rect.x=Math.max(0,Math.min(rect.x,cropCanvas.width-rect.w));rect.y=Math.max(0,Math.min(rect.y,cropCanvas.height-rect.h));
+  return rect;
+}
+cropCanvas.addEventListener('pointerdown',e=>{
+  if(cropPointerId!==null)return;
+  const p=cropCanvasPoint(e),kind=cropHit(p);if(!kind)return;
+  cropPointerId=e.pointerId;cropCanvas.setPointerCapture(e.pointerId);
+  cropDrag={kind,start:p,rect:{...cropRect}};e.preventDefault();
+});
+cropCanvas.addEventListener('pointermove',e=>{
+  if(!cropDrag||e.pointerId!==cropPointerId)return;
+  const p=cropCanvasPoint(e),dx=p.x-cropDrag.start.x,dy=p.y-cropDrag.start.y,r={...cropDrag.rect};
+  if(cropDrag.kind==='move'){r.x+=dx;r.y+=dy;}
+  else{
+    if(cropDrag.kind.includes('w')){r.x+=dx;r.w-=dx} if(cropDrag.kind.includes('e'))r.w+=dx;
+    if(cropDrag.kind.includes('n')){r.y+=dy;r.h-=dy} if(cropDrag.kind.includes('s'))r.h+=dy;
+  }
+  cropRect=clampCrop(r);drawCrop();e.preventDefault();
+});
+function endCropPointer(e){if(e.pointerId!==cropPointerId)return;cropDrag=null;cropPointerId=null;}
+cropCanvas.addEventListener('pointerup',endCropPointer);cropCanvas.addEventListener('pointercancel',endCropPointer);
+function openCropper(img){
+  pendingSource=img;const size=pendingSize(img);pendingWidth=size.w;pendingHeight=size.h;
+  $('cropOverlay').classList.add('open');$('cropOverlay').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+  requestAnimationFrame(fitCropCanvas);
+}
+function closeCropper(discard=true){
+  $('cropOverlay').classList.remove('open');$('cropOverlay').setAttribute('aria-hidden','true');document.body.style.overflow='';
+  if(discard&&pendingSource&&pendingSource!==source&&typeof pendingSource.close==='function')pendingSource.close();
+  pendingSource=null;
+}
+async function useCrop(){
+  if(!pendingSource)return;
+  const sx=pendingWidth/cropCanvas.width,sy=pendingHeight/cropCanvas.height;
+  const x=Math.max(0,Math.round(cropRect.x*sx)),y=Math.max(0,Math.round(cropRect.y*sy));
+  const w=Math.max(2,Math.min(pendingWidth-x,Math.round(cropRect.w*sx))),h=Math.max(2,Math.min(pendingHeight-y,Math.round(cropRect.h*sy)));
+  const out=document.createElement('canvas');out.width=w;out.height=h;
+  out.getContext('2d').drawImage(pendingSource,x,y,w,h,0,0,w,h);
+  let cropped;
+  if('createImageBitmap' in window)cropped=await createImageBitmap(out);else{const img=new Image();img.src=out.toDataURL('image/jpeg',.94);await img.decode();cropped=img;}
+  if(source&&typeof source.close==='function')source.close();
+  if(pendingSource&&pendingSource!==source&&typeof pendingSource.close==='function')pendingSource.close();
+  source=cropped;sourceWidth=w;sourceHeight=h;pendingSource=null;
+  closeCropper(false);selected.clear();seedPoint=null;await processImage();
+}
 async function openFile(file) {
   if (!file) return;
-  E.status.textContent = 'Opening image…';
-  selected.clear();
-  seedPoint = null;
-  try {
-    if (source && typeof source.close === 'function') source.close();
-    if ('createImageBitmap' in window) {
-      try {
-        source = await createImageBitmap(file, {imageOrientation:'from-image'});
-      } catch (_) {
-        source = await createImageBitmap(file);
-      }
-      sourceWidth = source.width;
-      sourceHeight = source.height;
-    } else {
-      const url = URL.createObjectURL(file);
-      source = await new Promise((resolve,reject) => {
-        const img = new Image();
-        img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image load failed')); };
-        img.src = url;
-      });
-      sourceWidth = source.naturalWidth || source.width;
-      sourceHeight = source.naturalHeight || source.height;
-    }
-    await processImage();
-  } catch (err) {
-    console.error(err);
-    E.status.textContent = 'The image could not be opened.';
-  } finally {
-    E.file.value = '';
-    E.camera.value = '';
-  }
+  E.status.textContent='Opening image…';selected.clear();seedPoint=null;
+  try { const img=await decodeImageFile(file);openCropper(img); }
+  catch(err){console.error(err);E.status.textContent='The image could not be opened.';}
+  finally{E.file.value='';E.camera.value='';}
 }
-E.file.onchange = e => openFile(e.target.files && e.target.files[0]);
-E.camera.onchange = e => openFile(e.target.files && e.target.files[0]);
+E.file.onchange=e=>openFile(e.target.files&&e.target.files[0]);
+E.camera.onchange=e=>openFile(e.target.files&&e.target.files[0]);
+$('cropReset').onclick=resetCropRect;
+$('cropCancel').onclick=()=>{closeCropper(true);E.status.textContent=source?'Image unchanged':'Choose an image';};
+$('cropUse').onclick=useCrop;$('cropUseBottom').onclick=useCrop;
+window.addEventListener('resize',()=>{if($('cropOverlay').classList.contains('open'))fitCropCanvas();});
 
 function grayscale(data) {
   const out = new Uint8Array(data.length >>> 2);
@@ -565,7 +667,7 @@ function draw() {
     ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
   }
   contours.forEach((path,i)=>{
-    ctx.strokeStyle=selected.has(i)?'#ff9f0a':'#aeb0b7';
+    ctx.strokeStyle=selected.has(i)?'#2563eb':'#aeb0b7';
     ctx.lineWidth=selected.has(i)?Math.max(2.8,w/420):Math.max(1.2,w/850);
     ctx.lineJoin='round';ctx.lineCap='round';
     ctx.beginPath();
