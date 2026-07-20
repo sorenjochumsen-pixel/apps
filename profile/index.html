@@ -39,7 +39,7 @@ dialog{border:0;border-radius:24px;width:calc(100% - 30px);max-width:560px;paddi
 <section class="grid">
   <div class="card"><div class="value" id="thresholdValue">128</div><input id="threshold" type="range" min="0" max="255" value="128"><div class="range-labels"><span>Dark</span><span>Light</span></div><div class="range-title">Threshold</div></div>
   <div class="card"><div class="value" id="blurValue">1</div><input id="blur" type="range" min="0" max="4" value="1"><div class="range-labels"><span>Sharp</span><span>Softer</span></div><div class="range-title">Photo Cleanup</div></div>
-  <div class="card"><div class="value" id="detailValue">1.25</div><input id="detail" type="range" min="0" max="6" step="0.25" value="1.25"><div class="range-labels"><span>More detail</span><span>Less detail</span></div><div class="range-title">Simplification</div></div>
+  <div class="card"><div class="value" id="detailValue">0</div><input id="detail" type="range" min="0" max="6" step="0.25" value="1.25"><div class="range-labels"><span>Highest Quality</span><span>Smaller File</span></div><div class="range-title">Segments</div></div>
   <div class="card"><div class="value" id="smoothValue">0</div><input id="smooth" type="range" min="0" max="3" value="0"><div class="range-labels"><span>Off</span><span>More</span></div><div class="range-title">Corner-safe Smoothing</div></div>
 </section>
 
@@ -53,21 +53,16 @@ dialog{border:0;border-radius:24px;width:calc(100% - 30px);max-width:560px;paddi
   <label class="toggle-card"><span>Show Photo Underlay</span><span class="switch"><input id="underlay" type="checkbox" checked><span class="slider"></span></span></label>
 </section>
 
-<section class="mode-row">
-  <button class="mode active" id="singleMode">Single Profile</button>
-  <button class="mode" id="traceMode">Image Trace</button>
-</section>
-
 <section class="height-card"><label for="heightMm">Output Height (mm)</label><input id="heightMm" type="number" min="1" step="0.1" value="90" inputmode="decimal"></section>
 
 <div id="status" class="status">Choose an image</div>
-<div class="hint" id="hint">Single Profile: tap the object you want to trace</div>
+<div class="hint" id="hint">Tap a contour or enclosed area to select or deselect it</div>
 
 <div class="engine-setting"><input id="noise" type="range" min="0" max="3000" step="10" value="80"><span id="noiseValue">80</span><input id="invert" type="checkbox"><input id="ignoreBorder" type="checkbox" checked></div>
 <section class="actions"><button class="action" id="selectAll">Select All</button><button class="action" id="clearAll">Clear Selection</button></section>
 
 <section class="export-row"><button class="export" id="svg" disabled>Export SVG</button><button class="export" id="dxf" disabled>Export DXF</button></section>
-<p class="foot" id="foot">Single Profile traces one tapped object. Image Trace preserves separate shapes and holes.</p>
+<p class="foot" id="foot">Separate shapes and meaningful holes can be selected and exported.</p>
 </main>
 
 <section class="crop-overlay" id="cropOverlay" aria-hidden="true">
@@ -79,8 +74,7 @@ dialog{border:0;border-radius:24px;width:calc(100% - 30px);max-width:560px;paddi
 
 <dialog id="dialog">
   <h2>Profile Trace</h2>
-  <p><b>Single Profile</b> creates one closed outer contour from the object you tap. A practical touch radius helps with narrow shapes.</p>
-  <p><b>Image Trace</b> extracts multiple closed contours. Tap a contour or its enclosed area to include or exclude it.</p>
+  <p>The app extracts multiple closed contours from the cropped photograph. Tap a contour or its enclosed area to include or exclude it.</p>
   <p>For accurate scale, photograph straight on, avoid reflections, and enter the object's measured height before export.</p>
   <button class="close" id="close">Close</button>
 </dialog>
@@ -109,7 +103,7 @@ let cropPointerId = null;
 let source = null;
 let sourceWidth = 0;
 let sourceHeight = 0;
-let mode = 'single';
+const mode = 'trace';
 let contours = [];
 let selected = new Set();
 let processingMask = null;
@@ -147,7 +141,6 @@ function updateLabels() {
   $('thresholdValue').textContent = E.threshold.value;
   $('blurValue').textContent = E.blur.value;
   $('noiseValue').textContent = E.noise.value;
-  $('detailValue').textContent = Number(E.detail.value).toFixed(2).replace(/\.00$/,'').replace(/0$/,'');
   $('smoothValue').textContent = E.smooth.value;
 }
 function persistControls() {
@@ -167,14 +160,9 @@ E.height.addEventListener('focus', e => e.target.select());
 E.height.addEventListener('click', e => e.target.select());
 
 function applyModeUI() {
-  const single = mode === 'single';
-  $('singleMode').classList.toggle('active', single);
-  $('traceMode').classList.toggle('active', !single);
-  $('hint').textContent = single ? 'Single Profile: tap the object you want to trace' : 'Image Trace: tap a contour or enclosed area to select or deselect it';
-  $('foot').textContent = single ? 'Tap the intended object; small internal holes are ignored.' : 'Separate shapes and meaningful holes can be selected and exported.';
+  $('hint').textContent = 'Tap a contour or enclosed area to select or deselect it';
+  $('foot').textContent = 'Separate shapes and meaningful holes can be selected and exported.';
 }
-$('singleMode').onclick = () => { mode='single'; selected.clear(); applyModeUI(); processImage(); };
-$('traceMode').onclick = () => { mode='trace'; selected.clear(); applyModeUI(); processImage(); };
 
 async function decodeImageFile(file) {
   if ('createImageBitmap' in window) {
@@ -611,7 +599,7 @@ async function processImage() {
   if (!source) return;
   const generation=++processGeneration;
   E.svg.disabled=E.dxf.disabled=true;
-  E.status.textContent=mode==='single' ? (seedPoint?'Tracing selected object…':'Preparing image — tap the object') : 'Tracing contours…';
+  E.status.textContent='Tracing contours…';
   await new Promise(r=>setTimeout(r,16));
   if (generation!==processGeneration) return;
   try {
@@ -626,29 +614,13 @@ async function processImage() {
     const darkMask=makeMask(grayImage,currentW,currentH,false);
     const lightMask=makeMask(grayImage,currentW,currentH,true);
 
-    if (mode==='single') {
-      contours=[]; selected.clear(); processingMask=null;
-      if (seedPoint) {
-        const chosen=selectSingleComponent(darkMask,lightMask,currentW,currentH,seedPoint.x,seedPoint.y);
-        if (chosen) {
-          processingMask=chosen.mask;
-          const loops=processContours(processingMask,currentW,currentH,Math.max(12,Number(E.noise.value)));
-          if (loops.length) {
-            loops.sort((a,b)=>Math.abs(polygonArea(b))-Math.abs(polygonArea(a)));
-            contours=[loops[0]];
-            selected.add(0);
-          }
-        }
-      }
-    } else {
-      let mask=E.invert.checked ? lightMask : darkMask;
-      if (Number(E.blur.value)>0) mask=morphology(mask,currentW,currentH,'close',1);
-      mask=removeBorderBackground(mask,currentW,currentH);
-      processingMask=mask;
-      contours=processContours(mask,currentW,currentH,Number(E.noise.value));
-      contours.sort((a,b)=>Math.abs(polygonArea(b))-Math.abs(polygonArea(a)));
-      selected=new Set(contours.map((_,i)=>i));
-    }
+    let mask=E.invert.checked ? lightMask : darkMask;
+    if (Number(E.blur.value)>0) mask=morphology(mask,currentW,currentH,'close',1);
+    mask=removeBorderBackground(mask,currentW,currentH);
+    processingMask=mask;
+    contours=processContours(mask,currentW,currentH,Number(E.noise.value));
+    contours.sort((a,b)=>Math.abs(polygonArea(b))-Math.abs(polygonArea(a)));
+    selected=new Set(contours.map((_,i)=>i));
     if (generation!==processGeneration) return;
     draw();
     updateStatus();
@@ -674,18 +646,20 @@ function draw() {
     path.forEach((p,k)=>k?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
     ctx.closePath();ctx.stroke();
   });
-  if (mode==='single' && seedPoint) {
-    ctx.fillStyle='#0a56db';ctx.beginPath();ctx.arc(seedPoint.x,seedPoint.y,Math.max(4,w/220),0,Math.PI*2);ctx.fill();
+}
+function updateSegmentCount() {
+  let count = 0;
+  for (const i of selected) {
+    const path = contours[i];
+    if (path) count += path.length;
   }
+  $('detailValue').textContent = String(count);
 }
 function updateStatus() {
-  if (mode==='single') {
-    E.status.textContent=contours.length?'1 closed profile selected':(seedPoint?'No suitable object found — tap farther inside it':'Tap the intended object');
-  } else {
-    const hierarchy=classifyHierarchy(contours);
-    const holes=hierarchy.filter((c,i)=>c.isHole&&selected.has(i)).length;
-    E.status.textContent=`${selected.size} selected · ${contours.length} detected${holes?` · ${holes} holes`:''}`;
-  }
+  updateSegmentCount();
+  const hierarchy=classifyHierarchy(contours);
+  const holes=hierarchy.filter((c,i)=>c.isHole&&selected.has(i)).length;
+  E.status.textContent=`${selected.size} selected · ${contours.length} detected${holes?` · ${holes} holes`:''}`;
   E.svg.disabled=E.dxf.disabled=selected.size===0;
 }
 function nearestContour(x,y,tolerance) {
@@ -711,11 +685,6 @@ function canvasPoint(clientX,clientY) {
 function selectAt(clientX,clientY,isTouch) {
   if (!source) return;
   const p=canvasPoint(clientX,clientY);
-  if (mode==='single') {
-    seedPoint={x:p.x,y:p.y};
-    processImage();
-    return;
-  }
   const tolerance=(isTouch?30:13)*Math.max(p.sx,p.sy);
   const hit=contourAtPoint(p.x,p.y,tolerance);
   if (hit<0) {E.status.textContent='Tap inside a shape or close to its edge';return;}
