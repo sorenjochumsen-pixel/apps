@@ -735,15 +735,48 @@ function makeSVG() {
   const d=paths.map(path=>'M '+path.map(p=>`${p.x.toFixed(3)} ${p.y.toFixed(3)}`).join(' L ')+' Z').join(' ');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${width.toFixed(3)}mm" height="${height.toFixed(3)}mm" viewBox="0 0 ${width.toFixed(3)} ${height.toFixed(3)}">\n  <path d="${d}" fill="none" stroke="#000" stroke-width="0.2" fill-rule="evenodd"/>\n</svg>\n`;
 }
+function cleanDXFPath(path) {
+  const cleaned=[];
+  const tolerance=1e-5;
+  for (const p of path) {
+    if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) continue;
+    const q={x:Number(p.x),y:Number(p.y)};
+    const prev=cleaned[cleaned.length-1];
+    if (!prev || Math.hypot(q.x-prev.x,q.y-prev.y)>tolerance) cleaned.push(q);
+  }
+  if (cleaned.length>2) {
+    const first=cleaned[0],last=cleaned[cleaned.length-1];
+    if (Math.hypot(first.x-last.x,first.y-last.y)<=tolerance) cleaned.pop();
+  }
+  return cleaned.length>=3 ? cleaned : [];
+}
 function makeDXF() {
-  const paths=orientForCAD(normalisedPaths());
-  const out=['0','SECTION','2','HEADER','9','$ACADVER','1','AC1015','9','$INSUNITS','70','4','0','ENDSEC','0','SECTION','2','ENTITIES'];
-  paths.forEach((path,i)=>{
-    out.push('0','LWPOLYLINE','100','AcDbEntity','8',`TRACE_${String(i+1).padStart(3,'0')}`,'100','AcDbPolyline','90',String(path.length),'70','1');
-    path.forEach(p=>out.push('10',p.x.toFixed(4),'20',p.y.toFixed(4)));
+  // AutoCAD R12 with classic POLYLINE/VERTEX records is more reliably
+  // imported by SketchUp than modern LWPOLYLINE records.
+  const paths=orientForCAD(normalisedPaths()).map(cleanDXFPath).filter(p=>p.length>=3);
+  const out=[
+    '0','SECTION','2','HEADER',
+    '9','$ACADVER','1','AC1009',
+    '9','$MEASUREMENT','70','1',
+    '9','$LUNITS','70','2',
+    '9','$LUPREC','70','4',
+    '0','ENDSEC',
+    '0','SECTION','2','TABLES',
+    '0','TABLE','2','LAYER','70','1',
+    '0','LAYER','2','TRACE','70','0','62','7','6','CONTINUOUS',
+    '0','ENDTAB',
+    '0','ENDSEC',
+    '0','SECTION','2','ENTITIES'
+  ];
+  paths.forEach(path=>{
+    out.push('0','POLYLINE','8','TRACE','66','1','70','1','10','0.0','20','0.0','30','0.0');
+    path.forEach(p=>out.push(
+      '0','VERTEX','8','TRACE','10',p.x.toFixed(4),'20',p.y.toFixed(4),'30','0.0','70','0'
+    ));
+    out.push('0','SEQEND','8','TRACE');
   });
   out.push('0','ENDSEC','0','EOF');
-  return out.join('\n');
+  return out.join('\r\n')+'\r\n';
 }
 E.svg.onclick=()=>download(makeSVG(),'profile_trace.svg','image/svg+xml;charset=utf-8');
 E.dxf.onclick=()=>download(makeDXF(),'profile_trace.dxf','application/dxf');
