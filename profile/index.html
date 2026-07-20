@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Profile Trace">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="manifest" href="manifest.webmanifest">
 <title>Profile Trace</title>
 <style>
 :root{--bg:#ffffff;--panel:#f7f7f6;--panel2:#fbfbfa;--text:#343438;--muted:#7b7b82;--line:#dddddf;--blue:#2563eb;--radius:22px}
@@ -75,7 +82,7 @@ dialog{border:0;border-radius:24px;width:calc(100% - 30px);max-width:560px;paddi
 <dialog id="dialog">
   <h2>Profile Trace</h2>
   <p>The app extracts multiple closed contours from the cropped photograph. Tap a contour or its enclosed area to include or exclude it.</p>
-  <p>For accurate scale, photograph straight on, avoid reflections, and enter the object's measured height before export.</p>
+  <p>Place the four crop points on the object's corners. The app corrects perspective before tracing. Enter the object's measured height before export.</p>
   <button class="close" id="close">Close</button>
 </dialog>
 
