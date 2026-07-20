@@ -17,17 +17,17 @@ button,input{font:inherit}.app{width:min(100%,860px);margin:auto;padding:0 6px}
 canvas{display:block;width:100%;height:auto;max-height:47vh;object-fit:contain;background:#fff;border-radius:16px;touch-action:manipulation}
 .grid,.quick-row,.toggle-row,.mode-row,.export-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .card,.toggle-card,.mode,.quick,.export,.action,.height-card{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:18px}
-.card{background:var(--panel);padding:14px 14px 12px}.card label{display:block;text-align:center;color:var(--muted);font-size:15px;font-weight:700;margin-top:4px}.value{text-align:center;font-size:40px;line-height:1;margin:8px 0 8px;font-variant-numeric:tabular-nums}
-input[type=range]{width:100%;accent-color:var(--blue)}.range-labels{display:flex;justify-content:space-between;margin-top:2px;color:var(--muted);font-size:12px}.range-title{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margin-top:-18px;pointer-events:none}
+.card{background:var(--panel);padding:14px 14px 12px;min-width:0}.card label{display:block;text-align:center;color:var(--muted);font-size:15px;font-weight:700;margin-top:4px}.value{text-align:center;font-size:40px;line-height:1;margin:8px 0 8px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--blue)}.range-meta{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;margin-top:5px;color:var(--muted);font-size:12px;line-height:1.15;min-height:28px}.range-meta span:first-child{text-align:left}.range-meta span:last-child{text-align:right}.range-meta strong{text-align:center;font-size:13px;font-weight:750;white-space:nowrap;color:var(--muted)}
 .quick,.mode,.export,.action{font-weight:750;cursor:pointer}.quick{min-height:62px;display:flex;align-items:center;justify-content:center}.quick input{display:none}.mode{min-height:58px}.mode.active{box-shadow:inset 0 0 0 2px var(--blue);color:var(--blue)}
 .toggle-card{background:var(--panel2);min-height:64px;padding:0 16px;display:grid;grid-template-columns:minmax(0,1fr) 56px;gap:12px;align-items:center;font-size:16px;font-weight:650}
 .switch{position:relative;width:56px;height:34px;justify-self:end}.switch input{position:absolute;opacity:0}.slider{position:absolute;inset:0;border-radius:999px;background:#e2e2e7}.slider:before{content:"";position:absolute;width:28px;height:28px;left:3px;top:3px;border-radius:50%;background:#fff;box-shadow:0 1px 5px #0003;transition:.2s}.switch input:checked + .slider{background:var(--blue)}.switch input:checked + .slider:before{transform:translateX(22px)}
 .height-card{margin-top:10px;background:var(--panel);padding:10px 16px 14px;text-align:center}.height-card label{display:block;color:var(--muted);font-size:22px;font-weight:750;margin-bottom:6px}.height-card input{width:100%;height:76px;border:0;border-radius:18px;background:#fff;color:var(--text);text-align:center;font-size:48px}
 .status{text-align:center;min-height:22px;padding-top:10px;color:var(--muted);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hint{text-align:center;min-height:18px;margin-top:2px;color:var(--muted);font-size:13px}
 .export{min-height:74px;font-size:19px}.export:disabled{opacity:.35;cursor:default}.foot{text-align:center;color:var(--muted);font-size:13px;margin:10px 8px 0}.engine-setting,.actions{display:none!important}
-.crop-overlay{position:fixed;inset:0;z-index:1000;background:#111;display:none;flex-direction:column;padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom))}.crop-overlay.open{display:flex}.crop-header{display:grid;grid-template-columns:88px 1fr 88px;align-items:center;gap:8px;color:#fff;min-height:52px}.crop-title{text-align:center;font-size:20px;font-weight:750}.crop-btn{min-height:44px;border:0;border-radius:14px;background:#2b2b2e;color:#fff;font-weight:700}.crop-btn.primary{background:var(--blue)}.crop-stage{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}.crop-stage canvas{max-width:100%;max-height:100%;width:auto;height:auto;border-radius:0;background:#000;touch-action:none}.crop-help{color:#d1d1d6;text-align:center;font-size:13px;padding:8px 4px 2px}.crop-footer{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:8px}.crop-footer .crop-btn{min-height:50px}
+.crop-overlay{position:fixed;inset:0;z-index:1000;background:#2a2a2c;display:none;flex-direction:column;padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom))}.crop-overlay.open{display:flex}.crop-header{display:grid;grid-template-columns:88px 1fr 88px;align-items:center;gap:8px;color:#fff;min-height:52px}.crop-title{text-align:center;font-size:20px;font-weight:750}.crop-btn{min-height:44px;border:0;border-radius:14px;background:#2b2b2e;color:#fff;font-weight:700}.crop-btn.primary{background:var(--blue)}.crop-stage{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}.crop-stage canvas{max-width:100%;max-height:100%;width:auto;height:auto;border-radius:0;background:#000;touch-action:none}.crop-help{color:#d1d1d6;text-align:center;font-size:13px;padding:8px 4px 2px}.crop-footer{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:8px}.crop-footer .crop-btn{min-height:50px}
 dialog{border:0;border-radius:24px;width:calc(100% - 30px);max-width:560px;padding:24px}dialog::backdrop{background:#0007}dialog p{line-height:1.45;color:#555}.close{width:100%;min-height:54px;border:0;border-radius:16px;background:var(--text);color:#fff;font-size:18px;font-weight:700}
-@media(max-width:600px){canvas{max-height:46vh}.grid{gap:8px}.card{padding:12px 10px 10px}.value{font-size:36px}.height-card label{font-size:20px}.height-card input{font-size:46px}}
+@media(max-width:600px){canvas{max-height:46vh}.grid{gap:8px}.card{padding:12px 10px 10px}.value{font-size:36px}.range-meta{font-size:10px;gap:3px}.range-meta strong{font-size:11px}.height-card label{font-size:20px}.height-card input{font-size:46px}}
 </style>
 </head>
 <body>
@@ -37,10 +37,10 @@ dialog{border:0;border-radius:24px;width:calc(100% - 30px);max-width:560px;paddi
 <section class="preview"><canvas id="canvas" width="900" height="650"></canvas></section>
 
 <section class="grid">
-  <div class="card"><div class="value" id="thresholdValue">128</div><input id="threshold" type="range" min="0" max="255" value="128"><div class="range-labels"><span>Dark</span><span>Light</span></div><div class="range-title">Threshold</div></div>
-  <div class="card"><div class="value" id="blurValue">1</div><input id="blur" type="range" min="0" max="4" value="1"><div class="range-labels"><span>Sharp</span><span>Softer</span></div><div class="range-title">Photo Cleanup</div></div>
-  <div class="card"><div class="value" id="detailValue">0</div><input id="detail" type="range" min="0" max="6" step="0.25" value="1.25"><div class="range-labels"><span>Highest Quality</span><span>Smaller File</span></div><div class="range-title">Segments</div></div>
-  <div class="card"><div class="value" id="smoothValue">0</div><input id="smooth" type="range" min="0" max="3" value="0"><div class="range-labels"><span>Off</span><span>More</span></div><div class="range-title">Corner-safe Smoothing</div></div>
+  <div class="card"><div class="value" id="thresholdValue">128</div><input id="threshold" type="range" min="0" max="255" value="128"><div class="range-meta"><span>Dark</span><strong>Threshold</strong><span>Light</span></div></div>
+  <div class="card"><div class="value" id="blurValue">1</div><input id="blur" type="range" min="0" max="4" value="1"><div class="range-meta"><span>Sharp</span><strong>Photo Cleanup</strong><span>Softer</span></div></div>
+  <div class="card"><div class="value" id="detailValue">0</div><input id="detail" type="range" min="0" max="6" step="0.25" value="1.25"><div class="range-meta"><span>Highest Quality</span><strong>Segments</strong><span>Smaller File</span></div></div>
+  <div class="card"><div class="value" id="smoothValue">0</div><input id="smooth" type="range" min="0" max="3" value="0"><div class="range-meta"><span>Off</span><strong>Corner-safe Smoothing</strong><span>More</span></div></div>
 </section>
 
 <section class="quick-row">
@@ -68,7 +68,7 @@ dialog{border:0;border-radius:24px;width:calc(100% - 30px);max-width:560px;paddi
 <section class="crop-overlay" id="cropOverlay" aria-hidden="true">
   <div class="crop-header"><button class="crop-btn" id="cropCancel">Cancel</button><div class="crop-title">Crop Photo</div><button class="crop-btn primary" id="cropUse">Use Photo</button></div>
   <div class="crop-stage" id="cropStage"><canvas id="cropCanvas" width="900" height="650"></canvas></div>
-  <div class="crop-help">Drag the frame or its corners so only the object to be traced remains.</div>
+  <div class="crop-help">Place the four corners on the object. Perspective is corrected automatically.</div>
   <div class="crop-footer"><button class="crop-btn" id="cropReset">Reset</button><button class="crop-btn primary" id="cropUseBottom">Use Photo</button></div>
 </section>
 
@@ -96,7 +96,7 @@ const cropCtx = cropCanvas.getContext('2d');
 let pendingSource = null;
 let pendingWidth = 0;
 let pendingHeight = 0;
-let cropRect = {x:0,y:0,w:0,h:0};
+let cropQuad = []; // top-left, top-right, bottom-right, bottom-left
 let cropDrag = null;
 let cropPointerId = null;
 
@@ -188,92 +188,114 @@ function fitCropCanvas(){
   resetCropRect();
 }
 function resetCropRect(){
-  const margin=Math.max(18,Math.round(Math.min(cropCanvas.width,cropCanvas.height)*0.045));
-  cropRect={x:margin,y:margin,w:Math.max(40,cropCanvas.width-2*margin),h:Math.max(40,cropCanvas.height-2*margin)};
+  const m=Math.max(18,Math.round(Math.min(cropCanvas.width,cropCanvas.height)*0.045));
+  cropQuad=[
+    {x:m,y:m},
+    {x:cropCanvas.width-m,y:m},
+    {x:cropCanvas.width-m,y:cropCanvas.height-m},
+    {x:m,y:cropCanvas.height-m}
+  ];
   drawCrop();
 }
+function drawLine(a,b){cropCtx.beginPath();cropCtx.moveTo(a.x,a.y);cropCtx.lineTo(b.x,b.y);cropCtx.stroke()}
+function lerpPoint(a,b,t){return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t}}
 function drawCrop(){
   if(!pendingSource)return;
   const w=cropCanvas.width,h=cropCanvas.height;
   cropCtx.clearRect(0,0,w,h);
   cropCtx.drawImage(pendingSource,0,0,w,h);
+  // A light veil outside the selected quadrilateral; inside remains at full brightness.
   cropCtx.save();
-  cropCtx.fillStyle='rgba(0,0,0,.58)';
-  cropCtx.fillRect(0,0,w,h);
-  cropCtx.globalCompositeOperation='destination-out';
-  cropCtx.fillRect(cropRect.x,cropRect.y,cropRect.w,cropRect.h);
-  cropCtx.restore();
+  cropCtx.fillStyle='rgba(0,0,0,.28)';cropCtx.fillRect(0,0,w,h);
+  cropCtx.beginPath();cropCtx.moveTo(cropQuad[0].x,cropQuad[0].y);
+  for(let i=1;i<4;i++)cropCtx.lineTo(cropQuad[i].x,cropQuad[i].y);
+  cropCtx.closePath();cropCtx.clip();cropCtx.drawImage(pendingSource,0,0,w,h);cropCtx.restore();
   cropCtx.save();
-  cropCtx.strokeStyle='#fff';cropCtx.lineWidth=Math.max(2,w/420);
-  cropCtx.strokeRect(cropRect.x,cropRect.y,cropRect.w,cropRect.h);
-  cropCtx.strokeStyle='rgba(255,255,255,.65)';cropCtx.lineWidth=1;
-  for(let i=1;i<3;i++){
-    const x=cropRect.x+cropRect.w*i/3,y=cropRect.y+cropRect.h*i/3;
-    cropCtx.beginPath();cropCtx.moveTo(x,cropRect.y);cropCtx.lineTo(x,cropRect.y+cropRect.h);cropCtx.stroke();
-    cropCtx.beginPath();cropCtx.moveTo(cropRect.x,y);cropCtx.lineTo(cropRect.x+cropRect.w,y);cropCtx.stroke();
-  }
-  const r=Math.max(9,w/75);cropCtx.fillStyle='#fff';
-  [[cropRect.x,cropRect.y],[cropRect.x+cropRect.w,cropRect.y],[cropRect.x,cropRect.y+cropRect.h],[cropRect.x+cropRect.w,cropRect.y+cropRect.h]].forEach(([x,y])=>{cropCtx.beginPath();cropCtx.arc(x,y,r,0,Math.PI*2);cropCtx.fill()});
+  cropCtx.strokeStyle='#fff';cropCtx.lineWidth=Math.max(2,w/420);cropCtx.lineJoin='round';
+  cropCtx.beginPath();cropCtx.moveTo(cropQuad[0].x,cropQuad[0].y);for(let i=1;i<4;i++)cropCtx.lineTo(cropQuad[i].x,cropQuad[i].y);cropCtx.closePath();cropCtx.stroke();
+  cropCtx.strokeStyle='rgba(255,255,255,.72)';cropCtx.lineWidth=1;
+  for(let t=1/3;t<1;t+=1/3){drawLine(lerpPoint(cropQuad[0],cropQuad[3],t),lerpPoint(cropQuad[1],cropQuad[2],t));drawLine(lerpPoint(cropQuad[0],cropQuad[1],t),lerpPoint(cropQuad[3],cropQuad[2],t));}
+  const r=Math.max(9,w/75);cropCtx.fillStyle='#fff';cropCtx.strokeStyle='rgba(0,0,0,.25)';cropCtx.lineWidth=1;
+  cropQuad.forEach(p=>{cropCtx.beginPath();cropCtx.arc(p.x,p.y,r,0,Math.PI*2);cropCtx.fill();cropCtx.stroke()});
   cropCtx.restore();
 }
 function cropCanvasPoint(e){
   const r=cropCanvas.getBoundingClientRect();
   return {x:(e.clientX-r.left)*cropCanvas.width/r.width,y:(e.clientY-r.top)*cropCanvas.height/r.height};
 }
+function pointInQuad(p,q){
+  let sign=0;
+  for(let i=0;i<4;i++){const a=q[i],b=q[(i+1)%4],c=(b.x-a.x)*(p.y-a.y)-(b.y-a.y)*(p.x-a.x);if(Math.abs(c)<1e-6)continue;const s=Math.sign(c);if(!sign)sign=s;else if(s!==sign)return false;}
+  return true;
+}
+function quadArea(q){let a=0;for(let i=0;i<4;i++){const p=q[i],n=q[(i+1)%4];a+=p.x*n.y-n.x*p.y}return a/2}
+function orient(a,b,c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x)}
+function segmentsCross(a,b,c,d){const o1=orient(a,b,c),o2=orient(a,b,d),o3=orient(c,d,a),o4=orient(c,d,b);return o1*o2<0&&o3*o4<0}
+function quadValid(q){
+  if(Math.abs(quadArea(q))<Math.max(2500,cropCanvas.width*cropCanvas.height*.015))return false;
+  if(segmentsCross(q[0],q[1],q[2],q[3])||segmentsCross(q[1],q[2],q[3],q[0]))return false;
+  const signs=[];for(let i=0;i<4;i++)signs.push(Math.sign(orient(q[i],q[(i+1)%4],q[(i+2)%4])));
+  return signs.every(v=>v===signs[0]&&v!==0);
+}
 function cropHit(p){
-  const hr=Math.max(24,cropCanvas.width/28),x1=cropRect.x,y1=cropRect.y,x2=x1+cropRect.w,y2=y1+cropRect.h;
-  const corners=[['nw',x1,y1],['ne',x2,y1],['sw',x1,y2],['se',x2,y2]];
-  for(const [name,x,y] of corners) if(Math.hypot(p.x-x,p.y-y)<=hr)return name;
-  if(p.x>=x1&&p.x<=x2&&p.y>=y1&&p.y<=y2)return 'move';
-  return null;
+  const hr=Math.max(28,cropCanvas.width/26);
+  for(let i=0;i<4;i++)if(Math.hypot(p.x-cropQuad[i].x,p.y-cropQuad[i].y)<=hr)return i;
+  return pointInQuad(p,cropQuad)?'move':null;
 }
-function clampCrop(rect){
-  const min=Math.max(50,Math.min(cropCanvas.width,cropCanvas.height)*.08);
-  rect.w=Math.max(min,Math.min(rect.w,cropCanvas.width));rect.h=Math.max(min,Math.min(rect.h,cropCanvas.height));
-  rect.x=Math.max(0,Math.min(rect.x,cropCanvas.width-rect.w));rect.y=Math.max(0,Math.min(rect.y,cropCanvas.height-rect.h));
-  return rect;
-}
+function clampPoint(p){return{x:Math.max(0,Math.min(cropCanvas.width,p.x)),y:Math.max(0,Math.min(cropCanvas.height,p.y))}}
 cropCanvas.addEventListener('pointerdown',e=>{
   if(cropPointerId!==null)return;
-  const p=cropCanvasPoint(e),kind=cropHit(p);if(!kind)return;
-  cropPointerId=e.pointerId;cropCanvas.setPointerCapture(e.pointerId);
-  cropDrag={kind,start:p,rect:{...cropRect}};e.preventDefault();
+  const p=cropCanvasPoint(e),kind=cropHit(p);if(kind===null)return;
+  cropPointerId=e.pointerId;cropCanvas.setPointerCapture(e.pointerId);cropDrag={kind,start:p,quad:cropQuad.map(v=>({...v}))};e.preventDefault();
 });
 cropCanvas.addEventListener('pointermove',e=>{
   if(!cropDrag||e.pointerId!==cropPointerId)return;
-  const p=cropCanvasPoint(e),dx=p.x-cropDrag.start.x,dy=p.y-cropDrag.start.y,r={...cropDrag.rect};
-  if(cropDrag.kind==='move'){r.x+=dx;r.y+=dy;}
-  else{
-    if(cropDrag.kind.includes('w')){r.x+=dx;r.w-=dx} if(cropDrag.kind.includes('e'))r.w+=dx;
-    if(cropDrag.kind.includes('n')){r.y+=dy;r.h-=dy} if(cropDrag.kind.includes('s'))r.h+=dy;
-  }
-  cropRect=clampCrop(r);drawCrop();e.preventDefault();
+  const p=cropCanvasPoint(e),dx=p.x-cropDrag.start.x,dy=p.y-cropDrag.start.y;let q=cropDrag.quad.map(v=>({...v}));
+  if(cropDrag.kind==='move'){
+    const minX=Math.min(...q.map(v=>v.x)),maxX=Math.max(...q.map(v=>v.x)),minY=Math.min(...q.map(v=>v.y)),maxY=Math.max(...q.map(v=>v.y));
+    const cdx=Math.max(-minX,Math.min(dx,cropCanvas.width-maxX)),cdy=Math.max(-minY,Math.min(dy,cropCanvas.height-maxY));q=q.map(v=>({x:v.x+cdx,y:v.y+cdy}));
+  }else q[cropDrag.kind]=clampPoint({x:q[cropDrag.kind].x+dx,y:q[cropDrag.kind].y+dy});
+  if(quadValid(q)){cropQuad=q;drawCrop()}e.preventDefault();
 });
 function endCropPointer(e){if(e.pointerId!==cropPointerId)return;cropDrag=null;cropPointerId=null;}
 cropCanvas.addEventListener('pointerup',endCropPointer);cropCanvas.addEventListener('pointercancel',endCropPointer);
 function openCropper(img){
   pendingSource=img;const size=pendingSize(img);pendingWidth=size.w;pendingHeight=size.h;
-  $('cropOverlay').classList.add('open');$('cropOverlay').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
-  requestAnimationFrame(fitCropCanvas);
+  $('cropOverlay').classList.add('open');$('cropOverlay').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';requestAnimationFrame(fitCropCanvas);
 }
 function closeCropper(discard=true){
   $('cropOverlay').classList.remove('open');$('cropOverlay').setAttribute('aria-hidden','true');document.body.style.overflow='';
-  if(discard&&pendingSource&&pendingSource!==source&&typeof pendingSource.close==='function')pendingSource.close();
-  pendingSource=null;
+  if(discard&&pendingSource&&pendingSource!==source&&typeof pendingSource.close==='function')pendingSource.close();pendingSource=null;
 }
+function solveLinear(A,b){
+  const n=b.length;A=A.map(r=>r.slice());b=b.slice();
+  for(let i=0;i<n;i++){let pivot=i;for(let r=i+1;r<n;r++)if(Math.abs(A[r][i])>Math.abs(A[pivot][i]))pivot=r;if(Math.abs(A[pivot][i])<1e-12)throw new Error('Perspective transform failed');[A[i],A[pivot]]=[A[pivot],A[i]];[b[i],b[pivot]]=[b[pivot],b[i]];const d=A[i][i];for(let c=i;c<n;c++)A[i][c]/=d;b[i]/=d;for(let r=0;r<n;r++){if(r===i)continue;const f=A[r][i];if(!f)continue;for(let c=i;c<n;c++)A[r][c]-=f*A[i][c];b[r]-=f*b[i];}}
+  return b;
+}
+function homographyFromRectToQuad(w,h,q){
+  const src=[{x:0,y:0},{x:w-1,y:0},{x:w-1,y:h-1},{x:0,y:h-1}],A=[],b=[];
+  for(let i=0;i<4;i++){const x=src[i].x,y=src[i].y,u=q[i].x,v=q[i].y;A.push([x,y,1,0,0,0,-u*x,-u*y]);b.push(u);A.push([0,0,0,x,y,1,-v*x,-v*y]);b.push(v)}
+  const m=solveLinear(A,b);return[m[0],m[1],m[2],m[3],m[4],m[5],m[6],m[7],1];
+}
+function mapH(H,x,y){const d=H[6]*x+H[7]*y+H[8];return{x:(H[0]*x+H[1]*y+H[2])/d,y:(H[3]*x+H[4]*y+H[5])/d}}
 async function useCrop(){
   if(!pendingSource)return;
+  E.status.textContent='Correcting perspective…';
+  await new Promise(r=>setTimeout(r,20));
   const sx=pendingWidth/cropCanvas.width,sy=pendingHeight/cropCanvas.height;
-  const x=Math.max(0,Math.round(cropRect.x*sx)),y=Math.max(0,Math.round(cropRect.y*sy));
-  const w=Math.max(2,Math.min(pendingWidth-x,Math.round(cropRect.w*sx))),h=Math.max(2,Math.min(pendingHeight-y,Math.round(cropRect.h*sy)));
-  const out=document.createElement('canvas');out.width=w;out.height=h;
-  out.getContext('2d').drawImage(pendingSource,x,y,w,h,0,0,w,h);
-  let cropped;
-  if('createImageBitmap' in window)cropped=await createImageBitmap(out);else{const img=new Image();img.src=out.toDataURL('image/jpeg',.94);await img.decode();cropped=img;}
-  if(source&&typeof source.close==='function')source.close();
-  if(pendingSource&&pendingSource!==source&&typeof pendingSource.close==='function')pendingSource.close();
-  source=cropped;sourceWidth=w;sourceHeight=h;pendingSource=null;
-  closeCropper(false);selected.clear();seedPoint=null;await processImage();
+  const q=cropQuad.map(p=>({x:p.x*sx,y:p.y*sy}));
+  const top=Math.hypot(q[1].x-q[0].x,q[1].y-q[0].y),bottom=Math.hypot(q[2].x-q[3].x,q[2].y-q[3].y),left=Math.hypot(q[3].x-q[0].x,q[3].y-q[0].y),right=Math.hypot(q[2].x-q[1].x,q[2].y-q[1].y);
+  let outW=Math.max(2,Math.round((top+bottom)/2)),outH=Math.max(2,Math.round((left+right)/2));
+  const maxOut=1400,sc=Math.min(1,maxOut/Math.max(outW,outH));outW=Math.max(2,Math.round(outW*sc));outH=Math.max(2,Math.round(outH*sc));
+  const srcCanvas=document.createElement('canvas');srcCanvas.width=pendingWidth;srcCanvas.height=pendingHeight;const sctx=srcCanvas.getContext('2d',{willReadFrequently:true});sctx.drawImage(pendingSource,0,0,pendingWidth,pendingHeight);const srcData=sctx.getImageData(0,0,pendingWidth,pendingHeight).data;
+  const out=document.createElement('canvas');out.width=outW;out.height=outH;const octx=out.getContext('2d');const image=octx.createImageData(outW,outH),dst=image.data,H=homographyFromRectToQuad(outW,outH,q);
+  for(let y=0;y<outH;y++)for(let x=0;x<outW;x++){
+    const p=mapH(H,x,y),ix=Math.max(0,Math.min(pendingWidth-1,Math.round(p.x))),iy=Math.max(0,Math.min(pendingHeight-1,Math.round(p.y))),si=(iy*pendingWidth+ix)*4,di=(y*outW+x)*4;dst[di]=srcData[si];dst[di+1]=srcData[si+1];dst[di+2]=srcData[si+2];dst[di+3]=255;
+  }
+  octx.putImageData(image,0,0);
+  let cropped;if('createImageBitmap' in window)cropped=await createImageBitmap(out);else{const img=new Image();img.src=out.toDataURL('image/jpeg',.94);await img.decode();cropped=img;}
+  if(source&&typeof source.close==='function')source.close();if(pendingSource&&pendingSource!==source&&typeof pendingSource.close==='function')pendingSource.close();
+  source=cropped;sourceWidth=outW;sourceHeight=outH;pendingSource=null;closeCropper(false);selected.clear();seedPoint=null;await processImage();
 }
 async function openFile(file) {
   if (!file) return;
